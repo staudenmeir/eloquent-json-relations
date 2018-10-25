@@ -2,9 +2,9 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Grammars;
 
-use Illuminate\Database\Query\Grammars\SqlServerGrammar as BaseGrammar;
+use Illuminate\Database\Query\Grammars\SqlServerGrammar as Base;
 
-class SqlServerGrammar extends BaseGrammar implements JsonGrammar
+class SqlServerGrammar extends Base implements JsonGrammar
 {
     /**
      * Compile a "cast as JSON" statement into SQL.

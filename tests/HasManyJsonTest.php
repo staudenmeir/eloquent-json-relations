@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use Illuminate\Database\Capsule\Manager as Capsule;
+use Illuminate\Database\Capsule\Manager as DB;
 use Tests\Models\Post;
 use Tests\Models\Role;
 use Tests\Models\User;
@@ -13,12 +13,12 @@ class HasManyJsonTest extends TestCase
     {
         parent::setUp();
 
-        if (! method_exists(Capsule::connection()->query(), 'whereJsonContains')) {
+        if (! method_exists(DB::connection()->query(), 'whereJsonContains')) {
             $this->markTestSkipped();
         }
     }
 
-    public function testGet()
+    public function testLazyLoading()
     {
         $users = Role::first()->users;
 

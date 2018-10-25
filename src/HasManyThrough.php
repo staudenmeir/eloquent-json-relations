@@ -3,9 +3,9 @@
 namespace Staudenmeir\EloquentJsonRelations;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough as BaseRelation;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough as Base;
 
-class HasManyThrough extends BaseRelation
+class HasManyThrough extends Base
 {
     /**
      * Build model dictionary keyed by the relation's foreign key.

@@ -7,7 +7,7 @@ use Tests\Models\User;
 
 class MorphManyTest extends TestCase
 {
-    public function testGet()
+    public function testLazyLoading()
     {
         $comments = User::first()->comments;
 

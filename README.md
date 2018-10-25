@@ -34,7 +34,7 @@ class User extends Model
     use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
     protected $casts = [
-        'options' => 'json'
+        'options' => 'json',
     ];
 
     public function locale()
@@ -54,7 +54,7 @@ class Locale extends Model
 }
 ```
 
-Remember to use the `HasJsonRelationships` trait on both the parent and the related model. 
+Remember to use the `HasJsonRelationships` trait in both the parent and the related model. 
 
 **Limitations:** Existence queries (`Locale::has('users')`) and `HasManyThrough` relationships don't work on PostgreSQL with integer keys.
 
@@ -104,7 +104,7 @@ class User extends Model
     use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
     protected $casts = [
-       'options' => 'json'
+       'options' => 'json',
     ];
     
     public function roles()

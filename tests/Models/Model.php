@@ -2,9 +2,10 @@
 
 namespace Tests\Models;
 
+use Illuminate\Database\Eloquent\Model as Base;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
-abstract class Model extends \Illuminate\Database\Eloquent\Model
+abstract class Model extends Base
 {
     use HasJsonRelationships;
 

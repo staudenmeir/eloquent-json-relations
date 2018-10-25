@@ -2,9 +2,9 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Grammars;
 
-use Illuminate\Database\Query\Grammars\PostgresGrammar as BaseGrammar;
+use Illuminate\Database\Query\Grammars\PostgresGrammar as Base;
 
-class PostgresGrammar extends BaseGrammar implements JsonGrammar
+class PostgresGrammar extends Base implements JsonGrammar
 {
     /**
      * Compile a "cast as JSON" statement into SQL.

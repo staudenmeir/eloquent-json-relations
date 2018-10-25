@@ -1,14 +1,9 @@
 language: php
-sudo: required
-dist: trusty
+sudo: false
+dist: xenial
 
-addons:
-  apt:
-    sources:
-      - mysql-5.7-trusty
-    packages:
-      - mysql-server
-      - mysql-client
+services:
+  - mysql
 
 php:
   - 7.0
@@ -20,11 +15,10 @@ env:
   - PREFER_LOWEST=""
 
 before_install:
-  - sudo mysql -e "use mysql; update user set authentication_string=PASSWORD('password') where User='root'; update user set plugin='mysql_native_password'; flush privileges;"
-  - sudo mysql_upgrade -u root -ppassword
-  - sudo service mysql restart
-  - sudo mysql -u root -ppassword -e 'create database `test`;'
+  - mysql -e 'create database `test`;'
 
-install: travis_retry composer update --no-interaction --no-suggest --prefer-dist --prefer-stable $PREFER_LOWEST
+install:
+  - travis_retry composer update --no-interaction --no-suggest --prefer-dist --prefer-stable $PREFER_LOWEST
 
-script: vendor/bin/phpunit
+script:
+  - vendor/bin/phpunit

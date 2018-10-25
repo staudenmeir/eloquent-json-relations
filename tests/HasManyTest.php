@@ -7,7 +7,7 @@ use Tests\Models\User;
 
 class HasManyTest extends TestCase
 {
-    public function testGet()
+    public function testLazyLoading()
     {
         $users = Locale::first()->users;
 

@@ -7,7 +7,7 @@ use Tests\Models\User;
 
 class MorphToTest extends TestCase
 {
-    public function testGet()
+    public function testLazyLoading()
     {
         $commentable = Comment::first()->commentable;
 

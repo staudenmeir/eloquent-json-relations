@@ -6,7 +6,7 @@ use Tests\Models\User;
 
 class BelongsToTest extends TestCase
 {
-    public function testGet()
+    public function testLazyLoading()
     {
         $locale = User::first()->locale;
 

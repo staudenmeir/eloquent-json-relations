@@ -2,9 +2,9 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Grammars;
 
-use Illuminate\Database\Query\Grammars\MySqlGrammar as BaseGrammar;
+use Illuminate\Database\Query\Grammars\MySqlGrammar as Base;
 
-class MySqlGrammar extends BaseGrammar implements JsonGrammar
+class MySqlGrammar extends Base implements JsonGrammar
 {
     /**
      * Compile a "cast as JSON" statement into SQL.

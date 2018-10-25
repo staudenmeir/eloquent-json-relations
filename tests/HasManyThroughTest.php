@@ -6,7 +6,7 @@ use Tests\Models\Locale;
 
 class HasManyThroughTest extends TestCase
 {
-    public function testGet()
+    public function testLazyLoading()
     {
         $users = Locale::first()->posts;
 
