@@ -33,6 +33,14 @@ class HasManyJsonTest extends TestCase
         $this->assertEquals([1, 3], $roles[1]->users->pluck('id')->all());
     }
 
+    public function testLazyEagerLoading()
+    {
+        $roles = Role::all()->load('users');
+
+        $this->assertEquals([1], $roles[0]->users->pluck('id')->all());
+        $this->assertEquals([1, 3], $roles[1]->users->pluck('id')->all());
+    }
+
     public function testExistenceQuery()
     {
         $roles = Role::has('users')->get();

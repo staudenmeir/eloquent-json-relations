@@ -20,6 +20,13 @@ class HasManyThroughTest extends TestCase
         $this->assertEquals([1], $locales[0]->posts->pluck('id')->all());
     }
 
+    public function testLazyEagerLoading()
+    {
+        $locales = Locale::all()->load('posts');
+
+        $this->assertEquals([1], $locales[0]->posts->pluck('id')->all());
+    }
+
     public function testExistenceQuery()
     {
         $locales = Locale::has('posts')->get();

@@ -21,6 +21,13 @@ class MorphManyTest extends TestCase
         $this->assertEquals([1], $users[0]->comments->pluck('id')->all());
     }
 
+    public function testLazyEagerLoading()
+    {
+        $users = User::all()->load('comments');
+
+        $this->assertEquals([1], $users[0]->comments->pluck('id')->all());
+    }
+
     public function testExistenceQuery()
     {
         $users = User::has('comments')->get();

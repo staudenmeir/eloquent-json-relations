@@ -21,6 +21,13 @@ class HasManyTest extends TestCase
         $this->assertEquals([1], $locales[0]->users->pluck('id')->all());
     }
 
+    public function testLazyEagerLoading()
+    {
+        $locales = Locale::all()->load('users');
+
+        $this->assertEquals([1], $locales[0]->users->pluck('id')->all());
+    }
+
     public function testExistenceQuery()
     {
         $locales = Locale::has('users')->get();

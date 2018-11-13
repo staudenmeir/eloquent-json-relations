@@ -10,11 +10,11 @@ class Post extends Model
 
     public function recommendations()
     {
-        return $this->belongsToJson(self::class, 'options->recommendations');
+        return $this->belongsToJson(self::class, 'options->recommendation_ids');
     }
 
     public function recommenders()
     {
-        return $this->hasManyJson(self::class, 'options->recommendations');
+        return $this->hasManyJson(self::class, 'options->recommendation_ids');
     }
 }

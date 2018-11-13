@@ -74,7 +74,7 @@ abstract class TestCase extends Base
             User::create(['options' => []]);
             User::create(['options' => ['role_ids' => [2, 3]]]);
 
-            Post::create(['options' => ['user_id' => 1, 'recommendations' => [2]]]);
+            Post::create(['options' => ['user_id' => 1, 'recommendation_ids' => [2]]]);
             Post::create(['options' => ['user_id' => 2]]);
 
             Comment::create(['options' => ['commentable_type' => User::class, 'commentable_id' => 1]]);

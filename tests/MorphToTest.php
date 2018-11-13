@@ -21,6 +21,13 @@ class MorphToTest extends TestCase
         $this->assertEquals(1, $comments[0]->commentable->id);
     }
 
+    public function testLazyEagerLoading()
+    {
+        $comments = Comment::all()->load('commentable');
+
+        $this->assertEquals(1, $comments[0]->commentable->id);
+    }
+
     public function testAssociate()
     {
         $comment = (new Comment)->commentable()->associate(User::find(1));

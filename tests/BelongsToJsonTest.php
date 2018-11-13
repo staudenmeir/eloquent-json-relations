@@ -33,6 +33,15 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([2, 3], $users[2]->roles->pluck('id')->all());
     }
 
+    public function testLazyEagerLoading()
+    {
+        $users = User::all()->load('roles');
+
+        $this->assertEquals([1, 2], $users[0]->roles->pluck('id')->all());
+        $this->assertEquals([], $users[1]->roles->pluck('id')->all());
+        $this->assertEquals([2, 3], $users[2]->roles->pluck('id')->all());
+    }
+
     public function testExistenceQuery()
     {
         $users = User::has('roles')->get();

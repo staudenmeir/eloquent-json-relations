@@ -20,6 +20,13 @@ class BelongsToTest extends TestCase
         $this->assertEquals(1, $users[0]->locale->id);
     }
 
+    public function testLazyEagerLoading()
+    {
+        $users = User::all()->load('locale');
+
+        $this->assertEquals(1, $users[0]->locale->id);
+    }
+
     public function testExistenceQuery()
     {
         $users = User::has('locale')->get();
