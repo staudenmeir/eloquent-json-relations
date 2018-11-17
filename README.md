@@ -171,7 +171,7 @@ class Role extends Model
 }
 ```
 
-Here, `options->roles` is the path to the JSON array. `role_id` is the name of the foreign key attribute inside the record object:
+Here, `options->roles` is the path to the JSON array. `role_id` is the name of the foreign key property inside the record object:
 
 ```php
 $user = new User;

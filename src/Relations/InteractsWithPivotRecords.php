@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 
-trait InteractsWithPivotData
+trait InteractsWithPivotRecords
 {
     /**
      * Attach models to the relationship.

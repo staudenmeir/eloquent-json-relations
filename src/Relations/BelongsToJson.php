@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 class BelongsToJson extends BelongsTo
 {
-    use InteractsWithPivotData, IsJsonRelation;
+    use InteractsWithPivotRecords, IsJsonRelation;
 
     /**
      * Get the results of the relationship.
