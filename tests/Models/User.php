@@ -22,4 +22,9 @@ class User extends Model
     {
         return $this->belongsToJson(Role::class, 'options->role_ids');
     }
+
+    public function roles2()
+    {
+        return $this->belongsToJson(Role::class, 'options->roles[]->role_id');
+    }
 }

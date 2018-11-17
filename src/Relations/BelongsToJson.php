@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Collection as BaseCollection;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Arr;
 
 class BelongsToJson extends BelongsTo
 {
-    use IsJsonRelation;
+    use InteractsWithPivotData, IsJsonRelation;
 
     /**
      * Get the results of the relationship.
@@ -19,7 +20,68 @@ class BelongsToJson extends BelongsTo
      */
     public function getResults()
     {
-        return $this->query->get();
+        return $this->get();
+    }
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array  $columns
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function get($columns = ['*'])
+    {
+        $models = parent::get($columns);
+
+        if ($this->key) {
+            $this->hydratePivotRelation($models->all(), $this->parent);
+        }
+
+        return $models;
+    }
+
+    /**
+     * Hydrate the pivot relationship on the models.
+     *
+     * @param  array  $models
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return void
+     */
+    protected function hydratePivotRelation(array $models, Model $parent)
+    {
+        foreach ($models as $model) {
+            $model->setRelation('pivot', $this->pivotRelation($model, $parent));
+        }
+    }
+
+    /**
+     * Get the pivot relationship from the query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function pivotRelation(Model $model, Model $parent)
+    {
+        $attributes = $this->pivotAttributes($model, $parent);
+
+        return Pivot::fromAttributes($model, $attributes, null, true);
+    }
+
+    /**
+     * Get the pivot attributes from a model.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return array
+     */
+    protected function pivotAttributes(Model $model, Model $parent)
+    {
+        $record = collect($parent->{$this->path})
+            ->where($this->key, $model->{$this->ownerKey})
+            ->first();
+
+        return ! is_null($record) ? Arr::except($record, $this->key) : [];
     }
 
     /**
@@ -71,13 +133,7 @@ class BelongsToJson extends BelongsTo
     {
         $foreign = $this->foreignKey;
 
-        $owner = $this->ownerKey;
-
-        $dictionary = [];
-
-        foreach ($results as $result) {
-            $dictionary[$result->getAttribute($owner)] = $result;
-        }
+        $dictionary = $this->buildDictionary($results);
 
         foreach ($models as $model) {
             $matches = [];
@@ -89,9 +145,32 @@ class BelongsToJson extends BelongsTo
             }
 
             $model->setRelation($relation, $this->related->newCollection($matches));
+
+            if ($this->key) {
+                $this->hydratePivotRelation($matches, $model);
+            }
         }
 
         return $models;
+    }
+
+    /**
+     * Build model dictionary keyed by the relation's foreign key.
+     *
+     * @param  \Illuminate\Database\Eloquent\Collection  $results
+     * @return array
+     */
+    protected function buildDictionary(Collection $results)
+    {
+        $owner = $this->ownerKey;
+
+        $dictionary = [];
+
+        foreach ($results as $result) {
+            $dictionary[$result->getAttribute($owner)] = $result;
+        }
+
+        return $dictionary;
     }
 
     /**
@@ -108,10 +187,10 @@ class BelongsToJson extends BelongsTo
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        $ownerKey = $this->getJsonGrammar($query)->compileCastAsJson($query->qualifyColumn($this->ownerKey));
+        $ownerKey = $this->relationExistenceQueryOwnerKey($query, $this->ownerKey);
 
         return $query->select($columns)->whereJsonContains(
-            $this->getQualifiedForeignKey(),
+            $this->getQualifiedPath(),
             $query->getQuery()->connection->raw($ownerKey)
         );
     }
@@ -126,115 +205,33 @@ class BelongsToJson extends BelongsTo
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        $query->select($columns)->from(
-            $query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash()
-        );
+        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
 
         $query->getModel()->setTable($hash);
 
-        $ownerKey = $this->getJsonGrammar($query)->compileCastAsJson($query->qualifyColumn($hash.'.'.$this->ownerKey));
+        $ownerKey = $this->relationExistenceQueryOwnerKey($query, $hash.'.'.$this->ownerKey);
 
-        return $query->whereJsonContains(
-            $this->getQualifiedForeignKey(),
+        return $query->select($columns)->whereJsonContains(
+            $this->getQualifiedPath(),
             $query->getQuery()->connection->raw($ownerKey)
         );
     }
 
     /**
-     * Attach models to the relationship.
+     * Get the owner key for the relationship query.
      *
-     * @param  mixed  $ids
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $ownerKey
+     * @return string
      */
-    public function attach($ids)
+    protected function relationExistenceQueryOwnerKey(Builder $query, $ownerKey)
     {
-        $this->child->{$this->foreignKey} = array_values(
-            array_unique(
-                array_merge(
-                    (array) $this->child->{$this->foreignKey},
-                    $this->parseIds($ids)
-                )
-            )
-        );
-
-        return $this->child;
-    }
-
-    /**
-     * Detach models from the relationship.
-     *
-     * @param  mixed  $ids
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function detach($ids = null)
-    {
-        if (! is_null($ids)) {
-            $this->child->{$this->foreignKey} = array_values(
-                array_diff(
-                    (array) $this->child->{$this->foreignKey},
-                    $this->parseIds($ids)
-                )
-            );
-        } else {
-            $this->child->{$this->foreignKey} = [];
+        if (! $this->key) {
+            return $this->getJsonGrammar($query)->compileJsonArray($query->qualifyColumn($ownerKey));
         }
 
-        return $this->child;
-    }
+        $this->addBinding($this->key);
 
-    /**
-     * Sync the relationship with a list of models.
-     *
-     * @param  mixed  $ids
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function sync($ids)
-    {
-        $this->child->{$this->foreignKey} = $this->parseIds($ids);
-
-        return $this->child;
-    }
-
-    /**
-     * Toggles models from the relationship.
-     *
-     * @param  mixed  $ids
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function toggle($ids)
-    {
-        $records = (array) $this->child->{$this->foreignKey};
-
-        $this->child->{$this->foreignKey} = array_values(
-            array_diff(
-                array_merge($records, $ids),
-                array_intersect($records, $this->parseIds($ids))
-            )
-        );
-
-        return $this->child;
-    }
-
-    /**
-     * Get all of the IDs from the given mixed value.
-     *
-     * @param  mixed  $value
-     * @return array
-     */
-    protected function parseIds($value)
-    {
-        if ($value instanceof Model) {
-            return [$value->{$this->ownerKey}];
-        }
-
-        if ($value instanceof Collection) {
-            return $value->pluck($this->ownerKey)->all();
-        }
-
-        if ($value instanceof BaseCollection) {
-            return $value->toArray();
-        }
-
-        return (array) $value;
+        return $this->getJsonGrammar($query)->compileJsonObject($query->qualifyColumn($ownerKey));
     }
 }

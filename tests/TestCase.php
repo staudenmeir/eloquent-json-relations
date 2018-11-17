@@ -70,11 +70,36 @@ abstract class TestCase extends Base
             Locale::create();
             Locale::create();
 
-            User::create(['options' => ['locale_id' => 1, 'role_ids' => [1, 2]]]);
+            User::create([
+                'options' => [
+                    'locale_id' => 1,
+                    'role_ids' => [1, 2],
+                    'roles' => [
+                        ['role_id' => 1, 'active' => true],
+                        ['role_id' => 2, 'active' => false],
+                    ],
+                ],
+            ]);
             User::create(['options' => []]);
-            User::create(['options' => ['role_ids' => [2, 3]]]);
+            User::create([
+                'options' => [
+                    'role_ids' => [2, 3],
+                    'roles' => [
+                        ['role_id' => 2, 'active' => true],
+                        ['role_id' => 3, 'active' => false],
+                    ],
+                ],
+            ]);
 
-            Post::create(['options' => ['user_id' => 1, 'recommendation_ids' => [2]]]);
+            Post::create([
+                'options' => [
+                    'user_id' => 1,
+                    'recommendation_ids' => [2],
+                    'recommendations' => [
+                        ['post_id' => 2],
+                    ],
+                ],
+            ]);
             Post::create(['options' => ['user_id' => 2]]);
 
             Comment::create(['options' => ['commentable_type' => User::class, 'commentable_id' => 1]]);

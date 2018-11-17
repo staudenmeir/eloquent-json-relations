@@ -7,13 +7,24 @@ use Illuminate\Database\Query\Grammars\MySqlGrammar as Base;
 class MySqlGrammar extends Base implements JsonGrammar
 {
     /**
-     * Compile a "cast as JSON" statement into SQL.
+     * Compile a "JSON array" statement into SQL.
      *
      * @param  string  $column
      * @return string
      */
-    public function compileCastAsJson($column)
+    public function compileJsonArray($column)
     {
-        return 'cast('.$this->wrap($column).' as json)';
+        return 'json_array('.$this->wrap($column).')';
+    }
+
+    /**
+     * Compile a "JSON object" statement into SQL.
+     *
+     * @param  string  $column
+     * @return string
+     */
+    public function compileJsonObject($column)
+    {
+        return 'json_object(?, '.$this->wrap($column).')';
     }
 }

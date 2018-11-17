@@ -23,8 +23,8 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
 
 ## Usage
 
-   * [Referential Integrity](#referential-integrity)
-   * [Many-To-Many Relationships](#many-to-many-relationships)
+- [Referential Integrity](#referential-integrity) 
+- [Many-To-Many Relationships](#many-to-many-relationships)
 
 In this example, `User` has a `BelongsTo` relationship with `Locale`. There is no dedicated column, but the foreign key (`locale_id`) is stored as a property in a JSON field (`users.options`):
 
@@ -96,7 +96,11 @@ This package also introduces two new relationship types: `BelongsToJson` and `Ha
 
 On Laravel 5.6.25+, you can use them to implement many-to-many relationships with JSON arrays.
 
-In this example, `User` has a `BelongsToMany` relationship with `Role`. There is no pivot table, but the foreign keys (`role_ids`) are stored as an array in a JSON field (`users.options`):
+In this example, `User` has a `BelongsToMany` relationship with `Role`. There is no pivot table, but the foreign keys are stored as an array in a JSON field (`users.options`):
+
+#### Array of IDs
+
+By default, the relationship stores the records as an array of IDs:
 
 ```php
 class User extends Model
@@ -128,14 +132,60 @@ On the side of the `BelongsToJson` relationship, you can use `attach()`, `detach
 
 ```php
 $user = new User;
-$user->roles()->attach([1, 2]);
-$user->save();
+$user->roles()->attach([1, 2])->save(); // Now: [1, 2]
 
-$user->roles()->detach([2])->save(); // Now: [1]
+$user->roles()->detach([2])->save();    // Now: [1]
 
-$user->roles()->sync([1, 3])->save(); // Now: [1, 3]
+$user->roles()->sync([1, 3])->save();   // Now: [1, 3]
 
 $user->roles()->toggle([2, 3])->save(); // Now: [1, 2]
 ```
 
-**Limitations:** These relationships don't work on SQLite.
+#### Array of Objects
+
+You can also store the records as objects with additional pivot attributes:
+
+```php
+class User extends Model
+{
+    use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+
+    protected $casts = [
+       'options' => 'json',
+    ];
+    
+    public function roles()
+    {
+        return $this->belongsToJson('App\Role', 'options->roles[]->role_id');
+    }
+}
+
+class Role extends Model
+{
+    use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+
+    public function users()
+    {
+       return $this->hasManyJson('App\User', 'options->roles[]->role_id');
+    }
+}
+```
+
+Here, `options->roles` is the path to the JSON array. `role_id` is the name of the foreign key attribute inside the record object:
+
+```php
+$user = new User;
+$user->roles()->attach([1 => ['active' => true], 2 => ['active' => false]])->save();
+// Now: [{"role_id":1,"active":true},{"role_id":2,"active":false}]
+
+$user->roles()->detach([2])->save();
+// Now: [{"role_id":1,"active":true}]
+
+$user->roles()->sync([1 => ['active' => false], 3 => ['active' => true]])->save();
+// Now: [{"role_id":1,"active":false},{"role_id":3,"active":true}]
+
+$user->roles()->toggle([2 => ['active' => true], 3])->save();
+// Now: [{"role_id":1,"active":false},{"role_id":2,"active":true}]
+```
+
+**Limitations:** These relationships only work partially on SQLite and SQL Server.

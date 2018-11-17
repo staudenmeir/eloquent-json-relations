@@ -4,7 +4,6 @@ namespace Staudenmeir\EloquentJsonRelations;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
@@ -41,7 +40,9 @@ trait HasJsonRelationships
         if (Str::contains($key, '->')) {
             list($key, $path) = explode('->', $key, 2);
 
-            return Arr::get($this->getAttributeValue($key), str_replace('->', '.', $path));
+            $path = str_replace(['->', '[]'], ['.', '.*'], $path);
+
+            return data_get($this->getAttributeValue($key), $path);
         }
 
         return parent::getAttributeValue($key);
