@@ -22,8 +22,17 @@ trait HasJsonRelationships
             return;
         }
 
-        if (array_key_exists(explode('->', $key)[0], $this->attributes)) {
-            return $this->getAttributeValue($key);
+        $keyPieces = explode('->', $key);
+
+        if(is_array($keyPieces)){
+            $attr = $keyPieces[0];
+            if(Str::contains($keyPieces[0], '[]')){
+                $attr = $keyPieces[1];
+                $key = str_replace('[]', '', $keyPieces[0]);
+            }
+            if (array_key_exists($attr, $this->attributes)) {
+                return $this->getAttributeValue($key);
+            }
         }
 
         return parent::getAttribute($key);
