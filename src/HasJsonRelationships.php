@@ -22,7 +22,9 @@ trait HasJsonRelationships
             return;
         }
 
-        if (array_key_exists(explode('->', $key)[0], $this->attributes)) {
+        $attribute = preg_split('/(->|\[\])/', $key)[0];
+
+        if (array_key_exists($attribute, $this->attributes)) {
             return $this->getAttributeValue($key);
         }
 
@@ -39,6 +41,12 @@ trait HasJsonRelationships
     {
         if (Str::contains($key, '->')) {
             list($key, $path) = explode('->', $key, 2);
+
+            if (substr($key, -2) === '[]') {
+                $key = substr($key, 0, -2);
+
+                $path = '*.'.$path;
+            }
 
             $path = str_replace(['->', '[]'], ['.', '.*'], $path);
 

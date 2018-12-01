@@ -131,6 +131,14 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([true, true, false], $roles->pluck('pivot.active')->all());
     }
 
+    public function testAttachWithObjectsInColumn()
+    {
+        $user = (new User)->roles3()->attach([1 => ['active' => true], 2 => ['active' => false]]);
+
+        $this->assertEquals([1, 2], $user->roles3->pluck('id')->all());
+        $this->assertEquals([true, false], $user->roles3->pluck('pivot.active')->all());
+    }
+
     public function testDetach()
     {
         $user = User::first()->roles()->detach(2);
