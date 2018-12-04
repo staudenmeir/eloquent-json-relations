@@ -23,8 +23,8 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
 
 ## Usage
 
-- [Referential Integrity](#referential-integrity) 
 - [Many-To-Many Relationships](#many-to-many-relationships)
+- [Referential Integrity](#referential-integrity) 
 
 In this example, `User` has a `BelongsTo` relationship with `Locale`. There is no dedicated column, but the foreign key (`locale_id`) is stored as a property in a JSON field (`users.options`):
 
@@ -56,39 +56,7 @@ class Locale extends Model
 
 Remember to use the `HasJsonRelationships` trait in both the parent and the related model. 
 
-**Limitations:** Existence queries (`Locale::has('users')`) and `HasManyThrough` relationships don't work on PostgreSQL with integer keys.
-
-### Referential Integrity
-
-[MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html) and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table) support foreign keys on JSON columns with generated/computed columns.
-
-Laravel migrations support this feature on MySQL:
-
-```php
-Schema::create('users', function (Blueprint $table) {
-    $table->increments('id');
-    $table->json('options');
-    $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
-    $table->unsignedInteger('locale_id')->storedAs($locale_id);
-    $table->foreign('locale_id')->references('id')->on('locales');
-});
-```
-
-On SQL Server, the migration requires raw SQL:
-
-```php
-Schema::create('users', function (Blueprint $table) {
-    $table->increments('id');
-    $table->json('options');
-});
-
-$locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
-DB::statement('ALTER TABLE [users] ADD "locale_id" AS CAST('.$locale_id.' AS INT) PERSISTED');
-
-Schema::table('users', function (Blueprint $table) {
-    $table->foreign('locale_id')->references('id')->on('locales');
-});
-```
+**Limitations:** On PostgreSQL, existence queries (`Locale::has('users')`) and `HasManyThrough` relationships don't work with integer keys.
 
 ### Many-To-Many Relationships
 
@@ -188,4 +156,38 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 // Now: [{"role_id":1,"active":false},{"role_id":2,"active":true}]
 ```
 
-**Limitations:** These relationships only work partially on SQLite and SQL Server.
+**Limitations:** On SQLite and SQL Server, these relationships only work partially.
+
+### Referential Integrity
+
+On one-to-many relationships, you can still ensure referential integrity. 
+
+[MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html) and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table) support foreign keys on JSON columns with generated/computed columns.
+
+Laravel migrations support this feature on MySQL:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->increments('id');
+    $table->json('options');
+    $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
+    $table->unsignedInteger('locale_id')->storedAs($locale_id);
+    $table->foreign('locale_id')->references('id')->on('locales');
+});
+```
+
+On SQL Server, the migration requires raw SQL:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->increments('id');
+    $table->json('options');
+});
+
+$locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
+DB::statement('ALTER TABLE [users] ADD "locale_id" AS CAST('.$locale_id.' AS INT) PERSISTED');
+
+Schema::table('users', function (Blueprint $table) {
+    $table->foreign('locale_id')->references('id')->on('locales');
+});
+```
