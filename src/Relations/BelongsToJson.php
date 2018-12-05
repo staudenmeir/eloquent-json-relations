@@ -6,67 +6,11 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Arr;
 
 class BelongsToJson extends BelongsTo
 {
     use InteractsWithPivotRecords, IsJsonRelation;
-
-    /**
-     * Get the results of the relationship.
-     *
-     * @return mixed
-     */
-    public function getResults()
-    {
-        return $this->get();
-    }
-
-    /**
-     * Execute the query as a "select" statement.
-     *
-     * @param  array  $columns
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function get($columns = ['*'])
-    {
-        $models = parent::get($columns);
-
-        if ($this->key) {
-            $this->hydratePivotRelation($models->all(), $this->parent);
-        }
-
-        return $models;
-    }
-
-    /**
-     * Hydrate the pivot relationship on the models.
-     *
-     * @param  array  $models
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @return void
-     */
-    protected function hydratePivotRelation(array $models, Model $parent)
-    {
-        foreach ($models as $model) {
-            $model->setRelation('pivot', $this->pivotRelation($model, $parent));
-        }
-    }
-
-    /**
-     * Get the pivot relationship from the query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    protected function pivotRelation(Model $model, Model $parent)
-    {
-        $attributes = $this->pivotAttributes($model, $parent);
-
-        return Pivot::fromAttributes($model, $attributes, null, true);
-    }
 
     /**
      * Get the pivot attributes from a model.
@@ -131,23 +75,21 @@ class BelongsToJson extends BelongsTo
      */
     public function match(array $models, Collection $results, $relation)
     {
-        $foreign = $this->foreignKey;
-
         $dictionary = $this->buildDictionary($results);
 
         foreach ($models as $model) {
             $matches = [];
 
-            foreach ((array) $model->$foreign as $id) {
+            foreach ((array) $model->{$this->foreignKey} as $id) {
                 if (isset($dictionary[$id])) {
                     $matches[] = $dictionary[$id];
                 }
             }
 
-            $model->setRelation($relation, $this->related->newCollection($matches));
+            $model->setRelation($relation, $collection = $this->related->newCollection($matches));
 
             if ($this->key) {
-                $this->hydratePivotRelation($matches, $model);
+                $this->hydratePivotRelation($collection, $model);
             }
         }
 
@@ -162,12 +104,10 @@ class BelongsToJson extends BelongsTo
      */
     protected function buildDictionary(Collection $results)
     {
-        $owner = $this->ownerKey;
-
         $dictionary = [];
 
         foreach ($results as $result) {
-            $dictionary[$result->getAttribute($owner)] = $result;
+            $dictionary[$result->{$this->ownerKey}] = $result;
         }
 
         return $dictionary;

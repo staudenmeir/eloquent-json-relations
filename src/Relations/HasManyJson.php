@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Support\Arr;
 
 class HasManyJson extends HasMany
@@ -14,71 +13,19 @@ class HasManyJson extends HasMany
     use IsJsonRelation;
 
     /**
-     * Get the results of the relationship.
-     *
-     * @return mixed
-     */
-    public function getResults()
-    {
-        return $this->get();
-    }
-
-    /**
-     * Execute the query as a "select" statement.
-     *
-     * @param  array  $columns
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function get($columns = ['*'])
-    {
-        $models = parent::get($columns);
-
-        if ($this->key) {
-            $this->hydratePivotRelation($models->all());
-        }
-
-        return $models;
-    }
-
-    /**
-     * Hydrate the pivot relationship on the models.
-     *
-     * @param  array  $models
-     * @return void
-     */
-    protected function hydratePivotRelation(array $models)
-    {
-        foreach ($models as $model) {
-            $model->setRelation('pivot', $this->pivotRelation($model));
-        }
-    }
-
-    /**
-     * Get the pivot relationship from the query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    protected function pivotRelation(Model $model)
-    {
-        $attributes = $this->pivotAttributes($model);
-
-        return Pivot::fromAttributes($model, $attributes, null, true);
-    }
-
-    /**
      * Get the pivot attributes from a model.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
      * @return array
      */
-    protected function pivotAttributes(Model $model)
+    protected function pivotAttributes(Model $model, Model $parent)
     {
         $record = collect($model->{$this->getPathName()})
-            ->where($this->key, $model->{$this->localKey})
+            ->where($this->key, $parent->{$this->localKey})
             ->first();
 
-        return Arr::except($record, $this->key);
+        return ! is_null($record) ? Arr::except($record, $this->key) : [];
     }
 
     /**
@@ -118,6 +65,28 @@ class HasManyJson extends HasMany
                 $query->orWhereJsonContains($this->path, $key);
             }
         });
+    }
+
+    /**
+     * Match the eagerly loaded results to their many parents.
+     *
+     * @param  array   $models
+     * @param  \Illuminate\Database\Eloquent\Collection  $results
+     * @param  string  $relation
+     * @param  string  $type
+     * @return array
+     */
+    protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
+    {
+        $models = parent::matchOneOrMany(...func_get_args());
+
+        if ($this->key) {
+            foreach ($models as $model) {
+                $this->hydratePivotRelation($model->$relation, $model);
+            }
+        }
+
+        return $models;
     }
 
     /**

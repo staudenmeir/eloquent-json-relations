@@ -3,6 +3,9 @@
 namespace Staudenmeir\EloquentJsonRelations\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use RuntimeException;
 use Staudenmeir\EloquentJsonRelations\Grammars\MySqlGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
@@ -40,6 +43,72 @@ trait IsJsonRelation
 
         parent::__construct(...$args);
     }
+
+    /**
+     * Get the results of the relationship.
+     *
+     * @return mixed
+     */
+    public function getResults()
+    {
+        return $this->get();
+    }
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array  $columns
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function get($columns = ['*'])
+    {
+        $models = parent::get($columns);
+
+        if ($this->key) {
+            $this->hydratePivotRelation($models, $this->parent);
+        }
+
+        return $models;
+    }
+
+    /**
+     * Hydrate the pivot relationship on the models.
+     *
+     * @param  \Illuminate\Database\Eloquent\Collection  $models
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return void
+     */
+    protected function hydratePivotRelation(Collection $models, Model $parent)
+    {
+        foreach ($models as $i => $model) {
+            $clone = clone $model;
+
+            $models[$i] = $clone->setRelation('pivot', $this->pivotRelation($clone, $parent));
+        }
+    }
+
+    /**
+     * Get the pivot relationship from the query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    protected function pivotRelation(Model $model, Model $parent)
+    {
+        $attributes = $this->pivotAttributes($model, $parent);
+
+        return Pivot::fromAttributes($model, $attributes, null, true);
+    }
+
+    /**
+     * Get the pivot attributes from a model.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return array
+     */
+    abstract protected function pivotAttributes(Model $model, Model $parent);
 
     /**
      * Get the fully qualified path of the relationship.
