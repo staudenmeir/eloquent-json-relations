@@ -23,8 +23,11 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
 
 ## Usage
 
+- [One-To-Many Relationships](#one-to-many-relationships)
 - [Many-To-Many Relationships](#many-to-many-relationships)
-- [Referential Integrity](#referential-integrity) 
+- [Referential Integrity](#referential-integrity)
+
+### One-To-Many Relationships
 
 In this example, `User` has a `BelongsTo` relationship with `Locale`. There is no dedicated column, but the foreign key (`locale_id`) is stored as a property in a JSON field (`users.options`):
 
