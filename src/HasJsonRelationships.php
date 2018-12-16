@@ -18,10 +18,6 @@ trait HasJsonRelationships
      */
     public function getAttribute($key)
     {
-        if (! $key) {
-            return;
-        }
-
         $attribute = preg_split('/(->|\[\])/', $key)[0];
 
         if (array_key_exists($attribute, $this->attributes)) {

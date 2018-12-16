@@ -56,10 +56,6 @@ class BelongsToJson extends BelongsTo
             $keys = array_merge($keys, (array) $model->{$this->foreignKey});
         }
 
-        if (count($keys) === 0) {
-            return [null];
-        }
-
         sort($keys);
 
         return array_values(array_unique($keys));
