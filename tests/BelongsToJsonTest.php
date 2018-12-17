@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Tests\Models\Post;
+use Tests\Models\Role;
 use Tests\Models\User;
 
 class BelongsToJsonTest extends TestCase
@@ -117,7 +118,7 @@ class BelongsToJsonTest extends TestCase
 
         $this->assertEquals([1, 2], $user->roles()->pluck('id')->all());
 
-        $user->roles()->attach([2, 3]);
+        $user->roles()->attach(collect([2, 3]));
 
         $this->assertEquals([1, 2, 3], $user->roles()->pluck('id')->all());
     }
@@ -157,7 +158,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testDetachWithObjects()
     {
-        $user = User::first()->roles2()->detach(2);
+        $user = User::first()->roles2()->detach(Role::find(2));
 
         $this->assertEquals([1], $user->roles2->pluck('id')->all());
         $this->assertEquals([true], $user->roles2->pluck('pivot.active')->all());
@@ -169,7 +170,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testSync()
     {
-        $user = User::first()->roles()->sync([2, 3]);
+        $user = User::first()->roles()->sync(Role::find([2, 3]));
 
         $this->assertEquals([2, 3], $user->roles()->pluck('id')->all());
     }
