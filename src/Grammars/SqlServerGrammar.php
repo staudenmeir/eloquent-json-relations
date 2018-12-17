@@ -26,6 +26,6 @@ class SqlServerGrammar extends Base implements JsonGrammar
      */
     public function compileJsonObject($column)
     {
-        throw new RuntimeException('This database is not supported.');
+        throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
     }
 }

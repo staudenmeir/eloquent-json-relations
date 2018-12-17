@@ -138,6 +138,6 @@ trait IsJsonRelation
                 return new SqlServerGrammar;
         }
 
-        throw new RuntimeException('This database is not supported.');
+        throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
     }
 }
