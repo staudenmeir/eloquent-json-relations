@@ -21,6 +21,7 @@ matrix:
       env: COMPOSER_FLAGS="--prefer-lowest"
 
 before_install:
+  - cp tests/config/database.travis.php tests/config/database.php
   - mysql -e 'create database `test`;'
 
 install:
