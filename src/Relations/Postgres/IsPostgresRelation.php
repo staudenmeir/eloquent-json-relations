@@ -27,4 +27,16 @@ trait IsPostgresRelation
 
         return new Expression($sql);
     }
+
+    /**
+     * Get the name of the "where in" method for eager loading.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  string  $key
+     * @return string
+     */
+    protected function whereInMethod(Model $model, $key)
+    {
+        return 'whereIn';
+    }
 }

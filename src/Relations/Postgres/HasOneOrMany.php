@@ -3,7 +3,6 @@
 namespace Staudenmeir\EloquentJsonRelations\Relations\Postgres;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 trait HasOneOrMany
 {
@@ -49,17 +48,5 @@ trait HasOneOrMany
         return $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(), '=', $second
         );
-    }
-
-    /**
-     * Get the name of the "where in" method for eager loading.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @return string
-     */
-    protected function whereInMethod(Model $model, $key)
-    {
-        return 'whereIn';
     }
 }

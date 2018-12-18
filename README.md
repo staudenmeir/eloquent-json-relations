@@ -59,9 +59,7 @@ class Locale extends Model
 }
 ```
 
-Remember to use the `HasJsonRelationships` trait in both the parent and the related model. 
-
-**Limitations:** On PostgreSQL, `HasManyThrough` relationships don't work with integer keys.
+Remember to use the `HasJsonRelationships` trait in both the parent and the related model.
 
 ### Many-To-Many Relationships
 
@@ -165,7 +163,7 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 
 ### Referential Integrity
 
-On one-to-many relationships, you can still ensure referential integrity. 
+On one-to-many relationships, you can still ensure referential integrity.
 
 [MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html) and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table) support foreign keys on JSON columns with generated/computed columns.
 

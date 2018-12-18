@@ -27,4 +27,9 @@ class User extends Model
     {
         return $this->belongsToJson(Role::class, 'options[]->role_id');
     }
+
+    public function teamMates()
+    {
+        return $this->hasManyThrough(self::class, Team::class, 'options->owner_id', 'options->team_id');
+    }
 }

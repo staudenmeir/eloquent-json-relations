@@ -15,6 +15,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\BelongsTo as BelongsToPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasMany as HasManyPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasOne as HasOnePostgres;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasManyThrough as HasManyThroughPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphMany as MorphManyPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphOne as MorphOnePostgres;
 
@@ -137,6 +138,27 @@ trait HasJsonRelationships
     }
 
     /**
+     * Instantiate a new HasManyThrough relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $farParent
+     * @param  \Illuminate\Database\Eloquent\Model  $throughParent
+     * @param  string  $firstKey
+     * @param  string  $secondKey
+     * @param  string  $localKey
+     * @param  string  $secondLocalKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    {
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return new HasManyThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
+        }
+
+        return new HasManyThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
+    }
+
+    /**
      * Instantiate a new MorphMany relationship.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
@@ -225,22 +247,5 @@ trait HasJsonRelationships
     protected function newHasManyJson(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         return new HasManyJson($query, $parent, $foreignKey, $localKey);
-    }
-
-    /**
-     * Instantiate a new HasManyThrough relationship.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $farParent
-     * @param  \Illuminate\Database\Eloquent\Model  $throughParent
-     * @param  string  $firstKey
-     * @param  string  $secondKey
-     * @param  string  $localKey
-     * @param  string  $secondLocalKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
-    {
-        return new HasManyThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
     }
 }
