@@ -15,4 +15,8 @@ return [
         'strict' => true,
         'engine' => null,
     ],
+    'sqlite' => [
+        'driver' => 'sqlite',
+        'database' => ':memory:'
+    ],
 ];

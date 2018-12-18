@@ -27,4 +27,8 @@ return [
         'schema' => 'public',
         'sslmode' => 'prefer',
     ],
+    'sqlite' => [
+        'driver' => 'sqlite',
+        'database' => ':memory:'
+    ],
 ];
