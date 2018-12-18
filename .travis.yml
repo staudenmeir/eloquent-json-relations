@@ -4,6 +4,7 @@ dist: xenial
 
 services:
   - mysql
+  - postgresql
 
 env:
   global:
@@ -23,6 +24,8 @@ matrix:
       env: COVERAGE=yes
     - php: 7.2
       env: RELEASE=lowest
+    - php: 7.2
+      env: COVERAGE=yes DB=pgsql
     - php: 7.3
     - php: 7.3
       env: RELEASE=lowest
@@ -46,6 +49,7 @@ install:
 before_script:
   - cp tests/config/database.travis.php tests/config/database.php
   - mysql -e 'create database `test`;'
+  - psql -c 'create database "test";' -U postgres
 
 script:
   - vendor/bin/phpunit $PHPUNIT_FLAGS

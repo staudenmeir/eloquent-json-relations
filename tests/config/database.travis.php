@@ -15,6 +15,18 @@ return [
         'strict' => true,
         'engine' => null,
     ],
+    'pgsql' => [
+        'driver' => 'pgsql',
+        'host' => '127.0.0.1',
+        'port' => '5432',
+        'database' => 'test',
+        'username' => 'postgres',
+        'password' => '',
+        'charset' => 'utf8',
+        'prefix' => '',
+        'schema' => 'public',
+        'sslmode' => 'prefer',
+    ],
     'sqlite' => [
         'driver' => 'sqlite',
         'database' => ':memory:'
