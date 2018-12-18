@@ -3,41 +3,41 @@
 namespace Tests;
 
 use Tests\Models\Comment;
-use Tests\Models\User;
+use Tests\Models\Post;
 
 class MorphManyTest extends TestCase
 {
     public function testLazyLoading()
     {
-        $comments = User::first()->comments;
+        $comments = Post::first()->comments;
 
         $this->assertEquals([1], $comments->pluck('id')->all());
     }
 
     public function testEagerLoading()
     {
-        $users = User::with('comments')->get();
+        $posts = Post::with('comments')->get();
 
-        $this->assertEquals([1], $users[0]->comments->pluck('id')->all());
+        $this->assertEquals([1], $posts[0]->comments->pluck('id')->all());
     }
 
     public function testLazyEagerLoading()
     {
-        $users = User::all()->load('comments');
+        $posts = Post::all()->load('comments');
 
-        $this->assertEquals([1], $users[0]->comments->pluck('id')->all());
+        $this->assertEquals([1], $posts[0]->comments->pluck('id')->all());
     }
 
     public function testExistenceQuery()
     {
-        $users = User::has('comments')->get();
+        $posts = Post::has('comments')->get();
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([1], $posts->pluck('id')->all());
     }
 
     public function testSave()
     {
-        $comment = User::first()->comments()->save(Comment::find(2));
+        $comment = Post::first()->comments()->save(Comment::find(2));
 
         $this->assertEquals(1, $comment->commentable->id);
     }

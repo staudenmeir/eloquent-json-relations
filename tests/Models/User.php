@@ -8,11 +8,6 @@ class User extends Model
         'options' => 'json'
     ];
 
-    public function comments()
-    {
-        return $this->morphMany(Comment::class, 'options->commentable');
-    }
-
     public function locale()
     {
         return $this->belongsTo(Locale::class, 'options->locale_id');

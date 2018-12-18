@@ -91,8 +91,9 @@ abstract class TestCase extends Base
             ]);
             Post::create(['options' => ['user_id' => 2]]);
 
-            Comment::create(['options' => ['commentable_type' => User::class, 'commentable_id' => 1]]);
-            Comment::create(['options' => []]);
+            Comment::create(['options' => ['commentable_type' => Post::class, 'commentable_id' => 1]]);
+            Comment::create(['options' => ['parent_id' => 1]]);
+            Comment::create(['options' => ['commentable_type' => User::class, 'commentable_id' => 2]]);
         });
     }
 }

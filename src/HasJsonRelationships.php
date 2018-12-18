@@ -4,9 +4,19 @@ namespace Staudenmeir\EloquentJsonRelations;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\BelongsTo as BelongsToPostgres;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasMany as HasManyPostgres;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasOne as HasOnePostgres;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphMany as MorphManyPostgres;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphOne as MorphOnePostgres;
 
 trait HasJsonRelationships
 {
@@ -50,6 +60,99 @@ trait HasJsonRelationships
         }
 
         return parent::getAttributeValue($key);
+    }
+
+    /**
+     * Instantiate a new HasOne relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  string  $foreignKey
+     * @param  string  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
+    {
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return new HasOnePostgres($query, $parent, $foreignKey, $localKey);
+        }
+
+        return new HasOne($query, $parent, $foreignKey, $localKey);
+    }
+
+    /**
+     * Instantiate a new MorphOne relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  string  $type
+     * @param  string  $id
+     * @param  string  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
+    {
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return new MorphOnePostgres($query, $parent, $type, $id, $localKey);
+        }
+
+        return new MorphOne($query, $parent, $type, $id, $localKey);
+    }
+
+    /**
+     * Instantiate a new BelongsTo relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $child
+     * @param  string  $foreignKey
+     * @param  string  $ownerKey
+     * @param  string  $relation
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
+    {
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return new BelongsToPostgres($query, $child, $foreignKey, $ownerKey, $relation);
+        }
+
+        return new BelongsTo($query, $child, $foreignKey, $ownerKey, $relation);
+    }
+
+    /**
+     * Instantiate a new HasMany relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  string  $foreignKey
+     * @param  string  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
+    {
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return new HasManyPostgres($query, $parent, $foreignKey, $localKey);
+        }
+
+        return new HasMany($query, $parent, $foreignKey, $localKey);
+    }
+
+    /**
+     * Instantiate a new MorphMany relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  string  $type
+     * @param  string  $id
+     * @param  string  $localKey
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
+    {
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return new MorphManyPostgres($query, $parent, $type, $id, $localKey);
+        }
+
+        return new MorphMany($query, $parent, $type, $id, $localKey);
     }
 
     /**

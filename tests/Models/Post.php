@@ -8,6 +8,16 @@ class Post extends Model
         'options' => 'json'
     ];
 
+    public function comment()
+    {
+        return $this->morphOne(Comment::class, 'options->commentable');
+    }
+
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'options->commentable');
+    }
+
     public function recommendations()
     {
         return $this->belongsToJson(self::class, 'options->recommendation_ids');

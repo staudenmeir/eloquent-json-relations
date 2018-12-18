@@ -61,7 +61,7 @@ class Locale extends Model
 
 Remember to use the `HasJsonRelationships` trait in both the parent and the related model. 
 
-**Limitations:** On PostgreSQL, existence queries (`Locale::has('users')`) and `HasManyThrough` relationships don't work with integer keys.
+**Limitations:** On PostgreSQL, `HasManyThrough` relationships don't work with integer keys.
 
 ### Many-To-Many Relationships
 

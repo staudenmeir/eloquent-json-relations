@@ -9,6 +9,11 @@ class Locale extends Model
         return $this->hasManyThrough(Post::class, User::class, 'options->locale_id', 'options->user_id');
     }
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'options->locale_id');
+    }
+
     public function users()
     {
         return $this->hasMany(User::class, 'options->locale_id');

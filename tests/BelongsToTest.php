@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Tests\Models\Comment;
 use Tests\Models\User;
 
 class BelongsToTest extends TestCase
@@ -32,6 +33,13 @@ class BelongsToTest extends TestCase
         $users = User::has('locale')->get();
 
         $this->assertEquals([1], $users->pluck('id')->all());
+    }
+
+    public function testExistenceQueryForSelfRelation()
+    {
+        $comments = Comment::has('parent')->get();
+
+        $this->assertEquals([2], $comments->pluck('id')->all());
     }
 
     public function testAssociate()
