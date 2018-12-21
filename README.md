@@ -71,7 +71,7 @@ In this example, `User` has a `BelongsToMany` relationship with `Role`. There is
 
 #### Array of IDs
 
-By default, the relationship stores the records as an array of IDs:
+By default, the relationship stores pivot records as an array of IDs:
 
 ```php
 class User extends Model
@@ -114,7 +114,7 @@ $user->roles()->toggle([2, 3])->save(); // Now: [1, 2]
 
 #### Array of Objects
 
-You can also store the records as objects with additional pivot attributes:
+You can also store pivot records as objects with additional attributes:
 
 ```php
 class User extends Model
