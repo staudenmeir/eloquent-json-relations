@@ -29,6 +29,7 @@ return [
     ],
     'sqlite' => [
         'driver' => 'sqlite',
-        'database' => ':memory:'
+        'database' => ':memory:',
+        'prefix' => '',
     ],
 ];
