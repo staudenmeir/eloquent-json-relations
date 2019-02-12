@@ -179,7 +179,20 @@ Schema::create('users', function (Blueprint $table) {
 });
 ```
 
-On SQL Server, the migration requires raw SQL:
+Laravel migrations (5.7.26+) also support this feature on SQL Server: 
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->increments('id');
+    $table->json('options');
+    $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
+    $locale_id = 'CAST('.$locale_id.' AS INT)';
+    $table->computed('locale_id', $locale_id)->persisted();
+    $table->foreign('locale_id')->references('id')->on('locales');
+});
+```
+
+Use this workaround for older versions of Laravel:
 
 ```php
 Schema::create('users', function (Blueprint $table) {
