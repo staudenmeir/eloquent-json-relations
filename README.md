@@ -179,7 +179,7 @@ Schema::create('users', function (Blueprint $table) {
 });
 ```
 
-Laravel migrations (5.7.26+) also support this feature on SQL Server: 
+Laravel migrations (5.7.25+) also support this feature on SQL Server: 
 
 ```php
 Schema::create('users', function (Blueprint $table) {
