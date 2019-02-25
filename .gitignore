@@ -1,8 +1,8 @@
 /.idea
 /.vagrant
 /vendor
-/after.sh
-/aliases
-/composer.lock
-/Homestead.yaml
-/Vagrantfile
+after.sh
+aliases
+composer.lock
+Homestead.yaml
+Vagrantfile

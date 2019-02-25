@@ -28,6 +28,18 @@ abstract class TestCase extends Base
         $db->setAsGlobal();
         $db->bootEloquent();
 
+        $this->migrate();
+
+        $this->seed();
+    }
+
+    /**
+     * Migrate the database.
+     *
+     * @return void
+     */
+    protected function migrate()
+    {
         DB::schema()->dropAllTables();
 
         DB::schema()->create('roles', function (Blueprint $table) {
@@ -68,60 +80,70 @@ abstract class TestCase extends Base
             $table->increments('id');
             $table->json('options');
         });
+    }
 
-        Model::unguarded(function () {
-            Role::create();
-            Role::create();
-            Role::create();
-            Role::create();
+    /**
+     * Seed the database.
+     *
+     * @return void
+     */
+    protected function seed()
+    {
+        Model::unguard();
 
-            Locale::create();
-            Locale::create();
+        Role::create();
+        Role::create();
+        Role::create();
+        Role::create();
 
-            User::create([
-                'options' => [
-                    'locale_id' => 1,
-                    'role_ids' => [1, 2],
-                    'roles' => [
-                        ['role_id' => 1, 'active' => true],
-                        ['role_id' => 2, 'active' => false],
-                    ],
+        Locale::create();
+        Locale::create();
+
+        User::create([
+            'options' => [
+                'locale_id' => 1,
+                'role_ids' => [1, 2],
+                'roles' => [
+                    ['role_id' => 1, 'active' => true],
+                    ['role_id' => 2, 'active' => false],
                 ],
-            ]);
-            User::create(['options' => ['team_id' => 1]]);
-            User::create([
-                'options' => [
-                    'role_ids' => [2, 3],
-                    'roles' => [
-                        ['role_id' => 2, 'active' => true],
-                        ['role_id' => 3, 'active' => false],
-                    ],
+            ],
+        ]);
+        User::create(['options' => ['team_id' => 1]]);
+        User::create([
+            'options' => [
+                'role_ids' => [2, 3],
+                'roles' => [
+                    ['role_id' => 2, 'active' => true],
+                    ['role_id' => 3, 'active' => false],
                 ],
-            ]);
+            ],
+        ]);
 
-            Post::create([
-                'options' => [
-                    'user_id' => 1,
-                    'recommendation_ids' => [2],
-                    'recommendations' => [
-                        ['post_id' => 2],
-                    ],
+        Post::create([
+            'options' => [
+                'user_id' => 1,
+                'recommendation_ids' => [2],
+                'recommendations' => [
+                    ['post_id' => 2],
                 ],
-            ]);
-            Post::create(['options' => ['user_id' => 2]]);
+            ],
+        ]);
+        Post::create(['options' => ['user_id' => 2]]);
 
-            Comment::create(['options' => ['commentable_type' => Post::class, 'commentable_id' => 1]]);
-            Comment::create(['options' => ['parent_id' => 1]]);
-            Comment::create(['options' => ['commentable_type' => User::class, 'commentable_id' => 2]]);
+        Comment::create(['options' => ['commentable_type' => Post::class, 'commentable_id' => 1]]);
+        Comment::create(['options' => ['parent_id' => 1]]);
+        Comment::create(['options' => ['commentable_type' => User::class, 'commentable_id' => 2]]);
 
-            Team::create(['options' => ['owner_id' => 1]]);
-            Team::create(['options' => []]);
+        Team::create(['options' => ['owner_id' => 1]]);
+        Team::create(['options' => []]);
 
-            Category::create(['options' => []]);
-            Category::create(['options' => ['parent_id' => 1]]);
+        Category::create(['options' => []]);
+        Category::create(['options' => ['parent_id' => 1]]);
 
-            Product::create(['options' => ['category_id' => 2]]);
-            Product::create(['options' => []]);
-        });
+        Product::create(['options' => ['category_id' => 2]]);
+        Product::create(['options' => []]);
+
+        Model::reguard();
     }
 }
