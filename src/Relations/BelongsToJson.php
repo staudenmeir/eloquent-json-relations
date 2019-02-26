@@ -25,7 +25,7 @@ class BelongsToJson extends BelongsTo
             ->where($this->key, $model->{$this->ownerKey})
             ->first();
 
-        return ! is_null($record) ? Arr::except($record, $this->key) : [];
+        return Arr::except($record, $this->key);
     }
 
     /**

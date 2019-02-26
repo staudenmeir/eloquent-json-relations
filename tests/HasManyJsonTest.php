@@ -14,8 +14,7 @@ class HasManyJsonTest extends TestCase
     {
         parent::setUp();
 
-        if (! method_exists(DB::connection()->query(), 'whereJsonContains')
-                || DB::connection()->getDriverName() === 'sqlite') {
+        if (DB::connection()->getDriverName() === 'sqlite') {
             $this->markTestSkipped();
         }
     }

@@ -6,46 +6,46 @@ use Tests\Models\Category;
 use Tests\Models\Locale;
 use Tests\Models\User;
 
-class HasManyThroughTest extends TestCase
+class HasOneThroughTest extends TestCase
 {
     public function testLazyLoading()
     {
-        $posts = Locale::first()->posts;
+        $post = Locale::first()->post;
 
-        $this->assertEquals([1], $posts->pluck('id')->all());
+        $this->assertEquals(1, $post->id);
     }
 
     public function testEagerLoading()
     {
-        $locales = Locale::with('posts')->get();
+        $locales = Locale::with('post')->get();
 
-        $this->assertEquals([1], $locales[0]->posts->pluck('id')->all());
+        $this->assertEquals(1, $locales[0]->post->id);
     }
 
     public function testLazyEagerLoading()
     {
-        $locales = Locale::all()->load('posts');
+        $locales = Locale::all()->load('post');
 
-        $this->assertEquals([1], $locales[0]->posts->pluck('id')->all());
+        $this->assertEquals(1, $locales[0]->post->id);
     }
 
     public function testExistenceQuery()
     {
-        $locales = Locale::has('posts')->get();
+        $locales = Locale::has('post')->get();
 
         $this->assertEquals([1], $locales->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()
     {
-        $users = User::has('teamMates')->get();
+        $users = User::has('teamMate')->get();
 
         $this->assertEquals([1], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForThroughSelfRelation()
     {
-        $categories = Category::has('subProducts')->get();
+        $categories = Category::has('subProduct')->get();
 
         $this->assertEquals([1], $categories->pluck('id')->all());
     }

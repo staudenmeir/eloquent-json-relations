@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
@@ -14,8 +16,9 @@ use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\BelongsTo as BelongsToPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasMany as HasManyPostgres;
-use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasOne as HasOnePostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasManyThrough as HasManyThroughPostgres;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasOne as HasOnePostgres;
+use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasOneThrough as HasOneThroughPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphMany as MorphManyPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphOne as MorphOnePostgres;
 
@@ -47,7 +50,7 @@ trait HasJsonRelationships
     public function getAttributeValue($key)
     {
         if (Str::contains($key, '->')) {
-            list($key, $path) = explode('->', $key, 2);
+            [$key, $path] = explode('->', $key, 2);
 
             if (substr($key, -2) === '[]') {
                 $key = substr($key, 0, -2);
@@ -79,6 +82,27 @@ trait HasJsonRelationships
         }
 
         return new HasOne($query, $parent, $foreignKey, $localKey);
+    }
+
+    /**
+     * Instantiate a new HasOneThrough relationship.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \Illuminate\Database\Eloquent\Model  $farParent
+     * @param  \Illuminate\Database\Eloquent\Model  $throughParent
+     * @param  string  $firstKey
+     * @param  string  $secondKey
+     * @param  string  $localKey
+     * @param  string  $secondLocalKey
+     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
+     */
+    protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    {
+        if ($query->getConnection()->getDriverName() === 'pgsql') {
+            return new HasOneThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
+        }
+
+        return new HasOneThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
     }
 
     /**

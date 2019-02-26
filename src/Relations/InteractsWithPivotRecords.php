@@ -156,7 +156,7 @@ trait InteractsWithPivotRecords
     {
         return collect($ids)->mapWithKeys(function ($attributes, $id) {
             if (! is_array($attributes)) {
-                list($id, $attributes) = [$attributes, []];
+                [$id, $attributes] = [$attributes, []];
             }
 
             return [$id => $attributes];

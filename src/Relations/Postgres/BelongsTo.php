@@ -23,7 +23,7 @@ class BelongsTo extends Base
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        $first = $this->jsonColumn($query, $this->related, $this->getQualifiedForeignKey(), $this->ownerKey);
+        $first = $this->jsonColumn($query, $this->related, $this->getQualifiedForeignKeyName(), $this->ownerKey);
 
         return $query->select($columns)->whereColumn(
             $first, '=', $query->qualifyColumn($this->ownerKey)
@@ -46,7 +46,7 @@ class BelongsTo extends Base
 
         $query->getModel()->setTable($hash);
 
-        $first = $this->jsonColumn($query, $this->related, $this->getQualifiedForeignKey(), $this->ownerKey);
+        $first = $this->jsonColumn($query, $this->related, $this->getQualifiedForeignKeyName(), $this->ownerKey);
 
         return $query->whereColumn(
             $first, $hash.'.'.$this->ownerKey

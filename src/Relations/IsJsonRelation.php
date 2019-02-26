@@ -64,7 +64,7 @@ trait IsJsonRelation
     {
         $models = parent::get($columns);
 
-        if ($this->key) {
+        if ($this->key && ! empty($this->parent->getAttributes())) {
             $this->hydratePivotRelation($models, $this->parent);
         }
 

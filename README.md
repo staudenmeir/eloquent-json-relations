@@ -1,12 +1,10 @@
 [![Build Status](https://travis-ci.org/staudenmeir/eloquent-json-relations.svg?branch=master)](https://travis-ci.org/staudenmeir/eloquent-json-relations)
-[![Code Coverage](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/staudenmeir/eloquent-json-relations/v/stable)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
 [![Total Downloads](https://poser.pugx.org/staudenmeir/eloquent-json-relations/downloads)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
 [![License](https://poser.pugx.org/staudenmeir/eloquent-json-relations/license)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
 
 ## Introduction
-This Laravel Eloquent extension adds support for JSON foreign keys to `BelongsTo`, `HasOne`, `HasMany`, `HasManyThrough`, `MorphTo`, `MorphOne` and `MorphMany` relationships.  
+This Laravel Eloquent extension adds support for JSON foreign keys to `BelongsTo`, `HasOne`, `HasMany`, `HasOneThrough`, `HasManyThrough`, `MorphTo`, `MorphOne` and `MorphMany` relationships.  
 It also provides [many-to-many](#many-to-many-relationships) relationships with JSON arrays.
 
 ## Compatibility
@@ -14,7 +12,7 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
  Database         | Laravel
 :-----------------|:----------
  MySQL 5.7+       | 5.5.29+
- MariaDB 10.2+    | 5.8+ (2019)
+ MariaDB 10.2+    | 5.8+
  PostgreSQL 9.3+  | 5.5.29+
  [SQLite 3.18+](https://www.sqlite.org/json1.html) | 5.6.35+
  SQL Server 2016+ | 5.6.25+
@@ -165,9 +163,9 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 
 On one-to-many relationships, you can still ensure referential integrity.
 
-[MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html) and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table) support foreign keys on JSON columns with generated/computed columns.
+[MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html), [MariaDB](https://mariadb.com/kb/en/library/foreign-keys/) and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table) support foreign keys on JSON columns with generated/computed columns.
 
-Laravel migrations support this feature on MySQL:
+Laravel migrations support this feature on MySQL/MariaDB:
 
 ```php
 Schema::create('users', function (Blueprint $table) {

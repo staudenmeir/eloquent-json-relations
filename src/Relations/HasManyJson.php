@@ -25,7 +25,7 @@ class HasManyJson extends HasMany
             ->where($this->key, $parent->{$this->localKey})
             ->first();
 
-        return ! is_null($record) ? Arr::except($record, $this->key) : [];
+        return Arr::except($record, $this->key);
     }
 
     /**

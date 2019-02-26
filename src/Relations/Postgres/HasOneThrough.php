@@ -2,9 +2,9 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Relations\Postgres;
 
-use Illuminate\Database\Eloquent\Relations\HasManyThrough as Base;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough as Base;
 
-class HasManyThrough extends Base
+class HasOneThrough extends Base
 {
     use HasOneOrManyThrough;
 }

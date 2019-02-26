@@ -12,6 +12,11 @@ class Category extends Model
         'options' => 'json'
     ];
 
+    public function subProduct()
+    {
+        return $this->hasOneThrough(Product::class, self::class, 'options->parent_id', 'options->category_id');
+    }
+
     public function subProducts()
     {
         return $this->hasManyThrough(Product::class, self::class, 'options->parent_id', 'options->category_id');
