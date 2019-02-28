@@ -120,6 +120,7 @@ class HasManyJson extends HasMany
     {
         $foreignKey = explode('.', $this->foreignKey)[1];
 
+        /** @var \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson $relation */
         $relation = $model->belongsToJson(get_class($this->parent), $foreignKey, $this->localKey);
 
         $relation->attach($this->getParentKey());

@@ -216,6 +216,7 @@ trait HasJsonRelationships
             $relation = $this->guessBelongsToRelation();
         }
 
+        /** @var \Illuminate\Database\Eloquent\Model $instance */
         $instance = $this->newRelatedInstance($related);
 
         $ownerKey = $ownerKey ?: $instance->getKeyName();
@@ -250,6 +251,7 @@ trait HasJsonRelationships
      */
     public function hasManyJson($related, $foreignKey, $localKey = null)
     {
+        /** @var \Illuminate\Database\Eloquent\Model $instance */
         $instance = $this->newRelatedInstance($related);
 
         $localKey = $localKey ?: $this->getKeyName();
