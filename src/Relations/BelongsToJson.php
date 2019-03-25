@@ -19,7 +19,7 @@ class BelongsToJson extends BelongsTo
      */
     public function getResults()
     {
-        return ! empty($this->child->{$this->foreignKey})
+        return ! empty($this->getForeignKeys())
             ? $this->get()
             : $this->related->newCollection();
     }
@@ -34,7 +34,7 @@ class BelongsToJson extends BelongsTo
         if (static::$constraints) {
             $table = $this->related->getTable();
 
-            $this->query->whereIn($table.'.'.$this->ownerKey, (array) $this->child->{$this->foreignKey});
+            $this->query->whereIn($table.'.'.$this->ownerKey, $this->getForeignKeys());
         }
     }
 
@@ -181,5 +181,15 @@ class BelongsToJson extends BelongsTo
             ->first();
 
         return Arr::except($record, $this->key);
+    }
+
+    /**
+     * Get the foreign key values.
+     *
+     * @return array
+     */
+    public function getForeignKeys()
+    {
+        return (array) $this->child->{$this->foreignKey};
     }
 }
