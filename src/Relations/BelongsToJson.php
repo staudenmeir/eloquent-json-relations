@@ -13,22 +13,6 @@ class BelongsToJson extends BelongsTo
     use InteractsWithPivotRecords, IsJsonRelation;
 
     /**
-     * Get the pivot attributes from a model.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @return array
-     */
-    protected function pivotAttributes(Model $model, Model $parent)
-    {
-        $record = collect($parent->{$this->path})
-            ->where($this->key, $model->{$this->ownerKey})
-            ->first();
-
-        return Arr::except($record, $this->key);
-    }
-
-    /**
      * Set the base constraints on the relation query.
      *
      * @return void
@@ -169,5 +153,21 @@ class BelongsToJson extends BelongsTo
         $this->addBinding($this->key);
 
         return $this->getJsonGrammar($query)->compileJsonObject($query->qualifyColumn($ownerKey));
+    }
+
+    /**
+     * Get the pivot attributes from a model.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return array
+     */
+    protected function pivotAttributes(Model $model, Model $parent)
+    {
+        $record = collect($parent->{$this->path})
+            ->where($this->key, $model->{$this->ownerKey})
+            ->first();
+
+        return Arr::except($record, $this->key);
     }
 }
