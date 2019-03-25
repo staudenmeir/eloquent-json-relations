@@ -13,6 +13,18 @@ class BelongsToJson extends BelongsTo
     use InteractsWithPivotRecords, IsJsonRelation;
 
     /**
+     * Get the results of the relationship.
+     *
+     * @return mixed
+     */
+    public function getResults()
+    {
+        return ! empty($this->child->{$this->foreignKey})
+            ? $this->get()
+            : $this->related->newCollection();
+    }
+
+    /**
      * Set the base constraints on the relation query.
      *
      * @return void

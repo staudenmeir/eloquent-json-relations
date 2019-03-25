@@ -13,6 +13,18 @@ class HasManyJson extends HasMany
     use IsJsonRelation;
 
     /**
+     * Get the results of the relationship.
+     *
+     * @return mixed
+     */
+    public function getResults()
+    {
+        return ! is_null($this->getParentKey())
+            ? $this->get()
+            : $this->related->newCollection();
+    }
+
+    /**
      * Set the base constraints on the relation query.
      *
      * @return void

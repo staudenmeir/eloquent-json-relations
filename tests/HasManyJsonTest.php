@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Tests\Models\Post;
 use Tests\Models\Role;
@@ -35,6 +36,16 @@ class HasManyJsonTest extends TestCase
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
         $this->assertEquals(['active' => true], $pivot->getAttributes());
+    }
+
+    public function testEmptyLazyLoading()
+    {
+        DB::enableQueryLog();
+
+        $roles = (new Role)->users;
+
+        $this->assertInstanceOf(Collection::class, $roles);
+        $this->assertEmpty(DB::getQueryLog());
     }
 
     public function testEagerLoading()

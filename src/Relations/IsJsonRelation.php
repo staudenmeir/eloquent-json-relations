@@ -45,16 +45,6 @@ trait IsJsonRelation
     }
 
     /**
-     * Get the results of the relationship.
-     *
-     * @return mixed
-     */
-    public function getResults()
-    {
-        return $this->get();
-    }
-
-    /**
      * Execute the query as a "select" statement.
      *
      * @param  array  $columns
