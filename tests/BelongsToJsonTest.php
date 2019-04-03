@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Database\Capsule\Manager as DB;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Tests\Models\Post;
@@ -104,9 +105,11 @@ class BelongsToJsonTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        $users = User::has('roles2')->get();
+        $users = User::whereHas('roles2', function (Builder $query) {
+            $query->where('id', 1);
+        })->get();
 
-        $this->assertEquals([1, 3], $users->pluck('id')->all());
+        $this->assertEquals([1], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()

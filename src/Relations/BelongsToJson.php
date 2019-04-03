@@ -162,7 +162,7 @@ class BelongsToJson extends BelongsTo
             return $this->getJsonGrammar($query)->compileJsonArray($query->qualifyColumn($ownerKey));
         }
 
-        $this->addBinding($this->key);
+        $query->addBinding($this->key);
 
         return $this->getJsonGrammar($query)->compileJsonObject($query->qualifyColumn($ownerKey));
     }

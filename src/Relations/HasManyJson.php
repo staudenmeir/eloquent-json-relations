@@ -180,7 +180,7 @@ class HasManyJson extends HasMany
             return $this->getJsonGrammar($query)->compileJsonArray($query->qualifyColumn($parentKey));
         }
 
-        $this->query->addBinding($this->key);
+        $query->addBinding($this->key);
 
         return $this->getJsonGrammar($query)->compileJsonObject($query->qualifyColumn($parentKey));
     }
