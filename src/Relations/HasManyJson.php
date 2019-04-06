@@ -35,7 +35,7 @@ class HasManyJson extends HasMany
             $parentKey = $this->getParentKey();
 
             if ($this->key) {
-                $parentKey = [[$this->key => $parentKey]];
+                $parentKey = $this->parentKeyToArray($parentKey);
             }
 
             $this->query->whereJsonContains($this->path, $parentKey);
@@ -50,17 +50,34 @@ class HasManyJson extends HasMany
      */
     public function addEagerConstraints(array $models)
     {
-        $keys = $this->getKeys($models, $this->localKey);
+        $parentKeys = $this->getKeys($models, $this->localKey);
 
-        $this->query->where(function (Builder $query) use ($keys) {
-            foreach ($keys as $key) {
+        $this->query->where(function (Builder $query) use ($parentKeys) {
+            foreach ($parentKeys as $parentKey) {
                 if ($this->key) {
-                    $key = [[$this->key => $key]];
+                    $parentKey = $this->parentKeyToArray($parentKey);
                 }
 
-                $query->orWhereJsonContains($this->path, $key);
+                $query->orWhereJsonContains($this->path, $parentKey);
             }
         });
+    }
+
+    /**
+     * Embed a parent key in a nested array.
+     *
+     * @param  mixed  $parentKey
+     * @return array
+     */
+    protected function parentKeyToArray($parentKey)
+    {
+        $keys = explode('->', $this->key);
+
+        foreach (array_reverse($keys) as $key) {
+            $parentKey = [$key => $parentKey];
+        }
+
+        return [$parentKey];
     }
 
     /**
@@ -177,12 +194,12 @@ class HasManyJson extends HasMany
         $parentKey = $this->getQualifiedParentKeyName();
 
         if (! $this->key) {
-            return $this->getJsonGrammar($query)->compileJsonArray($query->qualifyColumn($parentKey));
+            return $this->getJsonGrammar($query)->compileJsonArray($parentKey);
         }
 
-        $query->addBinding($this->key);
+        $query->addBinding($keys = explode('->', $this->key));
 
-        return $this->getJsonGrammar($query)->compileJsonObject($query->qualifyColumn($parentKey));
+        return $this->getJsonGrammar($query)->compileJsonObject($parentKey, count($keys));
     }
 
     /**
@@ -194,11 +211,14 @@ class HasManyJson extends HasMany
      */
     protected function pivotAttributes(Model $model, Model $parent)
     {
-        $record = collect($model->{$this->getPathName()})
-            ->where($this->key, $parent->{$this->localKey})
-            ->first();
+        $key = str_replace('->', '.', $this->key);
 
-        return Arr::except($record, $this->key);
+        $record = collect($model->{$this->getPathName()})
+            ->filter(function ($value) use ($key, $parent) {
+                return Arr::get($value, $key) == $parent->{$this->localKey};
+            })->first();
+
+        return Arr::except($record, $key);
     }
 
     /**

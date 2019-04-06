@@ -116,7 +116,8 @@ trait IsJsonRelation
      * @param  \Illuminate\Database\Eloquent\Builder  $query
      * @return \Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar
      */
-    protected function getJsonGrammar(Builder $query) {
+    protected function getJsonGrammar(Builder $query)
+    {
         $driver = $query->getConnection()->getDriverName();
 
         switch ($driver) {

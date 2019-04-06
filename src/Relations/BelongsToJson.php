@@ -158,13 +158,15 @@ class BelongsToJson extends BelongsTo
      */
     protected function relationExistenceQueryOwnerKey(Builder $query, $ownerKey)
     {
+        $ownerKey = $query->qualifyColumn($ownerKey);
+
         if (! $this->key) {
-            return $this->getJsonGrammar($query)->compileJsonArray($query->qualifyColumn($ownerKey));
+            return $this->getJsonGrammar($query)->compileJsonArray($ownerKey);
         }
 
-        $query->addBinding($this->key);
+        $query->addBinding($keys = explode('->', $this->key));
 
-        return $this->getJsonGrammar($query)->compileJsonObject($query->qualifyColumn($ownerKey));
+        return $this->getJsonGrammar($query)->compileJsonObject($ownerKey, count($keys));
     }
 
     /**
@@ -176,11 +178,14 @@ class BelongsToJson extends BelongsTo
      */
     protected function pivotAttributes(Model $model, Model $parent)
     {
-        $record = collect($parent->{$this->path})
-            ->where($this->key, $model->{$this->ownerKey})
-            ->first();
+        $key = str_replace('->', '.', $this->key);
 
-        return Arr::except($record, $this->key);
+        $record = collect($parent->{$this->path})
+            ->filter(function ($value) use ($key, $model) {
+                return Arr::get($value, $key) == $model->{$this->ownerKey};
+            })->first();
+
+        return Arr::except($record, $key);
     }
 
     /**

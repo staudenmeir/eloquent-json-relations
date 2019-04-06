@@ -22,11 +22,14 @@ class PostgresGrammar extends Base implements JsonGrammar
      * Compile a "JSON object" statement into SQL.
      *
      * @param  string  $column
+     * @param  int  $levels
      * @return string
      */
-    public function compileJsonObject($column)
+    public function compileJsonObject($column, $levels)
     {
-        $sql = 'jsonb_build_object(?::text, '.$this->wrap($column).')';
+        $sql = str_repeat('jsonb_build_object(?::text, ', $levels)
+                .$this->wrap($column)
+                .str_repeat(')', $levels);
 
         return $this->compileJsonArray(new Expression($sql));
     }

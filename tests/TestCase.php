@@ -104,8 +104,8 @@ abstract class TestCase extends Base
                 'locale_id' => 1,
                 'role_ids' => [1, 2],
                 'roles' => [
-                    ['role_id' => 1, 'active' => true],
-                    ['role_id' => 2, 'active' => false],
+                    ['role' => ['id' => 1, 'active' => true]],
+                    ['role' => ['id' => 2, 'active' => false]],
                 ],
             ],
         ]);
@@ -114,8 +114,8 @@ abstract class TestCase extends Base
             'options' => [
                 'role_ids' => [2, 3],
                 'roles' => [
-                    ['role_id' => 2, 'active' => true],
-                    ['role_id' => 3, 'active' => false],
+                    ['role' => ['id' => 2, 'active' => true]],
+                    ['role' => ['id' => 3, 'active' => false]],
                 ],
             ],
         ]);

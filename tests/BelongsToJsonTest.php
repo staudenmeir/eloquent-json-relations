@@ -36,8 +36,8 @@ class BelongsToJsonTest extends TestCase
         $pivot = $roles[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
-        $this->assertEquals(['active' => true], $pivot->getAttributes());
-        $this->assertEquals(['active' => false], $roles[1]->pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $roles[1]->pivot->getAttributes());
     }
 
     public function testEmptyLazyLoading()
@@ -69,8 +69,8 @@ class BelongsToJsonTest extends TestCase
         $pivot = $users[0]->roles2[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
-        $this->assertEquals(['active' => true], $pivot->getAttributes());
-        $this->assertEquals(['active' => false], $users[0]->roles2[1]->pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $users[0]->roles2[1]->pivot->getAttributes());
     }
 
     public function testLazyEagerLoading()
@@ -92,8 +92,8 @@ class BelongsToJsonTest extends TestCase
         $pivot = $users[0]->roles2[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
-        $this->assertEquals(['active' => true], $pivot->getAttributes());
-        $this->assertEquals(['active' => false], $users[0]->roles2[1]->pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $users[0]->roles2[1]->pivot->getAttributes());
     }
 
     public function testExistenceQuery()
@@ -139,16 +139,22 @@ class BelongsToJsonTest extends TestCase
 
     public function testAttachWithObjects()
     {
-        $user = (new User)->roles2()->attach([1 => ['active' => true], 2 => ['active' => false]]);
+        $user = (new User)->roles2()->attach([
+            1 => ['role' => ['active' => true]],
+            2 => ['role' => ['active' => false]],
+        ]);
 
         $this->assertEquals([1, 2], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true, false], $user->roles2->pluck('pivot.active')->all());
+        $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
 
-        $user->roles2()->attach([2 => ['active' => true], 3 => ['active' => false]]);
+        $user->roles2()->attach([
+            2 => ['role' => ['active' => true]],
+            3 => ['role' => ['active' => false]],
+        ]);
 
         $roles = $user->load('roles2')->roles2->sortBy('id')->values();
         $this->assertEquals([1, 2, 3], $roles->pluck('id')->all());
-        $this->assertEquals([true, true, false], $roles->pluck('pivot.active')->all());
+        $this->assertEquals([true, true, false], $roles->pluck('pivot.role.active')->all());
     }
 
     public function testAttachWithObjectsInColumn()
@@ -175,7 +181,7 @@ class BelongsToJsonTest extends TestCase
         $user = User::first()->roles2()->detach(Role::find(2));
 
         $this->assertEquals([1], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true], $user->roles2->pluck('pivot.active')->all());
+        $this->assertEquals([true], $user->roles2->pluck('pivot.role.active')->all());
 
         $user->roles2()->detach();
 
@@ -191,10 +197,13 @@ class BelongsToJsonTest extends TestCase
 
     public function testSyncWithObjects()
     {
-        $user = User::first()->roles2()->sync([2 => ['active' => true], 3 => ['active' => false]]);
+        $user = User::first()->roles2()->sync([
+            2 => ['role' => ['active' => true]],
+            3 => ['role' => ['active' => false]],
+        ]);
 
         $this->assertEquals([2, 3], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true, false], $user->roles2->pluck('pivot.active')->all());
+        $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
     }
 
     public function testToggle()
@@ -206,9 +215,12 @@ class BelongsToJsonTest extends TestCase
 
     public function testToggleWithObjects()
     {
-        $user = User::first()->roles2()->toggle([2, 3 => ['active' => false]]);
+        $user = User::first()->roles2()->toggle([
+            2,
+            3 => ['role' => ['active' => false]],
+        ]);
 
         $this->assertEquals([1, 3], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true, false], $user->roles2->pluck('pivot.active')->all());
+        $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
     }
 }

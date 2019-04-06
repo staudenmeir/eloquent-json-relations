@@ -66,7 +66,7 @@ trait InteractsWithPivotRecords
     }
 
     /**
-     * Toggles models from the relationship.
+     * Toggle models from the relationship.
      *
      * @param  mixed  $ids
      * @return \Illuminate\Database\Eloquent\Model
@@ -94,13 +94,15 @@ trait InteractsWithPivotRecords
      */
     protected function decodeRecords()
     {
+        $key = str_replace('->', '.', $this->key);
+
         return collect((array) $this->child->{$this->path})
-            ->mapWithKeys(function ($record) {
+            ->mapWithKeys(function ($record) use ($key) {
                 if (! is_array($record)) {
                     return [$record => []];
                 }
 
-                return [$record[$this->key] => Arr::except($record, $this->key)];
+                return [Arr::get($record, $key) => $record];
             })->all();
     }
 
@@ -116,8 +118,10 @@ trait InteractsWithPivotRecords
             return array_keys($records);
         }
 
+        $key = str_replace('->', '.', $this->key);
+
         foreach ($records as $id => &$attributes) {
-            $attributes[$this->key] = $id;
+            Arr::set($attributes, $key, $id);
         }
 
         return array_values($records);
