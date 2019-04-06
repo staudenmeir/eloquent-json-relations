@@ -36,7 +36,7 @@ class HasManyJsonTest extends TestCase
         $pivot = $users[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
-        $this->assertEquals(['active' => true], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
     }
 
     public function testEagerLoading()
@@ -56,8 +56,8 @@ class HasManyJsonTest extends TestCase
         $pivot = $roles[0]->users2[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
-        $this->assertEquals(['active' => true], $pivot->getAttributes());
-        $this->assertEquals(['active' => false], $roles[1]->users2[0]->pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $roles[1]->users2[0]->pivot->getAttributes());
     }
 
     public function testLazyEagerLoading()
@@ -77,8 +77,8 @@ class HasManyJsonTest extends TestCase
         $pivot = $roles[0]->users2[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
-        $this->assertEquals(['active' => true], $pivot->getAttributes());
-        $this->assertEquals(['active' => false], $roles[1]->users2[0]->pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $roles[1]->users2[0]->pivot->getAttributes());
     }
 
     public function testExistenceQuery()

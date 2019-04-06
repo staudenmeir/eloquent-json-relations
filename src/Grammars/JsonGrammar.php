@@ -16,7 +16,8 @@ interface JsonGrammar
      * Compile a "JSON object" statement into SQL.
      *
      * @param  string  $column
+     * @param  int  $levels
      * @return string
      */
-    public function compileJsonObject($column);
+    public function compileJsonObject($column, $levels);
 }

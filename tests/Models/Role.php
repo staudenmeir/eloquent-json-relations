@@ -11,6 +11,6 @@ class Role extends Model
 
     public function users2()
     {
-        return $this->hasManyJson(User::class, 'options->roles[]->role_id');
+        return $this->hasManyJson(User::class, 'options->roles[]->role->id');
     }
 }

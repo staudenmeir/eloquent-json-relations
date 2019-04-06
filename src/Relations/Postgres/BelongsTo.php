@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as Base;
 
 class BelongsTo extends Base
 {
-   use IsPostgresRelation;
+    use IsPostgresRelation;
 
     /**
      * Add the constraints for a relationship query.

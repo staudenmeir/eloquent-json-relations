@@ -21,10 +21,13 @@ class MySqlGrammar extends Base implements JsonGrammar
      * Compile a "JSON object" statement into SQL.
      *
      * @param  string  $column
+     * @param  int  $levels
      * @return string
      */
-    public function compileJsonObject($column)
+    public function compileJsonObject($column, $levels)
     {
-        return 'json_object(?, '.$this->wrap($column).')';
+        return str_repeat('json_object(?, ', $levels)
+                .$this->wrap($column)
+                .str_repeat(')', $levels);
     }
 }

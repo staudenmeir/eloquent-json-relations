@@ -22,9 +22,10 @@ class SqlServerGrammar extends Base implements JsonGrammar
      * Compile a "JSON object" statement into SQL.
      *
      * @param  string  $column
+     * @param  int  $levels
      * @return string
      */
-    public function compileJsonObject($column)
+    public function compileJsonObject($column, $levels)
     {
         throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
     }

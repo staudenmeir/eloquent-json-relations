@@ -20,7 +20,7 @@ class User extends Model
 
     public function roles2()
     {
-        return $this->belongsToJson(Role::class, 'options->roles[]->role_id');
+        return $this->belongsToJson(Role::class, 'options->roles[]->role->id');
     }
 
     public function roles3()
