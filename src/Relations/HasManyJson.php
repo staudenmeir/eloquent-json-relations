@@ -13,22 +13,6 @@ class HasManyJson extends HasMany
     use IsJsonRelation;
 
     /**
-     * Get the pivot attributes from a model.
-     *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @return array
-     */
-    protected function pivotAttributes(Model $model, Model $parent)
-    {
-        $record = collect($model->{$this->getPathName()})
-            ->where($this->key, $parent->{$this->localKey})
-            ->first();
-
-        return ! is_null($record) ? Arr::except($record, $this->key) : [];
-    }
-
-    /**
      * Set the base constraints on the relation query.
      *
      * @return void
@@ -187,6 +171,22 @@ class HasManyJson extends HasMany
 
         return $this->getJsonGrammar($query)->compileJsonObject($query->qualifyColumn($parentKey));
 
+    }
+
+    /**
+     * Get the pivot attributes from a model.
+     *
+     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @return array
+     */
+    protected function pivotAttributes(Model $model, Model $parent)
+    {
+        $record = collect($model->{$this->getPathName()})
+            ->where($this->key, $parent->{$this->localKey})
+            ->first();
+
+        return ! is_null($record) ? Arr::except($record, $this->key) : [];
     }
 
     /**
