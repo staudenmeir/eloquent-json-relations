@@ -11,7 +11,7 @@ trait HasOneOrManyThrough
     /**
      * Set the join clause on the query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder|null  $query
+     * @param \Illuminate\Database\Eloquent\Builder|null $query
      * @return void
      */
     protected function performJoin(Builder $query = null)
@@ -30,9 +30,9 @@ trait HasOneOrManyThrough
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param array|mixed $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -57,9 +57,9 @@ trait HasOneOrManyThrough
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param array|mixed $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -82,9 +82,9 @@ trait HasOneOrManyThrough
     /**
      * Add the constraints for a relationship query on the same table as the through parent.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param array|mixed $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getRelationExistenceQueryForThroughSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])

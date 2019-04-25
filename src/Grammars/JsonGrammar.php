@@ -7,7 +7,7 @@ interface JsonGrammar
     /**
      * Compile a "JSON array" statement into SQL.
      *
-     * @param  string  $column
+     * @param string $column
      * @return string
      */
     public function compileJsonArray($column);
@@ -15,8 +15,8 @@ interface JsonGrammar
     /**
      * Compile a "JSON object" statement into SQL.
      *
-     * @param  string  $column
-     * @param  int  $levels
+     * @param string $column
+     * @param int $levels
      * @return string
      */
     public function compileJsonObject($column, $levels);

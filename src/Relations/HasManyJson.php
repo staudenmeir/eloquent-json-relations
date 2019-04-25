@@ -19,7 +19,7 @@ class HasManyJson extends HasMany
      */
     public function getResults()
     {
-        return ! is_null($this->getParentKey())
+        return !is_null($this->getParentKey())
             ? $this->get()
             : $this->related->newCollection();
     }
@@ -45,7 +45,7 @@ class HasManyJson extends HasMany
     /**
      * Set the constraints for an eager load of the relation.
      *
-     * @param  array  $models
+     * @param array $models
      * @return void
      */
     public function addEagerConstraints(array $models)
@@ -66,7 +66,7 @@ class HasManyJson extends HasMany
     /**
      * Embed a parent key in a nested array.
      *
-     * @param  mixed  $parentKey
+     * @param mixed $parentKey
      * @return array
      */
     protected function parentKeyToArray($parentKey)
@@ -83,10 +83,10 @@ class HasManyJson extends HasMany
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array   $models
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
-     * @param  string  $relation
-     * @param  string  $type
+     * @param array  $models
+     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param string $relation
+     * @param string $type
      * @return array
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
@@ -105,7 +105,7 @@ class HasManyJson extends HasMany
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
+     * @param \Illuminate\Database\Eloquent\Collection $results
      * @return array
      */
     protected function buildDictionary(Collection $results)
@@ -126,7 +126,7 @@ class HasManyJson extends HasMany
     /**
      * Set the foreign ID for creating a related model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
+     * @param \Illuminate\Database\Eloquent\Model $model
      * @return void
      */
     protected function setForeignAttributesForCreate(Model $model)
@@ -142,9 +142,9 @@ class HasManyJson extends HasMany
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param array|mixed $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -164,9 +164,9 @@ class HasManyJson extends HasMany
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param array|mixed $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -186,14 +186,14 @@ class HasManyJson extends HasMany
     /**
      * Get the parent key for the relationship query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return string
      */
     protected function relationExistenceQueryParentKey(Builder $query)
     {
         $parentKey = $this->getQualifiedParentKeyName();
 
-        if (! $this->key) {
+        if (!$this->key) {
             return $this->getJsonGrammar($query)->compileJsonArray($parentKey);
         }
 
@@ -205,8 +205,8 @@ class HasManyJson extends HasMany
     /**
      * Get the pivot attributes from a model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Database\Eloquent\Model $parent
      * @return array
      */
     protected function pivotAttributes(Model $model, Model $parent)

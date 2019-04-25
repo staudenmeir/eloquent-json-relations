@@ -19,7 +19,7 @@ class BelongsToJson extends BelongsTo
      */
     public function getResults()
     {
-        return ! empty($this->getForeignKeys())
+        return !empty($this->getForeignKeys())
             ? $this->get()
             : $this->related->newCollection();
     }
@@ -41,7 +41,7 @@ class BelongsToJson extends BelongsTo
     /**
      * Gather the keys from an array of related models.
      *
-     * @param  array  $models
+     * @param array $models
      * @return array
      */
     protected function getEagerModelKeys(array $models)
@@ -60,9 +60,9 @@ class BelongsToJson extends BelongsTo
     /**
      * Match the eagerly loaded results to their parents.
      *
-     * @param  array   $models
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
-     * @param  string  $relation
+     * @param array  $models
+     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param string $relation
      * @return array
      */
     public function match(array $models, Collection $results, $relation)
@@ -91,7 +91,7 @@ class BelongsToJson extends BelongsTo
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $results
+     * @param \Illuminate\Database\Eloquent\Collection $results
      * @return array
      */
     protected function buildDictionary(Collection $results)
@@ -108,9 +108,9 @@ class BelongsToJson extends BelongsTo
     /**
      * Add the constraints for a relationship query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param array|mixed $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -130,9 +130,9 @@ class BelongsToJson extends BelongsTo
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Builder  $parentQuery
-     * @param  array|mixed  $columns
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
+     * @param array|mixed $columns
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
@@ -152,15 +152,15 @@ class BelongsToJson extends BelongsTo
     /**
      * Get the owner key for the relationship query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $ownerKey
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $ownerKey
      * @return string
      */
     protected function relationExistenceQueryOwnerKey(Builder $query, $ownerKey)
     {
         $ownerKey = $query->qualifyColumn($ownerKey);
 
-        if (! $this->key) {
+        if (!$this->key) {
             return $this->getJsonGrammar($query)->compileJsonArray($ownerKey);
         }
 
@@ -172,8 +172,8 @@ class BelongsToJson extends BelongsTo
     /**
      * Get the pivot attributes from a model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Database\Eloquent\Model $parent
      * @return array
      */
     protected function pivotAttributes(Model $model, Model $parent)

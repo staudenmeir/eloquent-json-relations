@@ -47,14 +47,14 @@ trait IsJsonRelation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array  $columns
+     * @param array $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function get($columns = ['*'])
     {
         $models = parent::get($columns);
 
-        if ($this->key && ! empty($this->parent->getAttributes())) {
+        if ($this->key && !empty($this->parent->getAttributes())) {
             $this->hydratePivotRelation($models, $this->parent);
         }
 
@@ -64,8 +64,8 @@ trait IsJsonRelation
     /**
      * Hydrate the pivot relationship on the models.
      *
-     * @param  \Illuminate\Database\Eloquent\Collection  $models
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param \Illuminate\Database\Eloquent\Collection $models
+     * @param \Illuminate\Database\Eloquent\Model $parent
      * @return void
      */
     protected function hydratePivotRelation(Collection $models, Model $parent)
@@ -80,8 +80,8 @@ trait IsJsonRelation
     /**
      * Get the pivot relationship from the query.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Database\Eloquent\Model $parent
      * @return \Illuminate\Database\Eloquent\Model
      */
     protected function pivotRelation(Model $model, Model $parent)
@@ -94,8 +94,8 @@ trait IsJsonRelation
     /**
      * Get the pivot attributes from a model.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Database\Eloquent\Model $parent
      * @return array
      */
     abstract protected function pivotAttributes(Model $model, Model $parent);
@@ -113,7 +113,7 @@ trait IsJsonRelation
     /**
      * Get the JSON grammar.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param \Illuminate\Database\Eloquent\Builder $query
      * @return \Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar
      */
     protected function getJsonGrammar(Builder $query)

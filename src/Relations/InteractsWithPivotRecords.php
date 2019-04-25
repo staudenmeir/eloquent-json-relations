@@ -12,7 +12,7 @@ trait InteractsWithPivotRecords
     /**
      * Attach models to the relationship.
      *
-     * @param  mixed  $ids
+     * @param mixed $ids
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function attach($ids)
@@ -29,12 +29,12 @@ trait InteractsWithPivotRecords
     /**
      * Detach models from the relationship.
      *
-     * @param  mixed  $ids
+     * @param mixed $ids
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function detach($ids = null)
     {
-        if (! is_null($ids)) {
+        if (!is_null($ids)) {
             $records = array_diff_key(
                 $this->decodeRecords(),
                 array_flip($this->parseIds($ids))
@@ -53,7 +53,7 @@ trait InteractsWithPivotRecords
     /**
      * Sync the relationship with a list of models.
      *
-     * @param  mixed  $ids
+     * @param mixed $ids
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function sync($ids)
@@ -68,7 +68,7 @@ trait InteractsWithPivotRecords
     /**
      * Toggle models from the relationship.
      *
-     * @param  mixed  $ids
+     * @param mixed $ids
      * @return \Illuminate\Database\Eloquent\Model
      */
     public function toggle($ids)
@@ -98,7 +98,7 @@ trait InteractsWithPivotRecords
 
         return collect((array) $this->child->{$this->path})
             ->mapWithKeys(function ($record) use ($key) {
-                if (! is_array($record)) {
+                if (!is_array($record)) {
                     return [$record => []];
                 }
 
@@ -109,12 +109,12 @@ trait InteractsWithPivotRecords
     /**
      * Encode the records for the child model.
      *
-     * @param  array  $records
+     * @param array $records
      * @return array
      */
     protected function encodeRecords(array $records)
     {
-        if (! $this->key) {
+        if (!$this->key) {
             return array_keys($records);
         }
 
@@ -130,7 +130,7 @@ trait InteractsWithPivotRecords
     /**
      * Get all of the IDs from the given mixed value.
      *
-     * @param  mixed  $value
+     * @param mixed $value
      * @return array
      */
     protected function parseIds($value)
@@ -153,13 +153,13 @@ trait InteractsWithPivotRecords
     /**
      * Format the parsed IDs.
      *
-     * @param  array $ids
+     * @param array $ids
      * @return array
      */
     protected function formatIds(array $ids)
     {
         return collect($ids)->mapWithKeys(function ($attributes, $id) {
-            if (! is_array($attributes)) {
+            if (!is_array($attributes)) {
                 [$id, $attributes] = [$attributes, []];
             }
 
