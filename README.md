@@ -63,7 +63,7 @@ Remember to use the `HasJsonRelationships` trait in both the parent and the rela
 
 ### Many-To-Many Relationships
 
-This package also introduces two new relationship types: `BelongsToJson` and `HasManyJson`
+The package also introduces two new relationship types: `BelongsToJson` and `HasManyJson`
 
 On Laravel 5.6.25+, you can use them to implement many-to-many relationships with JSON arrays.
 
