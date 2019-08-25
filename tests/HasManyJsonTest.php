@@ -49,6 +49,14 @@ class HasManyJsonTest extends TestCase
         $this->assertEmpty(DB::getQueryLog());
     }
 
+    public function testFirst()
+    {
+        $user = Role::first()->users2()->first();
+
+        $this->assertEquals(1, $user->id);
+        $this->assertInstanceOf(Pivot::class, $user->pivot);
+    }
+
     public function testEagerLoading()
     {
         $roles = Role::with('users')->get();

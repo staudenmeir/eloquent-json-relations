@@ -50,6 +50,14 @@ class BelongsToJsonTest extends TestCase
         $this->assertEmpty(DB::getQueryLog());
     }
 
+    public function testFirst()
+    {
+        $role = User::first()->roles2()->first();
+
+        $this->assertEquals(1, $role->id);
+        $this->assertInstanceOf(Pivot::class, $role->pivot);
+    }
+
     public function testEagerLoading()
     {
         $users = User::with('roles')->get();

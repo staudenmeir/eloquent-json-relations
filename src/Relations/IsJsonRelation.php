@@ -101,6 +101,17 @@ trait IsJsonRelation
     abstract protected function pivotAttributes(Model $model, Model $parent);
 
     /**
+     * Execute the query and get the first related model.
+     *
+     * @param array $columns
+     * @return mixed
+     */
+    public function first($columns = ['*'])
+    {
+        return $this->take(1)->get($columns)->first();
+    }
+
+    /**
      * Get the fully qualified path of the relationship.
      *
      * @return string
