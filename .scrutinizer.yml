@@ -1,4 +1,3 @@
 tools:
   external_code_coverage:
-    runs: 2
-    timeout: 600
+    runs: 3

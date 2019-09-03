@@ -113,6 +113,10 @@ class BelongsToJsonTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $users = User::whereHas('roles2', function (Builder $query) {
             $query->where('id', 1);
         })->get();
@@ -129,6 +133,10 @@ class BelongsToJsonTest extends TestCase
 
     public function testExistenceQueryForSelfRelationWithObjects()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $posts = Post::has('recommendations2')->get();
 
         $this->assertEquals([1], $posts->pluck('id')->all());

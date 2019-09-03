@@ -30,6 +30,10 @@ class HasManyJsonTest extends TestCase
 
     public function testLazyLoadingWithObjects()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $users = Role::first()->users2;
 
         $this->assertEquals([1], $users->pluck('id')->all());
@@ -51,6 +55,10 @@ class HasManyJsonTest extends TestCase
 
     public function testFirst()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $user = Role::first()->users2()->first();
 
         $this->assertEquals(1, $user->id);
@@ -67,6 +75,10 @@ class HasManyJsonTest extends TestCase
 
     public function testEagerLoadingWithObjects()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $roles = Role::with('users2')->get();
 
         $this->assertEquals([1], $roles[0]->users2->pluck('id')->all());
@@ -88,6 +100,10 @@ class HasManyJsonTest extends TestCase
 
     public function testLazyEagerLoadingWithObjects()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $roles = Role::all()->load('users2');
 
         $this->assertEquals([1], $roles[0]->users2->pluck('id')->all());
@@ -108,6 +124,10 @@ class HasManyJsonTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $roles = Role::whereHas('users2', function (Builder $query) {
             $query->where('id', 1);
         })->get();
@@ -124,6 +144,10 @@ class HasManyJsonTest extends TestCase
 
     public function testExistenceQueryForSelfRelationWithObjects()
     {
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            $this->markTestSkipped();
+        }
+
         $posts = Post::has('recommenders2')->get();
 
         $this->assertEquals([2], $posts->pluck('id')->all());
