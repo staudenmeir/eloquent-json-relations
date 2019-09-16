@@ -133,11 +133,11 @@ trait IsJsonRelation
 
         switch ($driver) {
             case 'mysql':
-                return new MySqlGrammar;
+                return $query->getConnection()->withTablePrefix(new MySqlGrammar);
             case 'pgsql':
-                return new PostgresGrammar;
+                return $query->getConnection()->withTablePrefix(new PostgresGrammar);
             case 'sqlsrv':
-                return new SqlServerGrammar;
+                return $query->getConnection()->withTablePrefix(new SqlServerGrammar);
         }
 
         throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
