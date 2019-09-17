@@ -1,7 +1,5 @@
 language: php
 
-dist: xenial
-
 services:
   - mysql
   - postgresql
