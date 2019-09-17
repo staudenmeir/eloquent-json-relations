@@ -207,3 +207,7 @@ Schema::table('users', function (Blueprint $table) {
     $table->foreign('locale_id')->references('id')->on('locales');
 });
 ```
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) and [CODE OF CONDUCT](CODE_OF_CONDUCT.md) for details.
