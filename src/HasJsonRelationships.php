@@ -222,7 +222,11 @@ trait HasJsonRelationships
         $ownerKey = $ownerKey ?: $instance->getKeyName();
 
         return $this->newBelongsToJson(
-            $instance->newQuery(), $this, $foreignKey, $ownerKey, $relation
+            $instance->newQuery(),
+            $this,
+            $foreignKey,
+            $ownerKey,
+            $relation
         );
     }
 
@@ -257,7 +261,10 @@ trait HasJsonRelationships
         $localKey = $localKey ?: $this->getKeyName();
 
         return $this->newHasManyJson(
-            $instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey
+            $instance->newQuery(),
+            $this,
+            $instance->getTable().'.'.$foreignKey,
+            $localKey
         );
     }
 

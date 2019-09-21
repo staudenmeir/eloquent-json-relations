@@ -26,7 +26,9 @@ class BelongsTo extends Base
         $first = $this->jsonColumn($query, $this->related, $this->getQualifiedForeignKeyName(), $this->ownerKey);
 
         return $query->select($columns)->whereColumn(
-            $first, '=', $query->qualifyColumn($this->ownerKey)
+            $first,
+            '=',
+            $query->qualifyColumn($this->ownerKey)
         );
     }
 
@@ -49,7 +51,8 @@ class BelongsTo extends Base
         $first = $this->jsonColumn($query, $this->related, $this->getQualifiedForeignKeyName(), $this->ownerKey);
 
         return $query->whereColumn(
-            $first, $hash.'.'.$this->ownerKey
+            $first,
+            $hash.'.'.$this->ownerKey
         );
     }
 }
