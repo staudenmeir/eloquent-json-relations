@@ -9,12 +9,12 @@
         }
     ],
     "require": {
-        "php": "^7.2",
-        "illuminate/database": "^6.0"
+        "php": "^7.2.5",
+        "illuminate/database": "^7.0"
     },
     "require-dev": {
         "laravel/homestead": "^10.0",
-        "phpunit/phpunit": "^8.0"
+        "phpunit/phpunit": "^8.5"
     },
     "autoload": {
         "psr-4": {
