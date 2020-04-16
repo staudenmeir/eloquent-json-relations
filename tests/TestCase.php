@@ -71,7 +71,8 @@ abstract class TestCase extends Base
         });
 
         DB::schema()->create('categories', function (Blueprint $table) {
-            $table->increments('id');
+            $type = DB::connection()->getDriverName() === 'pgsql' ? 'uuid' : 'string';
+            $table->$type('id');
             $table->json('options');
             $table->softDeletes();
         });
@@ -138,10 +139,16 @@ abstract class TestCase extends Base
         Team::create(['options' => ['owner_id' => 1]]);
         Team::create(['options' => []]);
 
-        Category::create(['options' => []]);
-        Category::create(['options' => ['parent_id' => 1]]);
+        Category::create([
+            'id' => '42bbcb40-399e-4fa0-b50c-20051d43c7eb',
+            'options' => [],
+        ]);
+        Category::create([
+            'id' => 'af5811f8-45ae-43a9-b333-c936890973cb',
+            'options' => ['parent_id' => '42bbcb40-399e-4fa0-b50c-20051d43c7eb'],
+        ]);
 
-        Product::create(['options' => ['category_id' => 2]]);
+        Product::create(['options' => ['category_id' => 'af5811f8-45ae-43a9-b333-c936890973cb']]);
         Product::create(['options' => []]);
 
         Model::reguard();

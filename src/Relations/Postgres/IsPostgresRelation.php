@@ -25,6 +25,10 @@ trait IsPostgresRelation
             $sql = '('.$sql.')::int';
         }
 
+        if ($model->hasCast($key) && $model->getCasts()[$key] === 'uuid') {
+            $sql = '('.$sql.')::uuid';
+        }
+
         return new Expression($sql);
     }
 
