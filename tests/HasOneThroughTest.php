@@ -47,6 +47,6 @@ class HasOneThroughTest extends TestCase
     {
         $categories = Category::has('subProduct')->get();
 
-        $this->assertEquals([1], $categories->pluck('id')->all());
+        $this->assertEquals(['42bbcb40-399e-4fa0-b50c-20051d43c7eb'], $categories->pluck('id')->all());
     }
 }

@@ -8,7 +8,12 @@ class Category extends Model
 {
     use SoftDeletes;
 
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
     protected $casts = [
+        'id' => 'uuid',
         'options' => 'json'
     ];
 
