@@ -195,6 +195,10 @@ class BelongsToJson extends BelongsTo
      */
     public function getForeignKeys()
     {
-        return (array) $this->child->{$this->foreignKey};
+        $keys = (array) $this->child->{$this->foreignKey};
+
+        return array_filter($keys, function($key) {
+            return $key !== null;
+        });
     }
 }

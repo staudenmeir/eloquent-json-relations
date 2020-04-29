@@ -108,6 +108,13 @@ abstract class TestCase extends Base
                     ['role' => ['id' => 1, 'active' => true]],
                     ['role' => ['id' => 2, 'active' => false]],
                 ],
+                'posts_and_comments' => [
+                    ['post' => ['id' => 1, 'active' => true]],
+                    ['post' => ['id' => 2, 'active' => true]],
+                    ['comment' => ['id' => 3, 'active' => false]],
+                    ['comment' => ['id' => 4, 'active' => false]],
+                    ['comment' => ['id' => 5, 'active' => false]],
+                ],
             ],
         ]);
         User::create(['options' => ['team_id' => 1]]);
