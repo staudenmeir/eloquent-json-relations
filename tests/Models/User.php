@@ -30,7 +30,7 @@ class User extends Model
 
     public function postsOnly()
     {
-        return $this->belongsToJson(Role::class, 'options->posts_and_comments[]->post->id');
+        return $this->belongsToJson(Post::class, 'options->posts_and_comments[]->post->id');
     }
 
     public function teamMate()
