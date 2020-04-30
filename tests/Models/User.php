@@ -28,6 +28,11 @@ class User extends Model
         return $this->belongsToJson(Role::class, 'options[]->role_id');
     }
 
+    public function postsOnly()
+    {
+        return $this->belongsToJson(Post::class, 'options->posts_and_comments[]->post->id');
+    }
+
     public function teamMate()
     {
         return $this->hasOneThrough(self::class, Team::class, 'options->owner_id', 'options->team_id');

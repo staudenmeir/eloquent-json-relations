@@ -239,4 +239,20 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([1, 3], $user->roles2->pluck('id')->all());
         $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
     }
+
+    public function testForeignKeysDoNotIncludeNullValues()
+    {
+        $keys = User::first()->postsOnly()->getForeignKeys();
+
+        $this->assertEquals([1, 2], $keys);
+    }
+
+    public function testForeignKeysDoNotIncludeNullValuesWhenEagerLoading()
+    {
+        DB::enableQueryLog();
+
+        User::with('postsOnly')->get();
+
+        $this->assertStringEndsWith('(1, 2)', DB::getQueryLog()[1]['query']);
+    }
 }
