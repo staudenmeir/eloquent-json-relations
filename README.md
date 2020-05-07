@@ -26,8 +26,11 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
 ## Usage
 
 - [One-To-Many Relationships](#one-to-many-relationships)
+  - [Referential Integrity](#referential-integrity)
 - [Many-To-Many Relationships](#many-to-many-relationships)
-- [Referential Integrity](#referential-integrity)
+  - [Array of IDs](#array-of-ids)
+  - [Array of Objects](#array-of-objects)
+  - [Query Performance](#query-performance)
 
 ### One-To-Many Relationships
 
@@ -60,6 +63,37 @@ class Locale extends Model
 ```
 
 Remember to use the `HasJsonRelationships` trait in both the parent and the related model.
+
+#### Referential Integrity
+
+On [MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html), [MariaDB](https://mariadb.com/kb/en/library/foreign-keys/) and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table) you can still ensure referential integrity with foreign keys on generated/computed columns.
+
+Laravel migrations support this feature on MySQL/MariaDB:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->bigIncrements('id');
+    $table->json('options');
+    $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
+    $table->unsignedInteger('locale_id')->storedAs($locale_id);
+    $table->foreign('locale_id')->references('id')->on('locales');
+});
+```
+
+Laravel migrations (5.7.25+) also support this feature on SQL Server: 
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->bigIncrements('id');
+    $table->json('options');
+    $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
+    $locale_id = 'CAST('.$locale_id.' AS INT)';
+    $table->computed('locale_id', $locale_id)->persisted();
+    $table->foreign('locale_id')->references('id')->on('locales');
+});
+```
+
+There is a [workaround](https://github.com/staudenmeir/eloquent-json-relations/tree/1.1#referential-integrity) for older versions of Laravel.
 
 ### Many-To-Many Relationships
 
@@ -161,50 +195,27 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 
 **Limitations:** On SQLite and SQL Server, these relationships only work partially.
 
-### Referential Integrity
+#### Query Performance
 
-On one-to-many relationships, you can still ensure referential integrity.
+On PostgreSQL, you can improve the query performance with `jsonb` columns and [`GIN` indexes](https://www.postgresql.org/docs/current/datatype-json.html#JSON-INDEXING).
 
-[MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html), [MariaDB](https://mariadb.com/kb/en/library/foreign-keys/) and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table) support foreign keys on JSON columns with generated/computed columns.
-
-Laravel migrations support this feature on MySQL/MariaDB:
+Use this migration when the array of IDs/objects is the column itself (e.g. `users.role_ids`):
 
 ```php
 Schema::create('users', function (Blueprint $table) {
-    $table->increments('id');
-    $table->json('options');
-    $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
-    $table->unsignedInteger('locale_id')->storedAs($locale_id);
-    $table->foreign('locale_id')->references('id')->on('locales');
+    $table->bigIncrements('id');
+    $table->jsonb('role_ids');
+    $table->index('role_ids', null, 'gin');
 });
 ```
 
-Laravel migrations (5.7.25+) also support this feature on SQL Server: 
+Use this migration when the array is nested inside an object (e.g. `users.options->role_ids`):
 
 ```php
 Schema::create('users', function (Blueprint $table) {
-    $table->increments('id');
-    $table->json('options');
-    $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
-    $locale_id = 'CAST('.$locale_id.' AS INT)';
-    $table->computed('locale_id', $locale_id)->persisted();
-    $table->foreign('locale_id')->references('id')->on('locales');
-});
-```
-
-Use this workaround for older versions of Laravel:
-
-```php
-Schema::create('users', function (Blueprint $table) {
-    $table->increments('id');
-    $table->json('options');
-});
-
-$locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
-DB::statement('ALTER TABLE [users] ADD "locale_id" AS CAST('.$locale_id.' AS INT) PERSISTED');
-
-Schema::table('users', function (Blueprint $table) {
-    $table->foreign('locale_id')->references('id')->on('locales');
+    $table->bigIncrements('id');
+    $table->jsonb('options');
+    $table->index([DB::raw('("options"->\'role_ids\')')], 'users_options_index', 'gin');
 });
 ```
 
