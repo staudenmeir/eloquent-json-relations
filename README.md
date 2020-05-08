@@ -215,7 +215,8 @@ Use this migration when the array is nested inside an object (e.g. `users.option
 Schema::create('users', function (Blueprint $table) {
     $table->bigIncrements('id');
     $table->jsonb('options');
-    $table->index([DB::raw('("options"->\'role_ids\')')], 'users_options_index', 'gin');
+    $table->rawIndex('("options"->\'role_ids\')', 'users_options_index')->algorithm('gin'); // Laravel 7.10.3+
+    //$table->index([DB::raw('("options"->\'role_ids\')')], 'users_options_index', 'gin');  // Laravel < 7.10.3
 });
 ```
 
