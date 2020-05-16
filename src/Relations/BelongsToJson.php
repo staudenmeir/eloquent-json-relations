@@ -49,7 +49,7 @@ class BelongsToJson extends BelongsTo
         $keys = [];
 
         foreach ($models as $model) {
-            $keys = array_merge($keys, (array) $model->{$this->foreignKey});
+            $keys = array_merge($keys, $this->getForeignKeys($model));
         }
 
         sort($keys);
@@ -72,7 +72,7 @@ class BelongsToJson extends BelongsTo
         foreach ($models as $model) {
             $matches = [];
 
-            foreach ((array) $model->{$this->foreignKey} as $id) {
+            foreach ($this->getForeignKeys($model) as $id) {
                 if (isset($dictionary[$id])) {
                     $matches[] = $dictionary[$id];
                 }
@@ -191,10 +191,17 @@ class BelongsToJson extends BelongsTo
     /**
      * Get the foreign key values.
      *
+     * @param \Illuminate\Database\Eloquent\Model|null $model
      * @return array
      */
-    public function getForeignKeys()
+    public function getForeignKeys(Model $model = null)
     {
-        return (array) $this->child->{$this->foreignKey};
+        $model = $model ?: $this->child;
+
+        $keys = (array) $model->{$this->foreignKey};
+
+        return array_filter($keys, function ($key) {
+            return $key !== null;
+        });
     }
 }
