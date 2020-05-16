@@ -155,7 +155,14 @@ class BelongsToJsonTest extends TestCase
 
     public function testAttachWithObjects()
     {
-        $user = (new User)->roles2()->attach([
+        $user = (new User);
+        $user->options = [
+            'roles' => [
+                ['foo' => 'bar'],
+            ],
+        ];
+
+        $user->roles2()->attach([
             1 => ['role' => ['active' => true]],
             2 => ['role' => ['active' => false]],
         ]);
@@ -171,6 +178,7 @@ class BelongsToJsonTest extends TestCase
         $roles = $user->load('roles2')->roles2->sortBy('id')->values();
         $this->assertEquals([1, 2, 3], $roles->pluck('id')->all());
         $this->assertEquals([true, true, false], $roles->pluck('pivot.role.active')->all());
+        $this->assertEquals(['foo' => 'bar'], $user->options['roles'][3]);
     }
 
     public function testAttachWithObjectsInColumn()
@@ -198,10 +206,12 @@ class BelongsToJsonTest extends TestCase
 
         $this->assertEquals([1], $user->roles2->pluck('id')->all());
         $this->assertEquals([true], $user->roles2->pluck('pivot.role.active')->all());
+        $this->assertEquals(['foo' => 'bar'], $user->options['roles'][1]);
 
         $user->roles2()->detach();
 
         $this->assertEquals([], $user->roles2()->pluck('id')->all());
+        $this->assertEquals(['foo' => 'bar'], $user->options['roles'][0]);
     }
 
     public function testSync()
@@ -220,6 +230,7 @@ class BelongsToJsonTest extends TestCase
 
         $this->assertEquals([2, 3], $user->roles2->pluck('id')->all());
         $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
+        $this->assertEquals(['foo' => 'bar'], $user->options['roles'][2]);
     }
 
     public function testToggle()
@@ -238,21 +249,13 @@ class BelongsToJsonTest extends TestCase
 
         $this->assertEquals([1, 3], $user->roles2->pluck('id')->all());
         $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
+        $this->assertEquals(['foo' => 'bar'], $user->options['roles'][2]);
     }
 
-    public function testForeignKeysDoNotIncludeNullValues()
+    public function testForeignKeys()
     {
-        $keys = User::first()->postsOnly()->getForeignKeys();
+        $keys = User::first()->roles()->getForeignKeys();
 
         $this->assertEquals([1, 2], $keys);
-    }
-
-    public function testForeignKeysDoNotIncludeNullValuesWhenEagerLoading()
-    {
-        DB::enableQueryLog();
-
-        User::with('postsOnly')->get();
-
-        $this->assertStringEndsWith('(1, 2)', DB::getQueryLog()[1]['query']);
     }
 }

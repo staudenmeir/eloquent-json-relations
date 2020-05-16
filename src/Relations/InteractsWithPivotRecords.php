@@ -17,11 +17,11 @@ trait InteractsWithPivotRecords
      */
     public function attach($ids)
     {
-        $records = $this->decodeRecords();
+        [$records, $others] = $this->decodeRecords();
 
         $records = $this->formatIds($this->parseIds($ids)) + $records;
 
-        $this->child->{$this->path} = $this->encodeRecords($records);
+        $this->child->{$this->path} = $this->encodeRecords($records, $others);
 
         return $this->child;
     }
@@ -34,18 +34,18 @@ trait InteractsWithPivotRecords
      */
     public function detach($ids = null)
     {
+        [$records, $others] = $this->decodeRecords();
+
         if (!is_null($ids)) {
             $records = array_diff_key(
-                $this->decodeRecords(),
+                $records,
                 array_flip($this->parseIds($ids))
             );
-
-            $records = $this->encodeRecords($records);
         } else {
             $records = [];
         }
 
-        $this->child->{$this->path} = $records;
+        $this->child->{$this->path} = $this->encodeRecords($records, $others);
 
         return $this->child;
     }
@@ -58,9 +58,11 @@ trait InteractsWithPivotRecords
      */
     public function sync($ids)
     {
+        [, $others] = $this->decodeRecords();
+
         $records = $this->formatIds($this->parseIds($ids));
 
-        $this->child->{$this->path} = $this->encodeRecords($records);
+        $this->child->{$this->path} = $this->encodeRecords($records, $others);
 
         return $this->child;
     }
@@ -73,16 +75,16 @@ trait InteractsWithPivotRecords
      */
     public function toggle($ids)
     {
-        $ids = $this->formatIds($this->parseIds($ids));
+        [$records, $others] = $this->decodeRecords();
 
-        $records = $this->decodeRecords();
+        $ids = $this->formatIds($this->parseIds($ids));
 
         $records = array_diff_key(
             $ids + $records,
             array_intersect_key($records, $ids)
         );
 
-        $this->child->{$this->path} = $this->encodeRecords($records);
+        $this->child->{$this->path} = $this->encodeRecords($records, $others);
 
         return $this->child;
     }
@@ -94,25 +96,38 @@ trait InteractsWithPivotRecords
      */
     protected function decodeRecords()
     {
+        $records = [];
+        $others = [];
+
         $key = str_replace('->', '.', $this->key);
 
-        return collect((array) $this->child->{$this->path})
-            ->mapWithKeys(function ($record) use ($key) {
-                if (!is_array($record)) {
-                    return [$record => []];
-                }
+        foreach ((array) $this->child->{$this->path} as $record) {
+            if (!is_array($record)) {
+                $records[$record] = [];
 
-                return [Arr::get($record, $key) => $record];
-            })->all();
+                continue;
+            }
+
+            $foreignKey = Arr::get($record, $key);
+
+            if (!is_null($foreignKey)) {
+                $records[$foreignKey] = $record;
+            } else {
+                $others[] = $record;
+            }
+        }
+
+        return [$records, $others];
     }
 
     /**
      * Encode the records for the child model.
      *
      * @param array $records
+     * @param array $others
      * @return array
      */
-    protected function encodeRecords(array $records)
+    protected function encodeRecords(array $records, array $others)
     {
         if (!$this->key) {
             return array_keys($records);
@@ -124,7 +139,10 @@ trait InteractsWithPivotRecords
             Arr::set($attributes, $key, $id);
         }
 
-        return array_values($records);
+        return array_merge(
+            array_values($records),
+            $others
+        );
     }
 
     /**

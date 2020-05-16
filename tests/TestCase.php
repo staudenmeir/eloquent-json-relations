@@ -107,13 +107,7 @@ abstract class TestCase extends Base
                 'roles' => [
                     ['role' => ['id' => 1, 'active' => true]],
                     ['role' => ['id' => 2, 'active' => false]],
-                ],
-                'posts_and_comments' => [
-                    ['post' => ['id' => 1, 'active' => true]],
-                    ['post' => ['id' => 2, 'active' => true]],
-                    ['comment' => ['id' => 3, 'active' => false]],
-                    ['comment' => ['id' => 4, 'active' => false]],
-                    ['comment' => ['id' => 5, 'active' => false]],
+                    ['foo' => 'bar'],
                 ],
             ],
         ]);
