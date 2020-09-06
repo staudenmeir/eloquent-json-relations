@@ -3,6 +3,7 @@
 namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Staudenmeir\EloquentJsonRelations\Casts\Uuid;
 
 class Category extends Model
 {
@@ -13,7 +14,7 @@ class Category extends Model
     protected $keyType = 'string';
 
     protected $casts = [
-        'id' => 'uuid',
+        'id' => Uuid::class,
         'options' => 'json'
     ];
 

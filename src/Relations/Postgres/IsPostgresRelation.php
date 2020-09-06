@@ -5,6 +5,7 @@ namespace Staudenmeir\EloquentJsonRelations\Relations\Postgres;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
+use Staudenmeir\EloquentJsonRelations\Casts\Uuid;
 
 trait IsPostgresRelation
 {
@@ -25,7 +26,7 @@ trait IsPostgresRelation
             $sql = '('.$sql.')::int';
         }
 
-        if ($model->hasCast($key) && $model->getCasts()[$key] === 'uuid') {
+        if ($model->hasCast($key) && $model->getCasts()[$key] === Uuid::class) {
             $sql = '('.$sql.')::uuid';
         }
 
