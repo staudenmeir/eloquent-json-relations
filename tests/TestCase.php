@@ -163,17 +163,4 @@ abstract class TestCase extends Base
 
         Model::reguard();
     }
-
-    protected function withInsertingIdsAllowed(\Closure $callback)
-    {
-        $isSqlSrv = DB::connection()->getDriverName() === 'sqlsrv';
-
-        if ($isSqlSrv) {
-            DB::unprepared('SET IDENTITY_INSERT locales OFF');
-            $callback();
-            DB::unprepared('SET IDENTITY_INSERT locales ON');
-        } else {
-            $callback;
-        }
-    }
 }
