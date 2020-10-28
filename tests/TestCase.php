@@ -47,7 +47,7 @@ abstract class TestCase extends Base
         });
 
         DB::schema()->create('locales', function (Blueprint $table) {
-            $table->increments('id');
+            $table->bigIncrements('id');
         });
 
         DB::schema()->create('users', function (Blueprint $table) {
@@ -98,7 +98,7 @@ abstract class TestCase extends Base
         Role::create();
 
         Locale::create();
-        Locale::create();
+        Locale::create(['id' => 223372036854775807]); // With big integer ID
 
         User::create([
             'options' => [
@@ -114,6 +114,7 @@ abstract class TestCase extends Base
         User::create(['options' => ['team_id' => 1]]);
         User::create([
             'options' => [
+                'locale_id' => 223372036854775807,
                 'role_ids' => [2, 3],
                 'roles' => [
                     ['role' => ['id' => 2, 'active' => true]],

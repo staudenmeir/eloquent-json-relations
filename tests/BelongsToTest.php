@@ -32,7 +32,7 @@ class BelongsToTest extends TestCase
     {
         $users = User::has('locale')->get();
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([1, 3], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()

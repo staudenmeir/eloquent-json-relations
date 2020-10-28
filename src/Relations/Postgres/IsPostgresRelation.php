@@ -23,7 +23,7 @@ trait IsPostgresRelation
         $sql = $query->getQuery()->getGrammar()->wrap($column);
 
         if ($model->getKeyName() === $key && in_array($model->getKeyType(), ['int', 'integer'])) {
-            $sql = '('.$sql.')::int';
+            $sql = '('.$sql.')::bigint';
         }
 
         if ($model->hasCast($key) && $model->getCasts()[$key] === Uuid::class) {

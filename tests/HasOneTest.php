@@ -33,7 +33,7 @@ class HasOneTest extends TestCase
     {
         $locales = Locale::has('user')->get();
 
-        $this->assertEquals([1], $locales->pluck('id')->all());
+        $this->assertEquals([1, 223372036854775807], $locales->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()
