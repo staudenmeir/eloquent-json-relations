@@ -101,9 +101,9 @@ abstract class TestCase extends Base
 
         // With big integer ID
         if (DB::connection()->getDriverName() === 'sqlsrv') {
-            DB::unprepared('SET IDENTITY_INSERT locales OFF');
-            Locale::create(['id' => 223372036854775807]);
             DB::unprepared('SET IDENTITY_INSERT locales ON');
+            Locale::create(['id' => 223372036854775807]);
+            DB::unprepared('SET IDENTITY_INSERT locales OFF');
         } else {
             Locale::create(['id' => 223372036854775807]);
         }
