@@ -98,7 +98,15 @@ abstract class TestCase extends Base
         Role::create();
 
         Locale::create();
-        Locale::create(['id' => 223372036854775807]); // With big integer ID
+
+        // With big integer ID
+        if (DB::connection()->getDriverName() === 'sqlsrv') {
+            DB::unprepared('SET IDENTITY_INSERT locales OFF');
+            Locale::create(['id' => 223372036854775807]);
+            DB::unprepared('SET IDENTITY_INSERT locales ON');
+        } else {
+            Locale::create(['id' => 223372036854775807]);
+        }
 
         User::create([
             'options' => [
@@ -154,5 +162,18 @@ abstract class TestCase extends Base
         Product::create(['options' => []]);
 
         Model::reguard();
+    }
+
+    protected function withInsertingIdsAllowed(\Closure $callback)
+    {
+        $isSqlSrv = DB::connection()->getDriverName() === 'sqlsrv';
+
+        if ($isSqlSrv) {
+            DB::unprepared('SET IDENTITY_INSERT locales OFF');
+            $callback();
+            DB::unprepared('SET IDENTITY_INSERT locales ON');
+        } else {
+            $callback;
+        }
     }
 }
