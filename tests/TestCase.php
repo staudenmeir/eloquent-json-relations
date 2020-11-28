@@ -47,7 +47,7 @@ abstract class TestCase extends Base
         });
 
         DB::schema()->create('locales', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
         });
 
         DB::schema()->create('users', function (Blueprint $table) {
@@ -98,15 +98,7 @@ abstract class TestCase extends Base
         Role::create();
 
         Locale::create();
-
-        // With big integer ID
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
-            DB::unprepared('SET IDENTITY_INSERT locales ON');
-            Locale::create(['id' => 223372036854775807]);
-            DB::unprepared('SET IDENTITY_INSERT locales OFF');
-        } else {
-            Locale::create(['id' => 223372036854775807]);
-        }
+        Locale::create();
 
         User::create([
             'options' => [
@@ -122,7 +114,6 @@ abstract class TestCase extends Base
         User::create(['options' => ['team_id' => 1]]);
         User::create([
             'options' => [
-                'locale_id' => 223372036854775807,
                 'role_ids' => [2, 3],
                 'roles' => [
                     ['role' => ['id' => 2, 'active' => true]],
