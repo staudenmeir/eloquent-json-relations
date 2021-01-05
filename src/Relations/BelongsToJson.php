@@ -34,7 +34,9 @@ class BelongsToJson extends BelongsTo
         if (static::$constraints) {
             $table = $this->related->getTable();
 
-            $this->query->whereIn($table.'.'.$this->ownerKey, $this->getForeignKeys());
+            $column =  !is_subclass_of($this->related, \Jenssegers\Mongodb\Eloquent\Model::class) ? $table . '.' . $this->ownerKey : $this->ownerKey;
+
+            $this->query->whereIn($column, $this->getForeignKeys());
         }
     }
 
