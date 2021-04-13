@@ -42,6 +42,21 @@ trait HasJsonRelationships
     }
 
     /**
+     * Get an attribute from the $attributes array.
+     *
+     * @param  string  $key
+     * @return mixed
+     */
+    public function getAttributeFromArray($key)
+    {
+        if (Str::contains($key, '->')) {
+            return $this->getAttributeValue($key);
+        }
+
+        return parent::getAttributeFromArray($key);
+    }
+
+    /**
      * Get a plain attribute (not a relationship).
      *
      * @param string $key
