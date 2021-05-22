@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection as BaseCollection;
 
 class HasManyJson extends HasMany
 {
@@ -213,7 +214,7 @@ class HasManyJson extends HasMany
     {
         $key = str_replace('->', '.', $this->key);
 
-        $record = collect($model->{$this->getPathName()})
+        $record = (new BaseCollection($model->{$this->getPathName()}))
             ->filter(function ($value) use ($key, $parent) {
                 return Arr::get($value, $key) == $parent->{$this->localKey};
             })->first();

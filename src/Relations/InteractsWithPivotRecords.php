@@ -176,7 +176,7 @@ trait InteractsWithPivotRecords
      */
     protected function formatIds(array $ids)
     {
-        return collect($ids)->mapWithKeys(function ($attributes, $id) {
+        return (new BaseCollection($ids))->mapWithKeys(function ($attributes, $id) {
             if (!is_array($attributes)) {
                 [$id, $attributes] = [$attributes, []];
             }

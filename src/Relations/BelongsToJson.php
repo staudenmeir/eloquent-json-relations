@@ -2,14 +2,12 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Relations;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Enumerable;
-use Traversable;
+use Illuminate\Support\Collection as BaseCollection;
 
 class BelongsToJson extends BelongsTo
 {
@@ -183,7 +181,7 @@ class BelongsToJson extends BelongsTo
     {
         $key = str_replace('->', '.', $this->key);
 
-        $record = collect($parent->{$this->path})
+        $record = (new BaseCollection($parent->{$this->path}))
             ->filter(function ($value) use ($key, $model) {
                 return Arr::get($value, $key) == $model->{$this->ownerKey};
             })->first();
@@ -201,31 +199,10 @@ class BelongsToJson extends BelongsTo
     {
         $model = $model ?: $this->child;
 
-        $keys = $this->getArrayableItems($model->{$this->foreignKey});
-
-        return array_filter($keys, function ($key) {
-            return $key !== null;
-        });
-    }
-
-    /**
-     * Results array of items from Collection or Arrayable.
-     *
-     * @param  mixed  $items
-     * @return array
-     */
-    protected function getArrayableItems($items)
-    {
-        if (is_array($items)) {
-            return $items;
-        } elseif ($items instanceof Enumerable) {
-            return $items->all();
-        } elseif ($items instanceof Arrayable) {
-            return $items->toArray();
-        } elseif ($items instanceof Traversable) {
-            return iterator_to_array($items);
-        }
-
-        return (array) $items;
+        return (new BaseCollection($model->{$this->foreignKey}))->filter(
+            function ($key) {
+                return $key !== null;
+            }
+        )->all();
     }
 }
