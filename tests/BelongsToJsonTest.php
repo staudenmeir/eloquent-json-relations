@@ -266,10 +266,15 @@ class BelongsToJsonTest extends TestCase
 
     public function foreignKeysDataProvider()
     {
-        return [
+        $users = [
             [User::class],
-            [UserAsCollection::class],
-            [UserAsArrayObject::class],
         ];
+
+        if (class_exists('Illuminate\Database\Eloquent\Casts\AsArrayObject')) {
+            $users[] = [UserAsArrayObject::class];
+            $users[] = [UserAsCollection::class];
+        }
+
+        return $users;
     }
 }
