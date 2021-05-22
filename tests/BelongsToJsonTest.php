@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 use Tests\Models\Post;
 use Tests\Models\Role;
 use Tests\Models\User;
+use Tests\Models\UserAsArrayObject;
+use Tests\Models\UserAsCollection;
 
 class BelongsToJsonTest extends TestCase
 {
@@ -252,10 +254,27 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][2]);
     }
 
-    public function testForeignKeys()
+    /**
+     * @dataProvider foreignKeysDataProvider
+     */
+    public function testForeignKeys($user)
     {
-        $keys = User::first()->roles()->getForeignKeys();
+        $keys = $user::first()->roles()->getForeignKeys();
 
         $this->assertEquals([1, 2], $keys);
+    }
+
+    public function foreignKeysDataProvider()
+    {
+        $users = [
+            [User::class],
+        ];
+
+        if (class_exists('Illuminate\Database\Eloquent\Casts\AsArrayObject')) {
+            $users[] = [UserAsArrayObject::class];
+            $users[] = [UserAsCollection::class];
+        }
+
+        return $users;
     }
 }
