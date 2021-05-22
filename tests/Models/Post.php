@@ -5,7 +5,7 @@ namespace Tests\Models;
 class Post extends Model
 {
     protected $casts = [
-        'options' => 'json'
+        'options' => 'json',
     ];
 
     public function comment()

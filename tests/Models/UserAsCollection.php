@@ -9,7 +9,7 @@ class UserAsCollection extends Model
     protected $table = 'users';
 
     protected $casts = [
-        'options' => AsCollection::class
+        'options' => AsCollection::class,
     ];
 
     public function roles()

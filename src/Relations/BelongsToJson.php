@@ -11,7 +11,8 @@ use Illuminate\Support\Collection as BaseCollection;
 
 class BelongsToJson extends BelongsTo
 {
-    use InteractsWithPivotRecords, IsJsonRelation;
+    use InteractsWithPivotRecords;
+    use IsJsonRelation;
 
     /**
      * Get the results of the relationship.

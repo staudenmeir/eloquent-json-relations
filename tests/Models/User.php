@@ -5,7 +5,7 @@ namespace Tests\Models;
 class User extends Model
 {
     protected $casts = [
-        'options' => 'json'
+        'options' => 'json',
     ];
 
     public function locale()

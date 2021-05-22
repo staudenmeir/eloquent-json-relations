@@ -15,7 +15,7 @@ class Category extends Model
 
     protected $casts = [
         'id' => Uuid::class,
-        'options' => 'json'
+        'options' => 'json',
     ];
 
     public function subProduct()

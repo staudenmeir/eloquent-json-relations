@@ -30,7 +30,7 @@ class MorphToTest extends TestCase
 
     public function testAssociate()
     {
-        $comment = (new Comment)->commentable()->associate(User::find(1));
+        $comment = (new Comment())->commentable()->associate(User::find(1));
 
         $this->assertEquals(1, $comment->commentable->id);
     }

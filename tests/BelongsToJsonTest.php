@@ -46,7 +46,7 @@ class BelongsToJsonTest extends TestCase
     {
         DB::enableQueryLog();
 
-        $roles = (new User)->roles;
+        $roles = (new User())->roles;
 
         $this->assertInstanceOf(Collection::class, $roles);
         $this->assertEmpty(DB::getQueryLog());
@@ -146,7 +146,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testAttach()
     {
-        $user = (new User)->roles()->attach([1, 2]);
+        $user = (new User())->roles()->attach([1, 2]);
 
         $this->assertEquals([1, 2], $user->roles()->pluck('id')->all());
 
@@ -157,7 +157,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testAttachWithObjects()
     {
-        $user = (new User);
+        $user = new User();
         $user->options = [
             'roles' => [
                 ['foo' => 'bar'],
@@ -185,7 +185,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testAttachWithObjectsInColumn()
     {
-        $user = (new User)->roles3()->attach([1 => ['active' => true], 2 => ['active' => false]]);
+        $user = (new User())->roles3()->attach([1 => ['active' => true], 2 => ['active' => false]]);
 
         $this->assertEquals([1, 2], $user->roles3->pluck('id')->all());
         $this->assertEquals([true, false], $user->roles3->pluck('pivot.active')->all());

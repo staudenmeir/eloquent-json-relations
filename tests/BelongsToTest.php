@@ -44,7 +44,7 @@ class BelongsToTest extends TestCase
 
     public function testAssociate()
     {
-        $user = (new User)->locale()->associate(1);
+        $user = (new User())->locale()->associate(1);
 
         $this->assertEquals(1, $user->locale->id);
     }

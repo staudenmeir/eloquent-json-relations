@@ -9,7 +9,7 @@ class UserAsArrayObject extends Model
     protected $table = 'users';
 
     protected $casts = [
-        'options' => AsArrayObject::class
+        'options' => AsArrayObject::class,
     ];
 
     public function roles()
