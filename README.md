@@ -21,7 +21,7 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
  
 ## Installation
 
-    composer require staudenmeir/eloquent-json-relations:"^1.1"
+    composer require "staudenmeir/eloquent-json-relations:^1.1"
 
 ## Usage
 
