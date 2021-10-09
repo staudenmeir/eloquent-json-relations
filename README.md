@@ -23,6 +23,10 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
 
     composer require "staudenmeir/eloquent-json-relations:^1.1"
 
+Use this command if you are in PowerShell on Windows (e.g. in VS Code):
+
+    composer require "staudenmeir/eloquent-json-relations:^^^^1.1"
+
 ## Usage
 
 - [One-To-Many Relationships](#one-to-many-relationships)
