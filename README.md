@@ -209,7 +209,7 @@ Use this migration when the array of IDs/objects is the column itself (e.g. `use
 Schema::create('users', function (Blueprint $table) {
     $table->bigIncrements('id');
     $table->jsonb('role_ids');
-    $table->index('role_ids', null, 'gin');
+    $table->index('role_ids')->algorithm('gin');
 });
 ```
 
