@@ -13,7 +13,6 @@
         "illuminate/database": "^8.0"
     },
     "require-dev": {
-        "laravel/homestead": "^11.0|^12.0",
         "phpunit/phpunit": "^9.3",
         "scrutinizer/ocular": "^1.8"
     },
