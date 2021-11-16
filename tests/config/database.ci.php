@@ -24,7 +24,7 @@ return [
         'password' => 'password',
         'charset' => 'utf8',
         'prefix' => '',
-        'schema' => 'public',
+        'search_path' => 'public',
         'sslmode' => 'prefer',
     ],
     'sqlite' => [
