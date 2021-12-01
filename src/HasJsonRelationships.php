@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
+use Staudenmeir\EloquentJsonRelations\Relations\HasManyThroughJson;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\BelongsTo as BelongsToPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasMany as HasManyPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasManyThrough as HasManyThroughPostgres;
@@ -281,6 +282,53 @@ trait HasJsonRelationships
             $instance->getTable().'.'.$foreignKey,
             $localKey
         );
+    }
+
+    /**
+     * Define has-many-through JSON relationship
+     *
+     * @param \Illuminate\Database\Eloquent\Model $related
+     * @param \Illuminate\Database\Eloquent\Model $through
+     * @param string $firstKey
+     * @param string $secondKey
+     * @param string $localKey
+     * @param string $secondLocalKey
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyThroughJson
+     */
+    public function hasManyThroughJson($related, $through, $firstKey = null, $secondKey = null, $localKey = null, $secondLocalKey = null)
+    {
+        $through = new $through;
+        $firstKey = $firstKey ?: $this->getForeignKey();
+        $secondKey = $secondKey ?: $through->getForeignKey();
+
+        $query = $this->newRelatedInstance($related)->newQuery();
+        
+        return $this->newHasManyThroughJson(
+            $query,
+            $this,
+            $through,
+            $firstKey,
+            $secondKey,
+            $localKey ?: $this->getKeyName(),
+            $secondLocalKey ?: $through->getKeyName()
+        );
+    }
+
+    /**
+     * Instantiate a new hasManyThroughJson relationship.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $farParent
+     * @param \Illuminate\Database\Eloquent\Model $through
+     * @param string $firstKey
+     * @param string $secondKey
+     * @param string $localKey
+     * @param string $secondLocalKey
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyThroughJson
+     */
+    protected function newHasManyThroughJson(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
+    {
+        return new HasManyThroughJson($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
     }
 
     /**
