@@ -11,14 +11,14 @@ It also provides [many-to-many](#many-to-many-relationships) relationships with 
 
 ## Compatibility
 
- Database         | Laravel
-:-----------------|:----------
- MySQL 5.7+       | 5.5.29+
- MariaDB 10.2+    | 5.8+
- PostgreSQL 9.3+  | 5.5.29+
- [SQLite 3.18+](https://www.sqlite.org/json1.html) | 5.6.35+
- SQL Server 2016+ | 5.6.25+
- 
+| Database                                          | Laravel |
+|:--------------------------------------------------|:--------|
+| MySQL 5.7+                                        | 5.5.29+ |
+| MariaDB 10.2+                                     | 5.8+    |
+| PostgreSQL 9.3+                                   | 5.5.29+ |
+| [SQLite 3.18+](https://www.sqlite.org/json1.html) | 5.6.35+ |
+| SQL Server 2016+                                  | 5.6.25+ |
+
 ## Installation
 
     composer require "staudenmeir/eloquent-json-relations:^1.1"
@@ -51,7 +51,7 @@ class User extends Model
 
     public function locale()
     {
-        return $this->belongsTo('App\Locale', 'options->locale_id');
+        return $this->belongsTo(Locale::class, 'options->locale_id');
     }
 }
 
@@ -61,7 +61,7 @@ class Locale extends Model
 
     public function users()
     {
-        return $this->hasMany('App\User', 'options->locale_id');
+        return $this->hasMany(User::class, 'options->locale_id');
     }
 }
 ```
@@ -79,7 +79,7 @@ Schema::create('users', function (Blueprint $table) {
     $table->bigIncrements('id');
     $table->json('options');
     $locale_id = DB::connection()->getQueryGrammar()->wrap('options->locale_id');
-    $table->unsignedInteger('locale_id')->storedAs($locale_id);
+    $table->unsignedBigInteger('locale_id')->storedAs($locale_id);
     $table->foreign('locale_id')->references('id')->on('locales');
 });
 ```
@@ -122,7 +122,7 @@ class User extends Model
     
     public function roles()
     {
-        return $this->belongsToJson('App\Role', 'options->role_ids');
+        return $this->belongsToJson(Role::class, 'options->role_ids');
     }
 }
 
@@ -132,7 +132,7 @@ class Role extends Model
 
     public function users()
     {
-       return $this->hasManyJson('App\User', 'options->role_ids');
+       return $this->hasManyJson(User::class, 'options->role_ids');
     }
 }
 ```
@@ -165,7 +165,7 @@ class User extends Model
     
     public function roles()
     {
-        return $this->belongsToJson('App\Role', 'options->roles[]->role_id');
+        return $this->belongsToJson(Role::class, 'options->roles[]->role_id');
     }
 }
 
@@ -175,7 +175,7 @@ class Role extends Model
 
     public function users()
     {
-       return $this->hasManyJson('App\User', 'options->roles[]->role_id');
+       return $this->hasManyJson(User::class, 'options->roles[]->role_id');
     }
 }
 ```

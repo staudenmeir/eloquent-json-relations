@@ -12,13 +12,13 @@ jobs:
         database: [mysql, pgsql, sqlite, sqlsrv]
         release: [stable, lowest]
         include:
-          - php: 8.0
+          - php: 8.1
             release: stable
             coverage: xdebug
 
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:latest
         env:
           MYSQL_ROOT_PASSWORD: password
           MYSQL_DATABASE: test
