@@ -99,7 +99,7 @@ trait InteractsWithPivotRecords
         $records = [];
         $others = [];
 
-        $key = str_replace('->', '.', $this->key);
+        $key = $this->key ? str_replace('->', '.', $this->key) : $this->key;
 
         foreach ((array) $this->child->{$this->path} as $record) {
             if (!is_array($record)) {
