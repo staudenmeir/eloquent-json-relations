@@ -45,23 +45,6 @@ trait IsJsonRelation
     }
 
     /**
-     * Execute the query as a "select" statement.
-     *
-     * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function get($columns = ['*'])
-    {
-        $models = parent::get($columns);
-
-        if ($this->key && !empty($this->parent->getAttributes())) {
-            $this->hydratePivotRelation($models, $this->parent);
-        }
-
-        return $models;
-    }
-
-    /**
      * Hydrate the pivot relationship on the models.
      *
      * @param \Illuminate\Database\Eloquent\Collection $models

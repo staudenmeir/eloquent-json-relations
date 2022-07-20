@@ -27,6 +27,23 @@ class BelongsToJson extends BelongsTo
     }
 
     /**
+     * Execute the query as a "select" statement.
+     *
+     * @param array $columns
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function get($columns = ['*'])
+    {
+        $models = parent::get($columns);
+
+        if ($this->key && !empty($this->parent->{$this->path})) {
+            $this->hydratePivotRelation($models, $this->parent);
+        }
+
+        return $models;
+    }
+
+    /**
      * Set the base constraints on the relation query.
      *
      * @return void
