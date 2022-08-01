@@ -2,6 +2,8 @@
 
 namespace Tests\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Staudenmeir\EloquentJsonRelations\Casts\Uuid;
 
@@ -18,12 +20,12 @@ class Category extends Model
         'options' => 'json',
     ];
 
-    public function subProduct()
+    public function subProduct(): HasOneThrough
     {
         return $this->hasOneThrough(Product::class, self::class, 'options->parent_id', 'options->category_id');
     }
 
-    public function subProducts()
+    public function subProducts(): HasManyThrough
     {
         return $this->hasManyThrough(Product::class, self::class, 'options->parent_id', 'options->category_id');
     }

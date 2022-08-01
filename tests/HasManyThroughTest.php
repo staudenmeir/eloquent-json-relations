@@ -10,37 +10,37 @@ class HasManyThroughTest extends TestCase
 {
     public function testLazyLoading()
     {
-        $posts = Locale::first()->posts;
+        $posts = Locale::find(11)->posts;
 
-        $this->assertEquals([1], $posts->pluck('id')->all());
+        $this->assertEquals([31], $posts->pluck('id')->all());
     }
 
     public function testEagerLoading()
     {
         $locales = Locale::with('posts')->get();
 
-        $this->assertEquals([1], $locales[0]->posts->pluck('id')->all());
+        $this->assertEquals([31], $locales[0]->posts->pluck('id')->all());
     }
 
     public function testLazyEagerLoading()
     {
         $locales = Locale::all()->load('posts');
 
-        $this->assertEquals([1], $locales[0]->posts->pluck('id')->all());
+        $this->assertEquals([31], $locales[0]->posts->pluck('id')->all());
     }
 
     public function testExistenceQuery()
     {
         $locales = Locale::has('posts')->get();
 
-        $this->assertEquals([1], $locales->pluck('id')->all());
+        $this->assertEquals([11], $locales->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()
     {
         $users = User::has('teamMates')->get();
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([21], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForThroughSelfRelation()

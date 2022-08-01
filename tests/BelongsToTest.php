@@ -11,42 +11,42 @@ class BelongsToTest extends TestCase
     {
         $locale = User::first()->locale;
 
-        $this->assertEquals(1, $locale->id);
+        $this->assertEquals(11, $locale->id);
     }
 
     public function testEagerLoading()
     {
         $users = User::with('locale')->get();
 
-        $this->assertEquals(1, $users[0]->locale->id);
+        $this->assertEquals(11, $users[0]->locale->id);
     }
 
     public function testLazyEagerLoading()
     {
         $users = User::all()->load('locale');
 
-        $this->assertEquals(1, $users[0]->locale->id);
+        $this->assertEquals(11, $users[0]->locale->id);
     }
 
     public function testExistenceQuery()
     {
         $users = User::has('locale')->get();
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([21], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()
     {
         $comments = Comment::has('parent')->get();
 
-        $this->assertEquals([2], $comments->pluck('id')->all());
+        $this->assertEquals([42], $comments->pluck('id')->all());
     }
 
     public function testAssociate()
     {
-        $user = (new User())->locale()->associate(1);
+        $user = (new User())->locale()->associate(11);
 
-        $this->assertEquals(1, $user->locale->id);
+        $this->assertEquals(11, $user->locale->id);
     }
 
     public function testDissociate()

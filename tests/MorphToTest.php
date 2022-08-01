@@ -9,35 +9,35 @@ class MorphToTest extends TestCase
 {
     public function testLazyLoading()
     {
-        $commentable = Comment::first()->commentable;
+        $commentable = Comment::find(41)->commentable;
 
-        $this->assertEquals(1, $commentable->id);
+        $this->assertEquals(31, $commentable->id);
     }
 
     public function testEagerLoading()
     {
         $comments = Comment::with('commentable')->get();
 
-        $this->assertEquals(1, $comments[0]->commentable->id);
+        $this->assertEquals(31, $comments[0]->commentable->id);
     }
 
     public function testLazyEagerLoading()
     {
         $comments = Comment::all()->load('commentable');
 
-        $this->assertEquals(1, $comments[0]->commentable->id);
+        $this->assertEquals(31, $comments[0]->commentable->id);
     }
 
     public function testAssociate()
     {
-        $comment = (new Comment())->commentable()->associate(User::find(1));
+        $comment = (new Comment())->commentable()->associate(User::find(21));
 
-        $this->assertEquals(1, $comment->commentable->id);
+        $this->assertEquals(21, $comment->commentable->id);
     }
 
     public function testDissociate()
     {
-        $comment = Comment::first()->commentable()->dissociate();
+        $comment = Comment::find(41)->commentable()->dissociate();
 
         $this->assertNull($comment->commentable);
     }

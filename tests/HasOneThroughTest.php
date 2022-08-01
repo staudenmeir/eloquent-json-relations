@@ -10,37 +10,37 @@ class HasOneThroughTest extends TestCase
 {
     public function testLazyLoading()
     {
-        $post = Locale::first()->post;
+        $post = Locale::find(11)->post;
 
-        $this->assertEquals(1, $post->id);
+        $this->assertEquals(31, $post->id);
     }
 
     public function testEagerLoading()
     {
         $locales = Locale::with('post')->get();
 
-        $this->assertEquals(1, $locales[0]->post->id);
+        $this->assertEquals(31, $locales[0]->post->id);
     }
 
     public function testLazyEagerLoading()
     {
         $locales = Locale::all()->load('post');
 
-        $this->assertEquals(1, $locales[0]->post->id);
+        $this->assertEquals(31, $locales[0]->post->id);
     }
 
     public function testExistenceQuery()
     {
         $locales = Locale::has('post')->get();
 
-        $this->assertEquals([1], $locales->pluck('id')->all());
+        $this->assertEquals([11], $locales->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()
     {
         $users = User::has('teamMate')->get();
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([21], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForThroughSelfRelation()

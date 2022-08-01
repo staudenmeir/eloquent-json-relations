@@ -3,6 +3,7 @@
 namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
 class UserAsCollection extends Model
 {
@@ -12,7 +13,7 @@ class UserAsCollection extends Model
         'options' => AsCollection::class,
     ];
 
-    public function roles()
+    public function roles(): BelongsToJson
     {
         return $this->belongsToJson(Role::class, 'options->role_ids');
     }

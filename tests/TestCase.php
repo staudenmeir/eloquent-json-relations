@@ -33,40 +33,35 @@ abstract class TestCase extends Base
         $this->seed();
     }
 
-    /**
-     * Migrate the database.
-     *
-     * @return void
-     */
-    protected function migrate()
+    protected function migrate(): void
     {
         DB::schema()->dropAllTables();
 
         DB::schema()->create('roles', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
         });
 
         DB::schema()->create('locales', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedInteger('id');
         });
 
         DB::schema()->create('users', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedInteger('id');
             $table->json('options');
         });
 
         DB::schema()->create('posts', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedInteger('id');
             $table->json('options');
         });
 
         DB::schema()->create('comments', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedInteger('id');
             $table->json('options');
         });
 
         DB::schema()->create('teams', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedInteger('id');
             $table->json('options');
         });
 
@@ -78,17 +73,12 @@ abstract class TestCase extends Base
         });
 
         DB::schema()->create('products', function (Blueprint $table) {
-            $table->increments('id');
+            $table->unsignedInteger('id');
             $table->json('options');
         });
     }
 
-    /**
-     * Seed the database.
-     *
-     * @return void
-     */
-    protected function seed()
+    protected function seed(): void
     {
         Model::unguard();
 
@@ -97,12 +87,13 @@ abstract class TestCase extends Base
         Role::create();
         Role::create();
 
-        Locale::create();
-        Locale::create();
+        Locale::create(['id' => 11]);
+        Locale::create(['id' => 12]);
 
         User::create([
+            'id' => 21,
             'options' => [
-                'locale_id' => 1,
+                'locale_id' => 11,
                 'role_ids' => [1, 2],
                 'roles' => [
                     ['role' => ['id' => 1, 'active' => true]],
@@ -111,8 +102,9 @@ abstract class TestCase extends Base
                 ],
             ],
         ]);
-        User::create(['options' => ['team_id' => 1]]);
+        User::create(['id' => 22, 'options' => ['team_id' => 51]]);
         User::create([
+            'id' => 23,
             'options' => [
                 'role_ids' => [2, 3],
                 'roles' => [
@@ -123,22 +115,23 @@ abstract class TestCase extends Base
         ]);
 
         Post::create([
+            'id' => 31,
             'options' => [
-                'user_id' => 1,
-                'recommendation_ids' => [2],
+                'user_id' => 21,
+                'recommendation_ids' => [32],
                 'recommendations' => [
-                    ['post_id' => 2],
+                    ['post_id' => 32],
                 ],
             ],
         ]);
-        Post::create(['options' => ['user_id' => 2]]);
+        Post::create(['id' => 32, 'options' => ['user_id' => 22]]);
 
-        Comment::create(['options' => ['commentable_type' => Post::class, 'commentable_id' => 1]]);
-        Comment::create(['options' => ['parent_id' => 1]]);
-        Comment::create(['options' => ['commentable_type' => User::class, 'commentable_id' => 2]]);
+        Comment::create(['id' => 41, 'options' => ['commentable_type' => Post::class, 'commentable_id' => 31]]);
+        Comment::create(['id' => 42, 'options' => ['parent_id' => 41]]);
+        Comment::create(['id' => 43, 'options' => ['commentable_type' => User::class, 'commentable_id' => 22]]);
 
-        Team::create(['options' => ['owner_id' => 1]]);
-        Team::create(['options' => []]);
+        Team::create(['id' => 51, 'options' => ['owner_id' => 21]]);
+        Team::create(['id' => 52, 'options' => []]);
 
         Category::create([
             'id' => '42bbcb40-399e-4fa0-b50c-20051d43c7eb',
@@ -149,8 +142,8 @@ abstract class TestCase extends Base
             'options' => ['parent_id' => '42bbcb40-399e-4fa0-b50c-20051d43c7eb'],
         ]);
 
-        Product::create(['options' => ['category_id' => 'af5811f8-45ae-43a9-b333-c936890973cb']]);
-        Product::create(['options' => []]);
+        Product::create(['id' => 61, 'options' => ['category_id' => 'af5811f8-45ae-43a9-b333-c936890973cb']]);
+        Product::create(['id' => 62, 'options' => []]);
 
         Model::reguard();
     }

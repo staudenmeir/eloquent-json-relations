@@ -25,14 +25,14 @@ class BelongsToJsonTest extends TestCase
 
     public function testLazyLoading()
     {
-        $roles = User::first()->roles;
+        $roles = User::find(21)->roles;
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
     }
 
     public function testLazyLoadingWithObjects()
     {
-        $roles = User::first()->roles2;
+        $roles = User::find(21)->roles2;
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
         $pivot = $roles[0]->pivot;
@@ -54,7 +54,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testFirst()
     {
-        $role = User::first()->roles2()->first();
+        $role = User::find(21)->roles2()->first();
 
         $this->assertEquals(1, $role->id);
         $this->assertInstanceOf(Pivot::class, $role->pivot);
@@ -110,7 +110,7 @@ class BelongsToJsonTest extends TestCase
     {
         $users = User::has('roles')->get();
 
-        $this->assertEquals([1, 3], $users->pluck('id')->all());
+        $this->assertEquals([21, 23], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryWithObjects()
@@ -123,14 +123,14 @@ class BelongsToJsonTest extends TestCase
             $query->where('id', 1);
         })->get();
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([21], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()
     {
         $posts = Post::has('recommendations')->get();
 
-        $this->assertEquals([1], $posts->pluck('id')->all());
+        $this->assertEquals([31], $posts->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelationWithObjects()
@@ -141,7 +141,7 @@ class BelongsToJsonTest extends TestCase
 
         $posts = Post::has('recommendations2')->get();
 
-        $this->assertEquals([1], $posts->pluck('id')->all());
+        $this->assertEquals([31], $posts->pluck('id')->all());
     }
 
     public function testAttach()
@@ -193,7 +193,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testDetach()
     {
-        $user = User::first()->roles()->detach(2);
+        $user = User::find(21)->roles()->detach(2);
 
         $this->assertEquals([1], $user->roles()->pluck('id')->all());
 
@@ -204,7 +204,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testDetachWithObjects()
     {
-        $user = User::first()->roles2()->detach(Role::find(2));
+        $user = User::find(21)->roles2()->detach(Role::find(2));
 
         $this->assertEquals([1], $user->roles2->pluck('id')->all());
         $this->assertEquals([true], $user->roles2->pluck('pivot.role.active')->all());
@@ -218,14 +218,14 @@ class BelongsToJsonTest extends TestCase
 
     public function testSync()
     {
-        $user = User::first()->roles()->sync(Role::find([2, 3]));
+        $user = User::find(21)->roles()->sync(Role::find([2, 3]));
 
         $this->assertEquals([2, 3], $user->roles()->pluck('id')->all());
     }
 
     public function testSyncWithObjects()
     {
-        $user = User::first()->roles2()->sync([
+        $user = User::find(21)->roles2()->sync([
             2 => ['role' => ['active' => true]],
             3 => ['role' => ['active' => false]],
         ]);
@@ -237,14 +237,14 @@ class BelongsToJsonTest extends TestCase
 
     public function testToggle()
     {
-        $user = User::first()->roles()->toggle([2, 3]);
+        $user = User::find(21)->roles()->toggle([2, 3]);
 
         $this->assertEquals([1, 3], $user->roles()->pluck('id')->all());
     }
 
     public function testToggleWithObjects()
     {
-        $user = User::first()->roles2()->toggle([
+        $user = User::find(21)->roles2()->toggle([
             2,
             3 => ['role' => ['active' => false]],
         ]);
@@ -259,7 +259,7 @@ class BelongsToJsonTest extends TestCase
      */
     public function testForeignKeys($user)
     {
-        $keys = $user::first()->roles()->getForeignKeys();
+        $keys = $user::find(21)->roles()->getForeignKeys();
 
         $this->assertEquals([1, 2], $keys);
     }

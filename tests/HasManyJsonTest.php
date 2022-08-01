@@ -23,9 +23,9 @@ class HasManyJsonTest extends TestCase
 
     public function testLazyLoading()
     {
-        $users = Role::first()->users;
+        $users = Role::find(1)->users;
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([21], $users->pluck('id')->all());
     }
 
     public function testLazyLoadingWithObjects()
@@ -34,9 +34,9 @@ class HasManyJsonTest extends TestCase
             $this->markTestSkipped();
         }
 
-        $users = Role::first()->users2;
+        $users = Role::find(1)->users2;
 
-        $this->assertEquals([1], $users->pluck('id')->all());
+        $this->assertEquals([21], $users->pluck('id')->all());
         $pivot = $users[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
@@ -59,9 +59,9 @@ class HasManyJsonTest extends TestCase
             $this->markTestSkipped();
         }
 
-        $user = Role::first()->users2()->first();
+        $user = Role::find(1)->users2()->first();
 
-        $this->assertEquals(1, $user->id);
+        $this->assertEquals(21, $user->id);
         $this->assertInstanceOf(Pivot::class, $user->pivot);
     }
 
@@ -69,8 +69,8 @@ class HasManyJsonTest extends TestCase
     {
         $roles = Role::with('users')->get();
 
-        $this->assertEquals([1], $roles[0]->users->pluck('id')->all());
-        $this->assertEquals([1, 3], $roles[1]->users->pluck('id')->all());
+        $this->assertEquals([21], $roles[0]->users->pluck('id')->all());
+        $this->assertEquals([21, 23], $roles[1]->users->pluck('id')->all());
     }
 
     public function testEagerLoadingWithObjects()
@@ -81,8 +81,8 @@ class HasManyJsonTest extends TestCase
 
         $roles = Role::with('users2')->get();
 
-        $this->assertEquals([1], $roles[0]->users2->pluck('id')->all());
-        $this->assertEquals([1, 3], $roles[1]->users2->pluck('id')->all());
+        $this->assertEquals([21], $roles[0]->users2->pluck('id')->all());
+        $this->assertEquals([21, 23], $roles[1]->users2->pluck('id')->all());
         $pivot = $roles[0]->users2[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
@@ -94,8 +94,8 @@ class HasManyJsonTest extends TestCase
     {
         $roles = Role::all()->load('users');
 
-        $this->assertEquals([1], $roles[0]->users->pluck('id')->all());
-        $this->assertEquals([1, 3], $roles[1]->users->pluck('id')->all());
+        $this->assertEquals([21], $roles[0]->users->pluck('id')->all());
+        $this->assertEquals([21, 23], $roles[1]->users->pluck('id')->all());
     }
 
     public function testLazyEagerLoadingWithObjects()
@@ -106,8 +106,8 @@ class HasManyJsonTest extends TestCase
 
         $roles = Role::all()->load('users2');
 
-        $this->assertEquals([1], $roles[0]->users2->pluck('id')->all());
-        $this->assertEquals([1, 3], $roles[1]->users2->pluck('id')->all());
+        $this->assertEquals([21], $roles[0]->users2->pluck('id')->all());
+        $this->assertEquals([21, 23], $roles[1]->users2->pluck('id')->all());
         $pivot = $roles[0]->users2[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
@@ -129,7 +129,7 @@ class HasManyJsonTest extends TestCase
         }
 
         $roles = Role::whereHas('users2', function (Builder $query) {
-            $query->where('id', 1);
+            $query->where('id', 21);
         })->get();
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
@@ -139,7 +139,7 @@ class HasManyJsonTest extends TestCase
     {
         $posts = Post::has('recommenders')->get();
 
-        $this->assertEquals([2], $posts->pluck('id')->all());
+        $this->assertEquals([32], $posts->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelationWithObjects()
@@ -150,27 +150,27 @@ class HasManyJsonTest extends TestCase
 
         $posts = Post::has('recommenders2')->get();
 
-        $this->assertEquals([2], $posts->pluck('id')->all());
+        $this->assertEquals([32], $posts->pluck('id')->all());
     }
 
     public function testSave()
     {
-        $user = Role::first()->users()->save(User::find(2));
+        $user = Role::find(1)->users()->save(User::find(22));
 
         $this->assertEquals([1], $user->roles()->pluck('id')->all());
 
-        $user = Role::first()->users()->save(User::find(3));
+        $user = Role::find(1)->users()->save(User::find(23));
 
         $this->assertEquals([1, 2, 3], $user->roles()->pluck('id')->all());
     }
 
     public function testSaveWithObjects()
     {
-        $user = Role::first()->users2()->save(User::find(2));
+        $user = Role::find(1)->users2()->save(User::find(22));
 
         $this->assertEquals([1], $user->roles2()->pluck('id')->all());
 
-        $user = Role::first()->users2()->save(User::find(3));
+        $user = Role::find(1)->users2()->save(User::find(23));
 
         $this->assertEquals([1, 2, 3], $user->roles2()->pluck('id')->all());
     }
