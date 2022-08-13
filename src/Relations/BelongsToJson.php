@@ -217,10 +217,6 @@ class BelongsToJson extends BelongsTo
     {
         $model = $model ?: $this->child;
 
-        return (new BaseCollection($model->{$this->foreignKey}))->filter(
-            function ($key) {
-                return $key !== null;
-            }
-        )->all();
+        return (new BaseCollection($model->{$this->foreignKey}))->filter(fn ($key) => $key !== null)->all();
     }
 }
