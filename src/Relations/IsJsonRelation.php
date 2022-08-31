@@ -56,7 +56,10 @@ trait IsJsonRelation
         foreach ($models as $i => $model) {
             $clone = clone $model;
 
-            $models[$i] = $clone->setRelation('pivot', $this->pivotRelation($clone, $parent));
+            $models[$i] = $clone->setRelation(
+                $this->getPivotAccessor(),
+                $this->pivotRelation($clone, $parent)
+            );
         }
     }
 
@@ -124,5 +127,15 @@ trait IsJsonRelation
         }
 
         throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
+    }
+
+    /**
+     * Get the name of the pivot accessor for this relationship.
+     *
+     * @return string
+     */
+    public function getPivotAccessor(): string
+    {
+        return 'pivot';
     }
 }
