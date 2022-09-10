@@ -171,11 +171,13 @@ class HasManyJson extends HasMany
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        $parentKey = $this->relationExistenceQueryParentKey($query);
+        [$sql, $bindings] = $this->relationExistenceQueryParentKey($query);
+
+        $query->addBinding($bindings);
 
         return $query->select($columns)->whereJsonContains(
             $this->getQualifiedPath(),
-            $query->getQuery()->connection->raw($parentKey)
+            $query->getQuery()->connection->raw($sql)
         );
     }
 
@@ -193,11 +195,13 @@ class HasManyJson extends HasMany
 
         $query->getModel()->setTable($hash);
 
-        $parentKey = $this->relationExistenceQueryParentKey($query);
+        [$sql, $bindings] = $this->relationExistenceQueryParentKey($query);
+
+        $query->addBinding($bindings);
 
         return $query->select($columns)->whereJsonContains(
             $hash.'.'.$this->getPathName(),
-            $query->getQuery()->connection->raw($parentKey)
+            $query->getQuery()->connection->raw($sql)
         );
     }
 
@@ -205,19 +209,25 @@ class HasManyJson extends HasMany
      * Get the parent key for the relationship query.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return string
+     * @return array
      */
-    protected function relationExistenceQueryParentKey(Builder $query)
+    protected function relationExistenceQueryParentKey(Builder $query): array
     {
         $parentKey = $this->getQualifiedParentKeyName();
 
-        if (!$this->key) {
-            return $this->getJsonGrammar($query)->compileJsonArray($parentKey);
+        if ($this->key) {
+            $keys = explode('->', $this->key);
+
+            $sql = $this->getJsonGrammar($query)->compileJsonObject($parentKey, count($keys));
+
+            $bindings = $keys;
+        } else {
+            $sql = $this->getJsonGrammar($query)->compileJsonArray($parentKey);
+
+            $bindings = [];
         }
 
-        $query->addBinding($keys = explode('->', $this->key));
-
-        return $this->getJsonGrammar($query)->compileJsonObject($parentKey, count($keys));
+        return [$sql, $bindings];
     }
 
     /**

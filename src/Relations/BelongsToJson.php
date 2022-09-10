@@ -138,11 +138,13 @@ class BelongsToJson extends BelongsTo
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        $ownerKey = $this->relationExistenceQueryOwnerKey($query, $this->ownerKey);
+        [$sql, $bindings] = $this->relationExistenceQueryOwnerKey($query, $this->ownerKey);
+
+        $query->addBinding($bindings);
 
         return $query->select($columns)->whereJsonContains(
             $this->getQualifiedPath(),
-            $query->getQuery()->connection->raw($ownerKey)
+            $query->getQuery()->connection->raw($sql)
         );
     }
 
@@ -160,11 +162,13 @@ class BelongsToJson extends BelongsTo
 
         $query->getModel()->setTable($hash);
 
-        $ownerKey = $this->relationExistenceQueryOwnerKey($query, $hash.'.'.$this->ownerKey);
+        [$sql, $bindings] = $this->relationExistenceQueryOwnerKey($query, $hash.'.'.$this->ownerKey);
+
+        $query->addBinding($bindings);
 
         return $query->select($columns)->whereJsonContains(
             $this->getQualifiedPath(),
-            $query->getQuery()->connection->raw($ownerKey)
+            $query->getQuery()->connection->raw($sql)
         );
     }
 
@@ -173,19 +177,25 @@ class BelongsToJson extends BelongsTo
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param string $ownerKey
-     * @return string
+     * @return array
      */
-    protected function relationExistenceQueryOwnerKey(Builder $query, $ownerKey)
+    protected function relationExistenceQueryOwnerKey(Builder $query, string $ownerKey): array
     {
         $ownerKey = $query->qualifyColumn($ownerKey);
 
-        if (!$this->key) {
-            return $this->getJsonGrammar($query)->compileJsonArray($ownerKey);
+        if ($this->key) {
+            $keys = explode('->', $this->key);
+
+            $sql = $this->getJsonGrammar($query)->compileJsonObject($ownerKey, count($keys));
+
+            $bindings = $keys;
+        } else {
+            $sql = $this->getJsonGrammar($query)->compileJsonArray($ownerKey);
+
+            $bindings = [];
         }
 
-        $query->addBinding($keys = explode('->', $this->key));
-
-        return $this->getJsonGrammar($query)->compileJsonObject($ownerKey, count($keys));
+        return [$sql, $bindings];
     }
 
     /**
