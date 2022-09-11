@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Support\Str;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\BelongsTo as BelongsToPostgres;
@@ -49,7 +48,7 @@ trait HasJsonRelationships
      */
     public function getAttributeFromArray($key)
     {
-        if (Str::contains($key, '->')) {
+        if (str_contains($key, '->')) {
             return $this->getAttributeValue($key);
         }
 
@@ -64,7 +63,7 @@ trait HasJsonRelationships
      */
     public function getAttributeValue($key)
     {
-        if (Str::contains($key, '->')) {
+        if (str_contains($key, '->')) {
             [$key, $path] = explode('->', $key, 2);
 
             if (substr($key, -2) === '[]') {
