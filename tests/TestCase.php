@@ -8,11 +8,14 @@ use Illuminate\Database\Schema\Blueprint;
 use PHPUnit\Framework\TestCase as Base;
 use Tests\Models\Category;
 use Tests\Models\Comment;
+use Tests\Models\Country;
 use Tests\Models\Locale;
+use Tests\Models\Permission;
 use Tests\Models\Post;
 use Tests\Models\Product;
 use Tests\Models\Role;
 use Tests\Models\Team;
+use Tests\Models\Project;
 use Tests\Models\User;
 
 abstract class TestCase extends Base
@@ -54,6 +57,7 @@ abstract class TestCase extends Base
 
         DB::schema()->create('users', function (Blueprint $table) {
             $table->unsignedInteger('id');
+            $table->unsignedInteger('country_id');
             $table->json('options');
         });
 
@@ -83,6 +87,20 @@ abstract class TestCase extends Base
             $table->unsignedInteger('id');
             $table->json('options');
         });
+
+        DB::schema()->create('countries', function (Blueprint $table) {
+            $table->unsignedInteger('id');
+        });
+
+        DB::schema()->create('permissions', function (Blueprint $table) {
+            $table->unsignedInteger('id');
+            $table->unsignedInteger('role_id');
+        });
+
+        DB::schema()->create('projects', function (Blueprint $table) {
+            $table->unsignedInteger('id');
+            $table->unsignedInteger('user_id');
+        });
     }
 
     protected function seed(): void
@@ -99,6 +117,7 @@ abstract class TestCase extends Base
 
         User::create([
             'id' => 21,
+            'country_id' => 71,
             'options' => [
                 'locale_id' => 11,
                 'role_ids' => [1, 2],
@@ -109,9 +128,10 @@ abstract class TestCase extends Base
                 ],
             ],
         ]);
-        User::create(['id' => 22, 'options' => ['team_id' => 51]]);
+        User::create(['id' => 22, 'country_id' => 72, 'options' => ['team_id' => 51]]);
         User::create([
             'id' => 23,
+            'country_id' => 73,
             'options' => [
                 'role_ids' => [2, 3],
                 'roles' => [
@@ -151,6 +171,29 @@ abstract class TestCase extends Base
 
         Product::create(['id' => 61, 'options' => ['category_id' => 'af5811f8-45ae-43a9-b333-c936890973cb']]);
         Product::create(['id' => 62, 'options' => []]);
+
+        Country::create(['id' => 71]);
+        Country::create(['id' => 72]);
+        Country::create(['id' => 73]);
+
+        Permission::create(['id' => 81, 'role_id' => 1]);
+        Permission::create(['id' => 82, 'role_id' => 1]);
+        Permission::create(['id' => 83, 'role_id' => 2]);
+        Permission::create(['id' => 84, 'role_id' => 3]);
+        Permission::create(['id' => 85, 'role_id' => 4]);
+
+        Project::create([
+             'id' => 71,
+             'user_id' => 21,
+         ]);
+        Project::create([
+             'id' => 72,
+             'user_id' => 22,
+         ]);
+        Project::create([
+             'id' => 73,
+             'user_id' => 23,
+         ]);
 
         Model::reguard();
     }

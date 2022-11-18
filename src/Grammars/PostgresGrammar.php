@@ -33,4 +33,15 @@ class PostgresGrammar extends Base implements JsonGrammar
 
         return $this->compileJsonArray(new Expression($sql));
     }
+
+    /**
+     * Compile a "JSON value select" statement into SQL.
+     *
+     * @param string $column
+     * @return string
+     */
+    public function compileJsonValueSelect(string $column): string
+    {
+        return $this->wrap($column);
+    }
 }

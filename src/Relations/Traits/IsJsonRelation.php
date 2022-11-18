@@ -1,6 +1,6 @@
 <?php
 
-namespace Staudenmeir\EloquentJsonRelations\Relations;
+namespace Staudenmeir\EloquentJsonRelations\Relations\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,16 +49,17 @@ trait IsJsonRelation
      *
      * @param \Illuminate\Database\Eloquent\Collection $models
      * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param callable $callback
      * @return void
      */
-    protected function hydratePivotRelation(Collection $models, Model $parent)
+    public function hydratePivotRelation(Collection $models, Model $parent, callable $callback)
     {
         foreach ($models as $i => $model) {
             $clone = clone $model;
 
             $models[$i] = $clone->setRelation(
                 $this->getPivotAccessor(),
-                $this->pivotRelation($clone, $parent)
+                $this->pivotRelation($clone, $parent, $callback)
             );
         }
     }
@@ -68,11 +69,14 @@ trait IsJsonRelation
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param callable $callback
      * @return \Illuminate\Database\Eloquent\Model
      */
-    protected function pivotRelation(Model $model, Model $parent)
+    protected function pivotRelation(Model $model, Model $parent, callable $callback)
     {
-        $attributes = $this->pivotAttributes($model, $parent);
+        $records = $callback($model, $parent);
+
+        $attributes = $this->pivotAttributes($model, $parent, $records);
 
         return Pivot::fromAttributes($model, $attributes, null, true);
     }
@@ -82,9 +86,10 @@ trait IsJsonRelation
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param array $records
      * @return array
      */
-    abstract protected function pivotAttributes(Model $model, Model $parent);
+    abstract public function pivotAttributes(Model $model, Model $parent, array $records);
 
     /**
      * Execute the query and get the first related model.
@@ -137,5 +142,15 @@ trait IsJsonRelation
     public function getPivotAccessor(): string
     {
         return 'pivot';
+    }
+
+    /**
+     * Get the base path of the foreign key.
+     *
+     * @return string
+     */
+    public function getForeignKeyPath(): string
+    {
+        return $this->path;
     }
 }

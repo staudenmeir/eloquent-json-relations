@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
+use Staudenmeir\EloquentHasManyDeepContracts\Interfaces\ConcatenableRelation;
+use Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableHasManyJsonRelation;
+use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
 
-class HasManyJson extends HasMany
+class HasManyJson extends HasMany implements ConcatenableRelation
 {
+    use IsConcatenableHasManyJsonRelation;
     use IsJsonRelation;
 
     /**
@@ -36,7 +40,11 @@ class HasManyJson extends HasMany
         $models = parent::get($columns);
 
         if ($this->key && !is_null($this->parent->{$this->localKey})) {
-            $this->hydratePivotRelation($models, $this->parent);
+            $this->hydratePivotRelation(
+                $models,
+                $this->parent,
+                fn (Model $model) => $model->{$this->getPathName()}
+            );
         }
 
         return $models;
@@ -113,7 +121,11 @@ class HasManyJson extends HasMany
 
         if ($this->key) {
             foreach ($models as $model) {
-                $this->hydratePivotRelation($model->$relation, $model);
+                $this->hydratePivotRelation(
+                    $model->$relation,
+                    $model,
+                    fn (Model $model) => $model->{$this->getPathName()}
+                );
             }
         }
 
@@ -235,13 +247,14 @@ class HasManyJson extends HasMany
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param array $records
      * @return array
      */
-    protected function pivotAttributes(Model $model, Model $parent)
+    public function pivotAttributes(Model $model, Model $parent, array $records)
     {
         $key = str_replace('->', '.', $this->key);
 
-        $record = (new BaseCollection($model->{$this->getPathName()}))
+        $record = (new BaseCollection($records))
             ->filter(function ($value) use ($key, $parent) {
                 return Arr::get($value, $key) == $parent->{$this->localKey};
             })->first();

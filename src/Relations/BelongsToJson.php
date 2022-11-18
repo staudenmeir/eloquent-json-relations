@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
+use Staudenmeir\EloquentHasManyDeepContracts\Interfaces\ConcatenableRelation;
+use Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableBelongsToJsonRelation;
+use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
 
-class BelongsToJson extends BelongsTo
+class BelongsToJson extends BelongsTo implements ConcatenableRelation
 {
     use InteractsWithPivotRecords;
+    use IsConcatenableBelongsToJsonRelation;
     use IsJsonRelation;
 
     /**
@@ -37,7 +41,11 @@ class BelongsToJson extends BelongsTo
         $models = parent::get($columns);
 
         if ($this->key && !empty($this->parent->{$this->path})) {
-            $this->hydratePivotRelation($models, $this->parent);
+            $this->hydratePivotRelation(
+                $models,
+                $this->parent,
+                fn (Model $model, Model $parent) => $parent->{$this->path}
+            );
         }
 
         return $models;
@@ -100,7 +108,11 @@ class BelongsToJson extends BelongsTo
             $model->setRelation($relation, $collection = $this->related->newCollection($matches));
 
             if ($this->key) {
-                $this->hydratePivotRelation($collection, $model);
+                $this->hydratePivotRelation(
+                    $collection,
+                    $model,
+                    fn (Model $model, Model $parent) => $parent->{$this->path}
+                );
             }
         }
 
@@ -203,13 +215,14 @@ class BelongsToJson extends BelongsTo
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param array $records
      * @return array
      */
-    protected function pivotAttributes(Model $model, Model $parent)
+    public function pivotAttributes(Model $model, Model $parent, array $records)
     {
         $key = str_replace('->', '.', $this->key);
 
-        $record = (new BaseCollection($parent->{$this->path}))
+        $record = (new BaseCollection($records))
             ->filter(function ($value) use ($key, $model) {
                 return Arr::get($value, $key) == $model->{$this->ownerKey};
             })->first();

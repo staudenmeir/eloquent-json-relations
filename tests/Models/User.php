@@ -5,17 +5,36 @@ namespace Tests\Models;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
 class User extends Model
 {
+    use HasRelationships;
+
     protected $casts = [
         'options' => 'json',
     ];
 
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class);
+    }
+
     public function locale(): BelongsTo
     {
         return $this->belongsTo(Locale::class, 'options->locale_id');
+    }
+
+    public function permissions(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
+    }
+
+    public function permissions2(): HasManyDeep
+    {
+        return $this->hasManyDeepFromRelations($this->roles2(), (new Role())->permissions());
     }
 
     public function roles(): BelongsToJson

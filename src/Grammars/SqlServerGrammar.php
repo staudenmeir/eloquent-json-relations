@@ -29,4 +29,17 @@ class SqlServerGrammar extends Base implements JsonGrammar
     {
         throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
     }
+
+    /**
+     * Compile a "JSON value select" statement into SQL.
+     *
+     * @param string $column
+     * @return string
+     */
+    public function compileJsonValueSelect(string $column): string
+    {
+        [$field, $path] = $this->wrapJsonFieldAndPath($column);
+
+        return "json_query($field$path)";
+    }
 }

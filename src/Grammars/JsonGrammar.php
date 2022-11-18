@@ -20,4 +20,12 @@ interface JsonGrammar
      * @return string
      */
     public function compileJsonObject($column, $levels);
+
+    /**
+     * Compile a "JSON value select" statement into SQL.
+     *
+     * @param string $column
+     * @return string
+     */
+    public function compileJsonValueSelect(string $column): string;
 }

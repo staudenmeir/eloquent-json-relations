@@ -30,4 +30,15 @@ class MySqlGrammar extends Base implements JsonGrammar
                 .$this->wrap($column)
                 .str_repeat(')', $levels);
     }
+
+    /**
+     * Compile a "JSON value select" statement into SQL.
+     *
+     * @param string $column
+     * @return string
+     */
+    public function compileJsonValueSelect(string $column): string
+    {
+        return $this->wrap($column);
+    }
 }
