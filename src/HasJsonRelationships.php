@@ -3,6 +3,7 @@
 namespace Staudenmeir\EloquentJsonRelations;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use RuntimeException;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\BelongsTo as BelongsToPostgres;
@@ -43,7 +45,7 @@ trait HasJsonRelationships
     /**
      * Get an attribute from the $attributes array.
      *
-     * @param  string  $key
+     * @param string $key
      * @return mixed
      */
     public function getAttributeFromArray($key)
@@ -294,5 +296,143 @@ trait HasJsonRelationships
     protected function newHasManyJson(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         return new HasManyJson($query, $parent, $foreignKey, $localKey);
+    }
+
+    /**
+     * Define has-many-through JSON relationship.
+     *
+     * @param string $related
+     * @param string $through
+     * @param string|\Staudenmeir\EloquentJsonRelations\JsonKey $firstKey
+     * @param string|null $secondKey
+     * @param string|null $localKey
+     * @param string|\Staudenmeir\EloquentJsonRelations\JsonKey|null $secondLocalKey
+     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     */
+    public function hasManyThroughJson(
+        string $related,
+        string $through,
+        string|JsonKey $firstKey,
+        string $secondKey = null,
+        string $localKey = null,
+        string|JsonKey $secondLocalKey = null
+    ) {
+        $relationships = [];
+
+        $through = new $through();
+
+        if ($firstKey instanceof JsonKey) {
+            $relationships[] = $this->hasManyJson($through, $firstKey, $localKey);
+
+            $relationships[] = $through->hasMany($related, $secondKey, $secondLocalKey);
+        } else {
+            if (!method_exists($through, 'belongsToJson')) {
+                //@codeCoverageIgnoreStart
+                $message = 'Please add the HasJsonRelationships trait to the ' . $through::class . ' model.';
+
+                throw new RuntimeException($message);
+                // @codeCoverageIgnoreEnd
+            }
+
+            $relationships[] = $this->hasMany($through, $firstKey, $localKey);
+
+            $relationships[] = $through->belongsToJson($related, $secondLocalKey, $secondKey);
+        }
+
+        $hasManyThroughJson = $this->newHasManyThroughJson($relationships);
+
+        $jsonKey = $firstKey instanceof JsonKey ? $firstKey : $secondLocalKey;
+
+        if (str_contains($jsonKey, '[]->')) {
+            $this->addHasManyThroughJsonPivotRelationship($hasManyThroughJson, $relationships, $through);
+        }
+
+        return $hasManyThroughJson;
+    }
+
+    /**
+     * Add the pivot relationship to the has-many-through JSON relationship.
+     *
+     * @param \Staudenmeir\EloquentHasManyDeep\HasManyDeep $hasManyThroughJson
+     * @param \Illuminate\Database\Eloquent\Relations\Relation[] $relationships
+     * @param \Illuminate\Database\Eloquent\Model $through
+     * @return void
+     */
+    protected function addHasManyThroughJsonPivotRelationship(
+        $hasManyThroughJson,
+        array $relationships,
+        Model $through
+    ): void {
+        if ($relationships[0] instanceof HasManyJson) {
+            /** @var \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson $hasManyJson */
+            $hasManyJson = $relationships[0];
+
+            $postGetCallback = function (Collection $models) use ($hasManyJson, $relationships) {
+                if (isset($models[0]->laravel_through_key)) {
+                    $hasManyJson->hydratePivotRelation(
+                        $models,
+                        $this,
+                        fn (Model $model) => json_decode($model->laravel_through_key, true)
+                    );
+                }
+            };
+
+            $localKey = $this->{$hasManyJson->getLocalKeyName()};
+
+            if (!is_null($localKey)) {
+                $hasManyThroughJson->withPostGetCallbacks([$postGetCallback]);
+            }
+
+            $hasManyThroughJson->withCustomEagerMatchingCallback(
+                function (array $models, Collection $results, string $relation) use ($hasManyJson, $hasManyThroughJson) {
+                    foreach ($models as $model) {
+                        $hasManyJson->hydratePivotRelation(
+                            $model->$relation,
+                            $model,
+                            fn (Model $model) => json_decode($model->laravel_through_key, true)
+                        );
+                    }
+
+                    return $models;
+                }
+            );
+        } else {
+            /** @var \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson $belongsToJson */
+            $belongsToJson = $relationships[1];
+
+            $path = $belongsToJson->getForeignKeyPath();
+
+            $postProcessor = function (Model $model, array $attributes) use ($belongsToJson, $path) {
+                $records = json_decode($attributes[$path], true);
+
+                return $belongsToJson->pivotAttributes($model, $model, $records);
+            };
+
+            $hasManyThroughJson->withPivot(
+                $through->getTable(),
+                [$path],
+                accessor: 'pivot',
+                postProcessor: $postProcessor
+            );
+        }
+    }
+
+    /**
+     * Instantiate a new HasManyThroughJson relationship.
+     *
+     * @param \Illuminate\Database\Eloquent\Relations\Relation[] $relationships
+     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     */
+    protected function newHasManyThroughJson(array $relationships)
+    {
+        if (!method_exists($this, 'hasManyDeepFromRelations')) {
+            //@codeCoverageIgnoreStart
+            $message = 'Please install staudenmeir/eloquent-has-many-deep and add the HasRelationships trait to this model.';
+
+            throw new RuntimeException($message);
+            // @codeCoverageIgnoreEnd
+        }
+
+        return $this->hasManyDeepFromRelations($relationships);
     }
 }
