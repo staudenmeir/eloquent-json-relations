@@ -94,7 +94,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testLazyEagerLoadingWithObjects()
     {
-        $users = User::get()->load('roles2');
+        $users = User::all()->load('roles2');
 
         $this->assertEquals([1, 2], $users[0]->roles2->pluck('id')->all());
         $this->assertEquals([], $users[1]->roles2->pluck('id')->all());

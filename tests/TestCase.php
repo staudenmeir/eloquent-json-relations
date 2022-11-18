@@ -33,6 +33,13 @@ abstract class TestCase extends Base
         $this->seed();
     }
 
+    protected function tearDown(): void
+    {
+        DB::connection()->disconnect();
+
+        parent::tearDown();
+    }
+
     protected function migrate(): void
     {
         DB::schema()->dropAllTables();
