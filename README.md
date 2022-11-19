@@ -8,8 +8,10 @@
 ## Introduction
 
 This Laravel Eloquent extension adds support for JSON foreign keys to `BelongsTo`, `HasOne`, `HasMany`, `HasOneThrough`
-, `HasManyThrough`, `MorphTo`, `MorphOne` and `MorphMany` relationships.  
-It also provides [many-to-many](#many-to-many-relationships) relationships with JSON arrays.
+, `HasManyThrough`, `MorphTo`, `MorphOne` and `MorphMany` relationships.
+
+It also provides [many-to-many](#many-to-many-relationships) and [has-many-through](#has-many-through-relationships)
+relationships with JSON arrays.
 
 ## Compatibility
 
