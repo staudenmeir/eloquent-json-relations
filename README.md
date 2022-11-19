@@ -241,7 +241,7 @@ Schema::create('users', function (Blueprint $table) {
 ### Has-Many-Through Relationships
 
 Similar to Laravel's [`HasManyThrough`](https://laravel.com/docs/9.x/eloquent-relationships#has-many-through), you can
-define `HasManyThroughJson` relationship when the JSON column is in the intermediate table (Laravel 9+). This
+define `HasManyThroughJson` relationships when the JSON column is in the intermediate table (Laravel 9+). This
 requires [staudenmeir/eloquent-has-many-deep](https://github.com/staudenmeir/eloquent-has-many-deep).
 
 Consider a relationship between `Role` and `Project` through `User`:
