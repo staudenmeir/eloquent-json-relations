@@ -17,4 +17,9 @@ class UserAsArrayObject extends Model
     {
         return $this->belongsToJson(Role::class, 'options->role_ids');
     }
+
+    public function roles3(): BelongsToJson
+    {
+        return $this->belongsToJson(Role::class, 'options[]->role_id');
+    }
 }
