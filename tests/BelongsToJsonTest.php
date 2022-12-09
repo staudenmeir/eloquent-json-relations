@@ -186,9 +186,9 @@ class BelongsToJsonTest extends TestCase
     }
 
     /**
-     * @dataProvider objectColumnProviders
+     * @dataProvider userModelProvider
      */
-    public function testAttachWithObjectsInColumn($userModel)
+    public function testAttachWithObjectsInColumn(string $userModel)
     {
         $user = (new $userModel())->roles3()->attach([1 => ['active' => true], 2 => ['active' => false]]);
 
@@ -260,28 +260,25 @@ class BelongsToJsonTest extends TestCase
     }
 
     /**
-     * @dataProvider objectColumnProviders
+     * @dataProvider userModelProvider
      */
-    public function testForeignKeys($user)
+    public function testForeignKeys(string $userModel)
     {
-        $keys = $user::find(21)->roles()->getForeignKeys();
+        $keys = $userModel::find(21)->roles()->getForeignKeys();
 
         $this->assertEquals([1, 2], $keys);
     }
 
-    public function objectColumnProviders()
+    public function userModelProvider(): array
     {
         $users = [
             [User::class],
+            [UserAsArrayable::class],
         ];
 
         if (class_exists('Illuminate\Database\Eloquent\Casts\AsArrayObject')) {
             $users[] = [UserAsArrayObject::class];
             $users[] = [UserAsCollection::class];
-        }
-
-        if (interface_exists(Arrayable::class)) {
-            $users[] = [UserAsArrayable::class];
         }
 
         return $users;
