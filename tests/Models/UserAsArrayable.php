@@ -2,15 +2,15 @@
 
 namespace Tests\Models;
 
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
+use Tests\Casts\ArrayableCast;
 
-class UserAsArrayObject extends Model
+class UserAsArrayable extends User
 {
     protected $table = 'users';
 
     protected $casts = [
-        'options' => AsArrayObject::class,
+        'options' => ArrayableCast::class,
     ];
 
     public function roles(): BelongsToJson

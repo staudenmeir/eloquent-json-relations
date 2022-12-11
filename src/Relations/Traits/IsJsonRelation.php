@@ -2,6 +2,7 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Relations\Traits;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -75,6 +76,10 @@ trait IsJsonRelation
     protected function pivotRelation(Model $model, Model $parent, callable $callback)
     {
         $records = $callback($model, $parent);
+
+        if ($records instanceof Arrayable) {
+            $records = $records->toArray();
+        }
 
         $attributes = $this->pivotAttributes($model, $parent, $records);
 
