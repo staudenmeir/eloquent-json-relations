@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use Illuminate\Contracts\Support\Arrayable;
+use Composer\InstalledVersions;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -146,9 +146,17 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([31], $posts->pluck('id')->all());
     }
 
-    public function testAttach()
+    /**
+     * @dataProvider userModelProvider
+     */
+    public function testAttach(string $userModel)
     {
-        $user = (new User())->roles()->attach([1, 2]);
+        // TODO[L10]
+        if (version_compare(InstalledVersions::getVersion('illuminate/database'), '9.18') === -1) {
+            $this->markTestSkipped();
+        }
+
+        $user = (new $userModel())->roles()->attach([1, 2]);
 
         $this->assertEquals([1, 2], $user->roles()->pluck('id')->all());
 
@@ -157,9 +165,17 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([1, 2, 3], $user->roles()->pluck('id')->all());
     }
 
-    public function testAttachWithObjects()
+    /**
+     * @dataProvider userModelProvider
+     */
+    public function testAttachWithObjects(string $userModel)
     {
-        $user = new User();
+        // TODO[L10]
+        if (version_compare(InstalledVersions::getVersion('illuminate/database'), '9.18') === -1) {
+            $this->markTestSkipped();
+        }
+
+        $user = new $userModel();
         $user->options = [
             'roles' => [
                 ['foo' => 'bar'],
@@ -276,6 +292,7 @@ class BelongsToJsonTest extends TestCase
             [UserAsArrayable::class],
         ];
 
+        // TODO[L10]
         if (class_exists('Illuminate\Database\Eloquent\Casts\AsArrayObject')) {
             $users[] = [UserAsArrayObject::class];
             $users[] = [UserAsCollection::class];

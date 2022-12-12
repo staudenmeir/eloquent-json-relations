@@ -20,14 +20,18 @@ use Tests\Models\User;
 
 abstract class TestCase extends Base
 {
+    protected string $database;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->database = getenv('DATABASE') ?: 'mysql';
+
         $config = require __DIR__.'/config/database.php';
 
         $db = new DB();
-        $db->addConnection($config[getenv('DATABASE') ?: 'mysql']);
+        $db->addConnection($config[$this->database]);
         $db->setAsGlobal();
         $db->bootEloquent();
 
