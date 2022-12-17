@@ -259,7 +259,9 @@ class Role extends Model
     public function projects()
     {
         return $this->hasManyThroughJson(
-            Project::class, User::class, new JsonKey('options->role_ids')
+            Project::class,
+            User::class,
+            new \Staudenmeir\EloquentJsonRelations\JsonKey('options->role_ids')
         );
     }
 }
