@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Composer\InstalledVersions;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -151,11 +150,6 @@ class BelongsToJsonTest extends TestCase
      */
     public function testAttach(string $userModel)
     {
-        // TODO[L10]
-        if (version_compare(InstalledVersions::getVersion('illuminate/database'), '9.18') === -1) {
-            $this->markTestSkipped();
-        }
-
         $user = (new $userModel())->roles()->attach([1, 2]);
 
         $this->assertEquals([1, 2], $user->roles()->pluck('id')->all());
@@ -170,11 +164,6 @@ class BelongsToJsonTest extends TestCase
      */
     public function testAttachWithObjects(string $userModel)
     {
-        // TODO[L10]
-        if (version_compare(InstalledVersions::getVersion('illuminate/database'), '9.18') === -1) {
-            $this->markTestSkipped();
-        }
-
         $user = new $userModel();
         $user->options = [
             'roles' => [
@@ -290,13 +279,9 @@ class BelongsToJsonTest extends TestCase
         $users = [
             [User::class],
             [UserAsArrayable::class],
+            [UserAsArrayObject::class],
+            [UserAsCollection::class],
         ];
-
-        // TODO[L10]
-        if (class_exists('Illuminate\Database\Eloquent\Casts\AsArrayObject')) {
-            $users[] = [UserAsArrayObject::class];
-            $users[] = [UserAsCollection::class];
-        }
 
         return $users;
     }
