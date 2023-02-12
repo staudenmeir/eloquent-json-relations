@@ -14,7 +14,7 @@
         "staudenmeir/eloquent-has-many-deep-contracts": "^1.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5.27",
+        "phpunit/phpunit": "^10.0",
         "staudenmeir/eloquent-has-many-deep": "^1.18"
     },
     "autoload": {
