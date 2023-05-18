@@ -62,7 +62,7 @@ abstract class TestCase extends Base
         DB::schema()->create('users', function (Blueprint $table) {
             $table->unsignedInteger('id');
             $table->unsignedInteger('country_id');
-            $table->json('options');
+            $table->jsonb('options'); // TODO
         });
 
         DB::schema()->create('posts', function (Blueprint $table) {
@@ -119,6 +119,7 @@ abstract class TestCase extends Base
         Locale::create(['id' => 11]);
         Locale::create(['id' => 12]);
 
+        // TODO: test root-level array
         User::create([
             'id' => 21,
             'country_id' => 71,
@@ -129,6 +130,22 @@ abstract class TestCase extends Base
                     ['role' => ['id' => 1, 'active' => true]],
                     ['role' => ['id' => 2, 'active' => false]],
                     ['foo' => 'bar'],
+                ],
+                'nested' => [
+                    [
+                        'role_ids' => [1],
+                        'roles' => [
+                            ['role' => ['id' => 1, 'active' => true]],
+                            ['foo' => 'bar'],
+                        ],
+                    ],
+                    [
+                        'role_ids' => [2],
+                        'roles' => [
+                            ['role' => ['id' => 2, 'active' => false]],
+                            ['foo' => 'bar'],
+                        ],
+                    ],
                 ],
             ],
         ]);
@@ -141,6 +158,20 @@ abstract class TestCase extends Base
                 'roles' => [
                     ['role' => ['id' => 2, 'active' => true]],
                     ['role' => ['id' => 3, 'active' => false]],
+                ],
+                'nested' => [
+                    [
+                        'role_ids' => [2],
+                        'roles' => [
+                            ['role' => ['id' => 2, 'active' => true]],
+                        ],
+                    ],
+                    [
+                        'role_ids' => [3],
+                        'roles' => [
+                            ['role' => ['id' => 3, 'active' => false]],
+                        ],
+                    ],
                 ],
             ],
         ]);

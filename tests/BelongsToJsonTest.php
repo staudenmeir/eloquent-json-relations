@@ -25,9 +25,16 @@ class BelongsToJsonTest extends TestCase
         }
     }
 
+    // TODO: data provider?
+
     public function testLazyLoading()
     {
+        DB::enableQueryLog();
+
         $roles = User::find(21)->roles;
+
+        print_r(DB::getQueryLog());
+        //exit;
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
     }
@@ -35,6 +42,34 @@ class BelongsToJsonTest extends TestCase
     public function testLazyLoadingWithObjects()
     {
         $roles = User::find(21)->roles2;
+
+        $this->assertEquals([1, 2], $roles->pluck('id')->all());
+        $pivot = $roles[0]->pivot;
+        $this->assertInstanceOf(Pivot::class, $pivot);
+        $this->assertTrue($pivot->exists);
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $roles[1]->pivot->getAttributes());
+    }
+
+    public function testLazyLoadingX() // TODO
+    {
+        DB::enableQueryLog();
+
+        $roles = User::find(21)->roles4;
+
+        print_r(DB::getQueryLog());
+        //exit;
+
+        $this->assertEquals([1, 2], $roles->pluck('id')->all());
+    }
+
+    public function testLazyLoadingXX() // TODO
+    {
+        DB::enableQueryLog();
+
+        $roles = User::find(21)->roles5;
+
+        print_r(DB::getQueryLog());
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
         $pivot = $roles[0]->pivot;
@@ -85,6 +120,37 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals(['role' => ['active' => false]], $users[0]->roles2[1]->pivot->getAttributes());
     }
 
+    public function testEagerLoadingX() // TODO
+    {
+        DB::enableQueryLog();
+
+        $users = User::with('roles4')->get();
+
+        print_r(DB::getQueryLog());
+
+        $this->assertEquals([1, 2], $users[0]->roles4->pluck('id')->all());
+        $this->assertEquals([], $users[1]->roles4->pluck('id')->all());
+        $this->assertEquals([2, 3], $users[2]->roles4->pluck('id')->all());
+    }
+
+    public function testEagerLoadingXX() // TODO
+    {
+        DB::enableQueryLog();
+
+        $users = User::with('roles5')->get();
+
+        print_r(DB::getQueryLog());
+
+        $this->assertEquals([1, 2], $users[0]->roles5->pluck('id')->all());
+        $this->assertEquals([], $users[1]->roles5->pluck('id')->all());
+        $this->assertEquals([2, 3], $users[2]->roles5->pluck('id')->all());
+        $pivot = $users[0]->roles5[0]->pivot;
+        $this->assertInstanceOf(Pivot::class, $pivot);
+        $this->assertTrue($pivot->exists);
+        $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $users[0]->roles5[1]->pivot->getAttributes());
+    }
+
     public function testLazyEagerLoading()
     {
         $users = User::all()->load('roles');
@@ -110,7 +176,11 @@ class BelongsToJsonTest extends TestCase
 
     public function testExistenceQuery()
     {
+        DB::enableQueryLog();
+
         $users = User::has('roles')->get();
+
+        print_r(DB::getQueryLog());
 
         $this->assertEquals([21, 23], $users->pluck('id')->all());
     }
@@ -126,6 +196,18 @@ class BelongsToJsonTest extends TestCase
         })->get();
 
         $this->assertEquals([21], $users->pluck('id')->all());
+    }
+
+    public function testExistenceQueryX() // TODO
+    {
+        DB::enableQueryLog();
+
+        $users = User::withCount('roles4')->get();
+        //$users = User::has('roles4')->get();
+
+        print_r(DB::getQueryLog());
+
+        $this->assertEquals([21, 23], $users->pluck('id')->all());
     }
 
     public function testExistenceQueryForSelfRelation()

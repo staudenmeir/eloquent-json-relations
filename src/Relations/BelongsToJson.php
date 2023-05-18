@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 use Staudenmeir\EloquentHasManyDeepContracts\Interfaces\ConcatenableRelation;
@@ -154,10 +155,42 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
 
         $query->addBinding($bindings);
 
-        return $query->select($columns)->whereJsonContains(
-            $this->getQualifiedPath(),
-            $query->getQuery()->connection->raw($sql)
-        );
+        if ($this->nestedKey) {
+
+//            $parentQuery->getQuery()->from = new Expression(
+//                $this->getJsonGrammar($parentQuery)->compileJsonTable(
+//                    $this->path,
+//                    $parentQuery->getQuery()->from,
+//                    $this->jsonTableAlias, // TODO
+//                    $this->jsonTableIdColumn
+//                )
+//            );
+        }
+
+        /** TODO
+         select *
+        from `users`
+        where id in (
+        select id
+        from users, json_table(
+        `options`, '$."nested"[*]' columns (`ids` json path '$' ERROR ON ERROR)
+        ) as `laravel_json_table`
+        where exists(select *
+        from `roles`
+        where json_contains(`laravel_json_table`.`ids`, json_array(`roles`.`id`), '$."role_ids"'))
+        )
+         */
+
+        if ($this->nestedKey) {
+            $query->whereJsonContains("$this->jsonTableAlias.$this->jsonTableIdColumn->$this->nestedKey", $query->getQuery()->connection->raw($sql)); // TODO
+        } else {
+            $query->whereJsonContains(
+                $this->getQualifiedPath(),
+                $query->getQuery()->connection->raw($sql)
+            );
+        }
+
+        return $query->select($columns);
     }
 
     /**
@@ -240,6 +273,12 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     {
         $model = $model ?: $this->child;
 
-        return (new BaseCollection($model->{$this->foreignKey}))->filter(fn ($key) => $key !== null)->all();
+        $foreignKeys = new BaseCollection($model->{$this->foreignKey});
+
+        if ($this->nestedKey && !$this->key) {
+            $foreignKeys = $foreignKeys->collapse();
+        }
+
+        return $foreignKeys->filter(fn ($key) => $key !== null)->all();
     }
 }

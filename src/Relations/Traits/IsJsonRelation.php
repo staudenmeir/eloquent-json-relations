@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Support\Collection as BaseCollection;
 use RuntimeException;
 use Staudenmeir\EloquentJsonRelations\Grammars\MySqlGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
@@ -29,6 +30,27 @@ trait IsJsonRelation
     protected $key;
 
     /**
+     * TODO
+     *
+     * @var string
+     */
+    protected ?string $nestedKey;
+
+    /**
+     * TODO
+     *
+     * @var string
+     */
+    protected string $jsonTableAlias = 'laravel_json_table'; // TODO
+
+    /**
+     * TODO
+     *
+     * @var string
+     */
+    protected string $jsonTableIdColumn = 'ids'; // TODO
+
+    /**
      * Create a new JSON relationship instance.
      *
      * @return void
@@ -42,8 +64,15 @@ trait IsJsonRelation
         $this->path = $foreignKey[0];
         $this->key = $foreignKey[1] ?? null;
 
+        // TODO
+        $x = explode('[*]->', $args[2]);
+
+        $this->nestedKey = isset($x[1]) ? explode('[]->', $x[1])[0] : null;
+
         parent::__construct(...$args);
     }
+
+    // TODO: unset "ids"?
 
     /**
      * Hydrate the pivot relationship on the models.
@@ -79,6 +108,10 @@ trait IsJsonRelation
 
         if ($records instanceof Arrayable) {
             $records = $records->toArray();
+        }
+
+        if ($this->nestedKey) {
+            $records = (new BaseCollection($records))->collapse()->all();
         }
 
         $attributes = $this->pivotAttributes($model, $parent, $records);

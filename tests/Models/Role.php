@@ -46,4 +46,14 @@ class Role extends Model
     {
         return $this->hasManyJson(User::class, 'options->roles[]->role->id');
     }
+
+    public function users3(): HasManyJson // TODO
+    {
+        return $this->hasManyJson(User::class, 'options->nested[*]->role_ids');
+    }
+
+    public function users4(): HasManyJson // TODO
+    {
+        return $this->hasManyJson(User::class, 'options->nested[*]->roles[]->role->id');
+    }
 }

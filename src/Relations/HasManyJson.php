@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 use Staudenmeir\EloquentHasManyDeepContracts\Interfaces\ConcatenableRelation;
@@ -15,7 +16,32 @@ use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
 class HasManyJson extends HasMany implements ConcatenableRelation
 {
     use IsConcatenableHasManyJsonRelation;
-    use IsJsonRelation;
+    use IsJsonRelation {
+        __construct as baseConstruct;
+    }
+
+    /**
+     * Create a new JSON relationship instance. TODO
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $args = func_get_args(); // TODO
+
+        $this->baseConstruct(...$args);
+
+        if ($this->nestedKey) {
+            $this->query->getQuery()->from = new Expression(
+                $this->getJsonGrammar($this->query)->compileJsonTable(
+                    $this->path,
+                    $this->query->getModel()->getTable(),
+                    $this->jsonTableAlias,
+                    $this->jsonTableIdColumn
+                )
+            );
+        }
+    }
 
     /**
      * Get the results of the relationship.
@@ -64,7 +90,16 @@ class HasManyJson extends HasMany implements ConcatenableRelation
                 $parentKey = $this->parentKeyToArray($parentKey);
             }
 
-            $this->query->whereJsonContains($this->path, $parentKey);
+            if ($this->nestedKey) {
+                $this->query->whereJsonContains(
+                    "$this->jsonTableAlias.$this->jsonTableIdColumn->$this->nestedKey",
+                    $parentKey
+                );
+
+                // TODO: distinct?
+            } else {
+                $this->query->whereJsonContains($this->path, $parentKey);
+            }
         }
     }
 
@@ -84,9 +119,26 @@ class HasManyJson extends HasMany implements ConcatenableRelation
                     $parentKey = $this->parentKeyToArray($parentKey);
                 }
 
-                $query->orWhereJsonContains($this->path, $parentKey);
+                if ($this->nestedKey) {
+                    $this->query->orWhereJsonContains(
+                        "$this->jsonTableAlias.$this->jsonTableIdColumn->$this->nestedKey",
+                        $parentKey
+                    ); // TODO
+                } else {
+                    $query->orWhereJsonContains($this->path, $parentKey);
+                }
             }
         });
+
+        if ($this->nestedKey) {
+            $table = $this->query->getQuery()->getGrammar()->wrapTable(
+                $this->query->getModel()->getTable()
+            );
+
+            $this->query->select(
+                new Expression("distinct $table.*")
+            );
+        }
     }
 
     /**
@@ -145,7 +197,17 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         $dictionary = [];
 
         foreach ($results as $result) {
-            foreach ($result->{$foreign} as $value) {
+            $values = new BaseCollection($result->{$foreign}); // TODO: alias
+
+            if ($this->nestedKey) {
+//                print_r($this->nestedKey);
+//                print_r($foreign);
+//                exit;
+
+                $values = $values->collapse();
+            }
+
+            foreach ($values as $value) {
                 $dictionary[$value][] = $result;
             }
         }
@@ -187,10 +249,27 @@ class HasManyJson extends HasMany implements ConcatenableRelation
 
         $query->addBinding($bindings);
 
-        return $query->select($columns)->whereJsonContains(
-            $this->getQualifiedPath(),
-            $query->getQuery()->connection->raw($sql)
-        );
+        if ($this->nestedKey) {
+            $query->getQuery()->from = new Expression(
+                $this->getJsonGrammar($query)->compileJsonTable(
+                    $this->path,
+                    $query->getQuery()->from,
+                    $this->jsonTableAlias, // TODO
+                    $this->jsonTableIdColumn
+                )
+            );
+        }
+
+        if ($this->nestedKey) {
+            $query->whereJsonContains("$this->jsonTableAlias.$this->jsonTableIdColumn->$this->nestedKey", $query->getQuery()->connection->raw($sql)); // TODO
+        } else {
+            $query->whereJsonContains(
+                $this->getQualifiedPath(),
+                $query->getQuery()->connection->raw($sql)
+            );
+        }
+
+        return $query->select($columns);
     }
 
     /**
@@ -211,6 +290,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
 
         $query->addBinding($bindings);
 
+        // TODO
         return $query->select($columns)->whereJsonContains(
             $hash.'.'.$this->getPathName(),
             $query->getQuery()->connection->raw($sql)

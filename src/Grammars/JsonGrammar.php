@@ -28,4 +28,15 @@ interface JsonGrammar
      * @return string
      */
     public function compileJsonValueSelect(string $column): string;
+
+    /**
+     * TODO
+     *
+     * @param string $selector
+     * @param string $table
+     * @param string $tableAlias
+     * @param string $columnAlias
+     * @return string
+     */
+    public function compileJsonTable(string $selector, string $table, string $tableAlias, string $columnAlias): string;
 }

@@ -42,4 +42,12 @@ class SqlServerGrammar extends Base implements JsonGrammar
 
         return "json_query($field$path)";
     }
+
+    /**
+     * TODO
+     */
+    public function compileJsonTable(string $selector, string $table, string $tableAlias, string $columnAlias): string
+    {
+        throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
+    }
 }

@@ -44,4 +44,17 @@ class PostgresGrammar extends Base implements JsonGrammar
     {
         return $this->wrap($column);
     }
+
+    public function compileJsonTable(string $selector, string $table, string $tableAlias, string $columnAlias): string
+    {
+        $segments = explode('[*]->', $selector);
+
+        $path = $this->wrap($segments[0]);
+
+        $table = $this->wrapTable($table); // TODO: qualify
+        $tableAlias = $this->wrapTable($tableAlias);
+        $columnAlias = $this->wrap($columnAlias);
+
+        return "$table, jsonb_array_elements(($path)::jsonb) as $tableAlias($columnAlias)";
+    }
 }

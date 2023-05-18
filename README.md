@@ -212,6 +212,11 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 
 **Limitations:** On SQLite and SQL Server, these relationships only work partially.
 
+Nested:
+- MySQL 8+ etc.
+- IDs + objects
+- > 2 levels?
+
 #### Query Performance
 
 On PostgreSQL, you can improve the query performance with `jsonb` columns
@@ -283,7 +288,9 @@ class Project extends Model
 }
 ```
 
-### Concatenation
+### Deep Relationships with Concatenation
+
+TODO: TOC, <a>
 
 You can include JSON relationships into deep relationships by concatenating them with other relationships
 using [staudenmeir/eloquent-has-many-deep](https://github.com/staudenmeir/eloquent-has-many-deep) (Laravel 9+).

@@ -41,4 +41,22 @@ class MySqlGrammar extends Base implements JsonGrammar
     {
         return $this->wrap($column);
     }
+
+    public function compileJsonTable(string $selector, string $table, string $tableAlias, string $columnAlias): string
+    {
+        $segments = explode('[*]->', $selector);
+
+        [$column, $path] = $this->wrapJsonFieldAndPath($segments[0] . '[*]');
+
+        $table = $this->wrapTable($table); // TODO: qualify
+        $tableAlias = $this->wrapTable($tableAlias);
+        $columnAlias = $this->wrap($columnAlias);
+
+        // TODO: error handling
+        return <<<SQL
+$table, json_table(
+    $column$path columns($columnAlias json path '$' ERROR ON ERROR)
+) as $tableAlias
+SQL;
+    }
 }

@@ -52,6 +52,16 @@ class User extends Model
         return $this->belongsToJson(Role::class, 'options[]->role_id');
     }
 
+    public function roles4(): BelongsToJson // TODO
+    {
+        return $this->belongsToJson(Role::class, 'options->nested[*]->role_ids');
+    }
+
+    public function roles5(): BelongsToJson // TODO
+    {
+        return $this->belongsToJson(Role::class, 'options->nested[*]->roles[]->role->id');
+    }
+
     public function teamMate(): HasOneThrough
     {
         return $this->hasOneThrough(self::class, Team::class, 'options->owner_id', 'options->team_id');

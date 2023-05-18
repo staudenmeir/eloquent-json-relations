@@ -74,7 +74,18 @@ trait HasJsonRelationships
                 $path = '*.'.$path;
             }
 
-            $path = str_replace(['->', '[]'], ['.', '.*'], $path);
+            if (substr($key, -4) === '[*]') {
+                $key = substr($key, 0, -4);
+
+                $path = '*.'.$path;
+            }
+
+            $path = str_replace(['->', '[]', '[*]'], ['.', '.*', '.*'], $path);
+
+//            print_r($this->getAttributeValue($key));
+//            print_r($path);
+//            print_r(data_get($this->getAttributeValue($key), $path));
+//            exit;
 
             return data_get($this->getAttributeValue($key), $path);
         }
