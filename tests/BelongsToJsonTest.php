@@ -6,6 +6,7 @@ use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Models\Post;
 use Tests\Models\Role;
 use Tests\Models\User;
@@ -145,9 +146,7 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([31], $posts->pluck('id')->all());
     }
 
-    /**
-     * @dataProvider userModelProvider
-     */
+    #[DataProvider(methodName: 'userModelProvider')]
     public function testAttach(string $userModel)
     {
         $user = (new $userModel())->roles()->attach([1, 2]);
@@ -159,9 +158,7 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([1, 2, 3], $user->roles()->pluck('id')->all());
     }
 
-    /**
-     * @dataProvider userModelProvider
-     */
+    #[DataProvider(methodName: 'userModelProvider')]
     public function testAttachWithObjects(string $userModel)
     {
         $user = new $userModel();
@@ -190,9 +187,7 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][3]);
     }
 
-    /**
-     * @dataProvider userModelProvider
-     */
+    #[DataProvider(methodName: 'userModelProvider')]
     public function testAttachWithObjectsInColumn(string $userModel)
     {
         $user = (new $userModel())->roles3()->attach([1 => ['active' => true], 2 => ['active' => false]]);
@@ -264,9 +259,7 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][2]);
     }
 
-    /**
-     * @dataProvider userModelProvider
-     */
+    #[DataProvider(methodName: 'userModelProvider')]
     public function testForeignKeys(string $userModel)
     {
         $keys = $userModel::find(21)->roles()->getForeignKeys();
@@ -274,15 +267,13 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([1, 2], $keys);
     }
 
-    public function userModelProvider(): array
+    public static function userModelProvider(): array
     {
-        $users = [
+        return [
             [User::class],
             [UserAsArrayable::class],
             [UserAsArrayObject::class],
             [UserAsCollection::class],
         ];
-
-        return $users;
     }
 }
