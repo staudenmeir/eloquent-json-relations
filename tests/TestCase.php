@@ -63,6 +63,8 @@ abstract class TestCase extends Base
             $table->unsignedInteger('id');
             $table->unsignedInteger('country_id');
             $table->json('options');
+            $table->json('role_ids');
+            $table->json('role_objects');
         });
 
         DB::schema()->create('posts', function (Blueprint $table) {
@@ -131,8 +133,20 @@ abstract class TestCase extends Base
                     ['foo' => 'bar'],
                 ],
             ],
+            'role_ids' => [1, 2],
+            'role_objects' => [
+                ['role' => ['id' => 1, 'active' => true]],
+                ['role' => ['id' => 2, 'active' => false]],
+                ['foo' => 'bar'],
+            ],
         ]);
-        User::create(['id' => 22, 'country_id' => 72, 'options' => ['team_id' => 51]]);
+        User::create([
+            'id' => 22,
+            'country_id' => 72,
+            'options' => ['team_id' => 51],
+            'role_ids' => [],
+            'role_objects' => [],
+        ]);
         User::create([
             'id' => 23,
             'country_id' => 73,
@@ -142,6 +156,11 @@ abstract class TestCase extends Base
                     ['role' => ['id' => 2, 'active' => true]],
                     ['role' => ['id' => 3, 'active' => false]],
                 ],
+            ],
+            'role_ids' => [2, 3],
+            'role_objects' => [
+                ['role' => ['id' => 2, 'active' => true]],
+                ['role' => ['id' => 3, 'active' => false]],
             ],
         ]);
 

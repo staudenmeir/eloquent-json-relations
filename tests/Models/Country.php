@@ -30,7 +30,7 @@ class Country extends Model
 
     public function roles2(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->users(), (new User())->roles2());
+        return $this->hasManyDeepFromRelations($this->users(), (new User())->rolesWithObjects());
     }
 
     public function users(): HasMany

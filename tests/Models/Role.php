@@ -19,7 +19,7 @@ class Role extends Model
 
     public function countries2(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->users2(), (new User())->country());
+        return $this->hasManyDeepFromRelations($this->usersWithObjects(), (new User())->country());
     }
 
     public function permissions(): HasMany
@@ -42,8 +42,18 @@ class Role extends Model
         return $this->hasManyJson(User::class, 'options->role_ids');
     }
 
-    public function users2(): HasManyJson
+    public function usersInColumn(): HasManyJson
+    {
+        return $this->hasManyJson(User::class, 'role_ids');
+    }
+
+    public function usersWithObjects(): HasManyJson
     {
         return $this->hasManyJson(User::class, 'options->roles[]->role->id');
+    }
+
+    public function usersWithObjectsInColumn(): HasManyJson
+    {
+        return $this->hasManyJson(User::class, 'role_objects[]->role->id');
     }
 }

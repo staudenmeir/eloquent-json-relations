@@ -37,6 +37,6 @@ class Permission extends Model
 
     public function users2(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->role(), (new Role())->users2());
+        return $this->hasManyDeepFromRelations($this->role(), (new Role())->usersWithObjects());
     }
 }

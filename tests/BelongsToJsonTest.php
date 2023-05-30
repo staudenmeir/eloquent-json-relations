@@ -25,16 +25,18 @@ class BelongsToJsonTest extends TestCase
         }
     }
 
-    public function testLazyLoading()
+    #[DataProvider(methodName: 'idRelationProvider')]
+    public function testLazyLoading(string $relation)
     {
-        $roles = User::find(21)->roles;
+        $roles = User::find(21)->$relation;
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
     }
 
-    public function testLazyLoadingWithObjects()
+    #[DataProvider(methodName: 'objectRelationProvider')]
+    public function testLazyLoadingWithObjects(string $relation)
     {
-        $roles = User::find(21)->roles2;
+        $roles = User::find(21)->$relation;
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
         $pivot = $roles[0]->pivot;
@@ -56,72 +58,78 @@ class BelongsToJsonTest extends TestCase
 
     public function testFirst()
     {
-        $role = User::find(21)->roles2()->first();
+        $role = User::find(21)->rolesWithObjects()->first();
 
         $this->assertEquals(1, $role->id);
         $this->assertInstanceOf(Pivot::class, $role->pivot);
     }
 
-    public function testEagerLoading()
+    #[DataProvider(methodName: 'idRelationProvider')]
+    public function testEagerLoading(string $relation)
     {
-        $users = User::with('roles')->get();
+        $users = User::with($relation)->get();
 
         $this->assertEquals([1, 2], $users[0]->roles->pluck('id')->all());
         $this->assertEquals([], $users[1]->roles->pluck('id')->all());
         $this->assertEquals([2, 3], $users[2]->roles->pluck('id')->all());
     }
 
-    public function testEagerLoadingWithObjects()
+    #[DataProvider(methodName: 'objectRelationProvider')]
+    public function testEagerLoadingWithObjects(string $relation)
     {
-        $users = User::with('roles2')->get();
+        $users = User::with($relation)->get();
 
-        $this->assertEquals([1, 2], $users[0]->roles2->pluck('id')->all());
-        $this->assertEquals([], $users[1]->roles2->pluck('id')->all());
-        $this->assertEquals([2, 3], $users[2]->roles2->pluck('id')->all());
-        $pivot = $users[0]->roles2[0]->pivot;
+        $this->assertEquals([1, 2], $users[0]->$relation->pluck('id')->all());
+        $this->assertEquals([], $users[1]->$relation->pluck('id')->all());
+        $this->assertEquals([2, 3], $users[2]->$relation->pluck('id')->all());
+        $pivot = $users[0]->$relation[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
         $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
-        $this->assertEquals(['role' => ['active' => false]], $users[0]->roles2[1]->pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $users[0]->$relation[1]->pivot->getAttributes());
     }
 
-    public function testLazyEagerLoading()
+    #[DataProvider(methodName: 'idRelationProvider')]
+    public function testLazyEagerLoading(string $relation)
     {
-        $users = User::all()->load('roles');
+        $users = User::all()->load($relation);
 
         $this->assertEquals([1, 2], $users[0]->roles->pluck('id')->all());
         $this->assertEquals([], $users[1]->roles->pluck('id')->all());
         $this->assertEquals([2, 3], $users[2]->roles->pluck('id')->all());
     }
 
-    public function testLazyEagerLoadingWithObjects()
+    #[DataProvider(methodName: 'objectRelationProvider')]
+    public function testLazyEagerLoadingWithObjects(string $relation)
     {
-        $users = User::all()->load('roles2');
+        $users = User::all()->load($relation);
 
-        $this->assertEquals([1, 2], $users[0]->roles2->pluck('id')->all());
-        $this->assertEquals([], $users[1]->roles2->pluck('id')->all());
-        $this->assertEquals([2, 3], $users[2]->roles2->pluck('id')->all());
-        $pivot = $users[0]->roles2[0]->pivot;
+        $this->assertEquals([1, 2], $users[0]->$relation->pluck('id')->all());
+        $this->assertEquals([], $users[1]->$relation->pluck('id')->all());
+        $this->assertEquals([2, 3], $users[2]->$relation->pluck('id')->all());
+        $pivot = $users[0]->$relation[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
         $this->assertEquals(['role' => ['active' => true]], $pivot->getAttributes());
-        $this->assertEquals(['role' => ['active' => false]], $users[0]->roles2[1]->pivot->getAttributes());
+        $this->assertEquals(['role' => ['active' => false]], $users[0]->$relation[1]->pivot->getAttributes());
     }
 
-    public function testExistenceQuery()
+    #[DataProvider(methodName: 'idRelationProvider')]
+    public function testExistenceQuery(string $relation)
     {
-        $users = User::has('roles')->get();
+        $users = User::has($relation)->get();
 
         $this->assertEquals([21, 23], $users->pluck('id')->all());
     }
 
-    public function testExistenceQueryWithObjects()
+    #[DataProvider(methodName: 'objectRelationProvider')]
+    public function testExistenceQueryWithObjects(string $relation)
     {
         if (DB::connection()->getDriverName() === 'sqlsrv') {
             $this->markTestSkipped();
         }
 
-        $users = User::whereHas('roles2', function (Builder $query) {
+        $users = User::whereHas($relation, function (Builder $query) {
             $query->where('id', 1);
         })->get();
 
@@ -168,20 +176,20 @@ class BelongsToJsonTest extends TestCase
             ],
         ];
 
-        $user->roles2()->attach([
+        $user->rolesWithObjects()->attach([
             1 => ['role' => ['active' => true]],
             2 => ['role' => ['active' => false]],
         ]);
 
-        $this->assertEquals([1, 2], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
+        $this->assertEquals([1, 2], $user->rolesWithObjects->pluck('id')->all());
+        $this->assertEquals([true, false], $user->rolesWithObjects->pluck('pivot.role.active')->all());
 
-        $user->roles2()->attach([
+        $user->rolesWithObjects()->attach([
             2 => ['role' => ['active' => true]],
             3 => ['role' => ['active' => false]],
         ]);
 
-        $roles = $user->load('roles2')->roles2->sortBy('id')->values();
+        $roles = $user->load('rolesWithObjects')->rolesWithObjects->sortBy('id')->values();
         $this->assertEquals([1, 2, 3], $roles->pluck('id')->all());
         $this->assertEquals([true, true, false], $roles->pluck('pivot.role.active')->all());
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][3]);
@@ -209,15 +217,15 @@ class BelongsToJsonTest extends TestCase
 
     public function testDetachWithObjects()
     {
-        $user = User::find(21)->roles2()->detach(Role::find(2));
+        $user = User::find(21)->rolesWithObjects()->detach(Role::find(2));
 
-        $this->assertEquals([1], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true], $user->roles2->pluck('pivot.role.active')->all());
+        $this->assertEquals([1], $user->rolesWithObjects->pluck('id')->all());
+        $this->assertEquals([true], $user->rolesWithObjects->pluck('pivot.role.active')->all());
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][1]);
 
-        $user->roles2()->detach();
+        $user->rolesWithObjects()->detach();
 
-        $this->assertEquals([], $user->roles2()->pluck('id')->all());
+        $this->assertEquals([], $user->rolesWithObjects()->pluck('id')->all());
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][0]);
     }
 
@@ -230,13 +238,13 @@ class BelongsToJsonTest extends TestCase
 
     public function testSyncWithObjects()
     {
-        $user = User::find(21)->roles2()->sync([
+        $user = User::find(21)->rolesWithObjects()->sync([
             2 => ['role' => ['active' => true]],
             3 => ['role' => ['active' => false]],
         ]);
 
-        $this->assertEquals([2, 3], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
+        $this->assertEquals([2, 3], $user->rolesWithObjects->pluck('id')->all());
+        $this->assertEquals([true, false], $user->rolesWithObjects->pluck('pivot.role.active')->all());
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][2]);
     }
 
@@ -249,13 +257,13 @@ class BelongsToJsonTest extends TestCase
 
     public function testToggleWithObjects()
     {
-        $user = User::find(21)->roles2()->toggle([
+        $user = User::find(21)->rolesWithObjects()->toggle([
             2,
             3 => ['role' => ['active' => false]],
         ]);
 
-        $this->assertEquals([1, 3], $user->roles2->pluck('id')->all());
-        $this->assertEquals([true, false], $user->roles2->pluck('pivot.role.active')->all());
+        $this->assertEquals([1, 3], $user->rolesWithObjects->pluck('id')->all());
+        $this->assertEquals([true, false], $user->rolesWithObjects->pluck('pivot.role.active')->all());
         $this->assertEquals(['foo' => 'bar'], $user->options['roles'][2]);
     }
 
@@ -265,6 +273,22 @@ class BelongsToJsonTest extends TestCase
         $keys = $userModel::find(21)->roles()->getForeignKeys();
 
         $this->assertEquals([1, 2], $keys);
+    }
+
+    public static function idRelationProvider(): array
+    {
+        return [
+            ['roles'],
+            ['rolesInColumn'],
+        ];
+    }
+
+    public static function objectRelationProvider(): array
+    {
+        return [
+            ['rolesWithObjects'],
+            ['rolesWithObjectsInColumn'],
+        ];
     }
 
     public static function userModelProvider(): array

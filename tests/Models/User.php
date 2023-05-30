@@ -15,6 +15,8 @@ class User extends Model
 
     protected $casts = [
         'options' => 'json',
+        'role_ids' => 'json',
+        'role_objects' => 'json',
     ];
 
     public function country(): BelongsTo
@@ -34,7 +36,7 @@ class User extends Model
 
     public function permissions2(): HasManyDeep
     {
-        return $this->hasManyDeepFromRelations($this->roles2(), (new Role())->permissions());
+        return $this->hasManyDeepFromRelations($this->rolesWithObjects(), (new Role())->permissions());
     }
 
     public function roles(): BelongsToJson
@@ -42,9 +44,19 @@ class User extends Model
         return $this->belongsToJson(Role::class, 'options->role_ids');
     }
 
-    public function roles2(): BelongsToJson
+    public function rolesInColumn(): BelongsToJson
+    {
+        return $this->belongsToJson(Role::class, 'role_ids');
+    }
+
+    public function rolesWithObjects(): BelongsToJson
     {
         return $this->belongsToJson(Role::class, 'options->roles[]->role->id');
+    }
+
+    public function rolesWithObjectsInColumn(): BelongsToJson
+    {
+        return $this->belongsToJson(Role::class, 'role_objects[]->role->id');
     }
 
     public function roles3(): BelongsToJson
