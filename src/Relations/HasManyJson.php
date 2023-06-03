@@ -60,11 +60,12 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         if (static::$constraints) {
             $parentKey = $this->getParentKey();
 
-            if ($this->key) {
-                $parentKey = $this->parentKeyToArray($parentKey);
-            }
-
-            $this->query->whereJsonContains($this->path, $parentKey);
+            $this->whereJsonContainsOrMemberOf(
+                $this->query,
+                $this->path,
+                $parentKey,
+                fn ($parentKey) => $this->parentKeyToArray($parentKey)
+            );
         }
     }
 
@@ -80,11 +81,13 @@ class HasManyJson extends HasMany implements ConcatenableRelation
 
         $this->query->where(function (Builder $query) use ($parentKeys) {
             foreach ($parentKeys as $parentKey) {
-                if ($this->key) {
-                    $parentKey = $this->parentKeyToArray($parentKey);
-                }
-
-                $query->orWhereJsonContains($this->path, $parentKey);
+                $this->whereJsonContainsOrMemberOf(
+                    $query,
+                    $this->path,
+                    $parentKey,
+                    fn ($parentKey) => $this->parentKeyToArray($parentKey),
+                    'or'
+                );
             }
         });
     }
@@ -109,7 +112,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param array  $models
+     * @param array $models
      * @param \Illuminate\Database\Eloquent\Collection $results
      * @param string $relation
      * @param string $type
@@ -187,10 +190,13 @@ class HasManyJson extends HasMany implements ConcatenableRelation
 
         $query->addBinding($bindings);
 
-        return $query->select($columns)->whereJsonContains(
+        $this->whereJsonContainsOrMemberOf(
+            $query,
             $this->getQualifiedPath(),
             $query->getQuery()->connection->raw($sql)
         );
+
+        return $query->select($columns);
     }
 
     /**
@@ -203,7 +209,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
-        $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
+        $query->from($query->getModel()->getTable() . ' as ' . $hash = $this->getRelationCountHash());
 
         $query->getModel()->setTable($hash);
 
@@ -211,10 +217,13 @@ class HasManyJson extends HasMany implements ConcatenableRelation
 
         $query->addBinding($bindings);
 
-        return $query->select($columns)->whereJsonContains(
-            $hash.'.'.$this->getPathName(),
+        $this->whereJsonContainsOrMemberOf(
+            $query,
+            $hash . '.' . $this->getPathName(),
             $query->getQuery()->connection->raw($sql)
         );
+
+        return $query->select($columns);
     }
 
     /**
@@ -227,16 +236,25 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     {
         $parentKey = $this->getQualifiedParentKeyName();
 
-        if ($this->key) {
-            $keys = explode('->', $this->key);
+        $grammar = $this->getJsonGrammar($query);
+        $connection = $query->getConnection();
 
-            $sql = $this->getJsonGrammar($query)->compileJsonObject($parentKey, count($keys));
-
-            $bindings = $keys;
-        } else {
-            $sql = $this->getJsonGrammar($query)->compileJsonArray($parentKey);
+        if ($grammar->supportsMemberOf($connection)) {
+            $sql = $grammar->wrap($parentKey);
 
             $bindings = [];
+        } else {
+            if ($this->key) {
+                $keys = explode('->', $this->key);
+
+                $sql = $this->getJsonGrammar($query)->compileJsonObject($parentKey, count($keys));
+
+                $bindings = $keys;
+            } else {
+                $sql = $this->getJsonGrammar($query)->compileJsonArray($parentKey);
+
+                $bindings = [];
+            }
         }
 
         return [$sql, $bindings];

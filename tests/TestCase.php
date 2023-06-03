@@ -5,7 +5,10 @@ namespace Tests;
 use Illuminate\Database\Capsule\Manager as DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
+use PHPUnit\Framework\Attributes\IgnoreMethodForCodeCoverage;
 use PHPUnit\Framework\TestCase as Base;
+use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
+use Staudenmeir\EloquentJsonRelations\Grammars\SqlServerGrammar;
 use Tests\Models\Category;
 use Tests\Models\Comment;
 use Tests\Models\Country;
@@ -18,6 +21,10 @@ use Tests\Models\Team;
 use Tests\Models\Project;
 use Tests\Models\User;
 
+#[IgnoreMethodForCodeCoverage(PostgresGrammar::class, 'compileMemberOf')]
+#[IgnoreMethodForCodeCoverage(PostgresGrammar::class, 'prepareBindingsForMemberOf')]
+#[IgnoreMethodForCodeCoverage(SqlServerGrammar::class, 'compileMemberOf')]
+#[IgnoreMethodForCodeCoverage(SqlServerGrammar::class, 'prepareBindingsForMemberOf')]
 abstract class TestCase extends Base
 {
     protected string $database;

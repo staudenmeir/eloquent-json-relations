@@ -154,10 +154,13 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
 
         $query->addBinding($bindings);
 
-        return $query->select($columns)->whereJsonContains(
+        $this->whereJsonContainsOrMemberOf(
+            $query,
             $this->getQualifiedPath(),
             $query->getQuery()->connection->raw($sql)
         );
+
+        return $query->select($columns);
     }
 
     /**
@@ -178,10 +181,13 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
 
         $query->addBinding($bindings);
 
-        return $query->select($columns)->whereJsonContains(
+        $this->whereJsonContainsOrMemberOf(
+            $query,
             $this->getQualifiedPath(),
             $query->getQuery()->connection->raw($sql)
         );
+
+        return $query->select($columns);
     }
 
     /**
@@ -195,16 +201,25 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     {
         $ownerKey = $query->qualifyColumn($ownerKey);
 
-        if ($this->key) {
-            $keys = explode('->', $this->key);
+        $grammar = $this->getJsonGrammar($query);
+        $connection = $query->getConnection();
 
-            $sql = $this->getJsonGrammar($query)->compileJsonObject($ownerKey, count($keys));
-
-            $bindings = $keys;
-        } else {
-            $sql = $this->getJsonGrammar($query)->compileJsonArray($ownerKey);
+        if ($grammar->supportsMemberOf($connection)) {
+            $sql = $grammar->wrap($ownerKey);
 
             $bindings = [];
+        } else {
+            if ($this->key) {
+                $keys = explode('->', $this->key);
+
+                $sql = $this->getJsonGrammar($query)->compileJsonObject($ownerKey, count($keys));
+
+                $bindings = $keys;
+            } else {
+                $sql = $this->getJsonGrammar($query)->compileJsonArray($ownerKey);
+
+                $bindings = [];
+            }
         }
 
         return [$sql, $bindings];

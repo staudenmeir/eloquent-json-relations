@@ -114,7 +114,7 @@ versions of Laravel.
 
 The package also introduces two new relationship types: `BelongsToJson` and `HasManyJson`
 
-On Laravel 5.6.25+, you can use them to implement many-to-many relationships with JSON arrays.
+Use them to implement many-to-many relationships with JSON arrays.
 
 In this example, `User` has a `BelongsToMany` relationship with `Role`. There is no pivot table, but the foreign keys
 are stored as an array in a JSON field (`users.options`):
@@ -214,6 +214,45 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 
 #### Query Performance
 
+##### MySQL
+
+On MySQL 8.0.17+, you can improve the query performance
+with [multi-valued indexes](https://dev.mysql.com/doc/refman/8.0/en/create-index.html#create-index-multi-valued).
+
+Use this migration when the array is the column itself (e.g. `users.role_ids`):
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    // ...
+    
+    // Array of IDs
+    $table->rawIndex('(cast(`role_ids` as unsigned array))', 'users_role_ids_index');
+    
+    // Array of objects
+    $table->rawIndex('(cast(`roles`->\'$[*]."role_id"\' as unsigned array))', 'users_roles_index');
+});
+```
+
+Use this migration when the array is nested inside an object (e.g. `users.options->role_ids`):
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    // ...
+    
+    // Array of IDs
+    $table->rawIndex('(cast(`options`->\'$."role_ids"\' as unsigned array))', 'users_role_ids_index');
+    
+    // Array of objects
+    $table->rawIndex('(cast(`options`->\'$."roles"[*]."role_id"\' as unsigned array))', 'users_roles_index');
+});
+```
+
+MySQL is quite picky about the syntax so I recommend that you check once
+with [`EXPLAIN`](https://dev.mysql.com/doc/refman/8.0/en/using-explain.html) that the executed relationship queries
+actually use the index.
+
+##### PostgreSQL
+
 On PostgreSQL, you can improve the query performance with `jsonb` columns
 and [`GIN` indexes](https://www.postgresql.org/docs/current/datatype-json.html#JSON-INDEXING).
 
@@ -221,7 +260,7 @@ Use this migration when the array of IDs/objects is the column itself (e.g. `use
 
 ```php
 Schema::create('users', function (Blueprint $table) {
-    $table->bigIncrements('id');
+    $table->id();
     $table->jsonb('role_ids');
     $table->index('role_ids')->algorithm('gin');
 });
@@ -231,10 +270,9 @@ Use this migration when the array is nested inside an object (e.g. `users.option
 
 ```php
 Schema::create('users', function (Blueprint $table) {
-    $table->bigIncrements('id');
+    $table->id();
     $table->jsonb('options');
-    $table->rawIndex('("options"->\'role_ids\')', 'users_options_index')->algorithm('gin'); // Laravel 7.10.3+
-    //$table->index([DB::raw('("options"->\'role_ids\')')], 'users_options_index', 'gin');  // Laravel < 7.10.3
+    $table->rawIndex('("options"->\'role_ids\')', 'users_options_index')->algorithm('gin');
 });
 ```
 

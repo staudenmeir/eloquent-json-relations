@@ -2,12 +2,13 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Relations\Traits;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use RuntimeException;
+use Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\MySqlGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\SqlServerGrammar;
@@ -118,12 +119,45 @@ trait IsJsonRelation
     }
 
     /**
+     * Add a “where JSON contains” or "member of" clause to the query.
+     *
+     * @param \Illuminate\Contracts\Database\Query\Builder $query
+     * @param string $column
+     * @param mixed $value
+     * @param callable|null $objectValueCallback
+     * @param string $boolean
+     * @return void
+     */
+    protected function whereJsonContainsOrMemberOf(
+        Builder $query,
+        string $column,
+        mixed $value,
+        callable $objectValueCallback = null,
+        string $boolean = 'and'
+    ): void {
+        $grammar = $this->getJsonGrammar($query);
+        $connection = $query->getConnection();
+
+        if ($grammar->supportsMemberOf($connection)) {
+            $query->whereRaw(
+                $grammar->compileMemberOf($column, $this->key, $value),
+                $grammar->prepareBindingsForMemberOf($value),
+                $boolean
+            );
+        } else {
+            $value = $this->key && $objectValueCallback ? $objectValueCallback($value) : $value;
+
+            $query->whereJsonContains($column, $value, $boolean);
+        }
+    }
+
+    /**
      * Get the JSON grammar.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Contracts\Database\Query\Builder $query
      * @return \Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar
      */
-    protected function getJsonGrammar(Builder $query)
+    protected function getJsonGrammar(Builder $query): JsonGrammar
     {
         $driver = $query->getConnection()->getDriverName();
 

@@ -2,8 +2,10 @@
 
 namespace Staudenmeir\EloquentJsonRelations\Grammars;
 
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\Grammars\PostgresGrammar as Base;
+use RuntimeException;
 
 class PostgresGrammar extends Base implements JsonGrammar
 {
@@ -43,5 +45,40 @@ class PostgresGrammar extends Base implements JsonGrammar
     public function compileJsonValueSelect(string $column): string
     {
         return $this->wrap($column);
+    }
+
+    /**
+     * Determine whether the database supports the "member of" operator.
+     *
+     * @param \Illuminate\Database\ConnectionInterface $connection
+     * @return bool
+     */
+    public function supportsMemberOf(ConnectionInterface $connection): bool
+    {
+        return false;
+    }
+
+    /**
+     * Compile a "member of" statement into SQL.
+     *
+     * @param string $column
+     * @param string|null $objectKey
+     * @param mixed $value
+     * @return string
+     */
+    public function compileMemberOf(string $column, ?string $objectKey, mixed $value): string
+    {
+        throw new RuntimeException('This database is not supported.');
+    }
+
+    /**
+     * Prepare the bindings for a "member of" statement.
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function prepareBindingsForMemberOf(mixed $value): array
+    {
+        throw new RuntimeException('This database is not supported.');
     }
 }

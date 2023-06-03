@@ -39,7 +39,8 @@ trait IsConcatenableBelongsToJsonRelation
 
                 $query->addBinding($bindings, 'join');
 
-                $join->whereJsonContains(
+                $this->whereJsonContainsOrMemberOf(
+                    $join,
                     $this->getQualifiedPath(),
                     $query->getQuery()->connection->raw($sql)
                 );
