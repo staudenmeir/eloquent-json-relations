@@ -65,7 +65,7 @@ class SqlServerGrammar extends Base implements JsonGrammar
      */
     public function compileMemberOf(string $column, ?string $objectKey, mixed $value): string
     {
-        throw new RuntimeException('This database is not supported.');
+        throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
     }
 
     /**
@@ -76,6 +76,6 @@ class SqlServerGrammar extends Base implements JsonGrammar
      */
     public function prepareBindingsForMemberOf(mixed $value): array
     {
-        throw new RuntimeException('This database is not supported.');
+        throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
     }
 }
