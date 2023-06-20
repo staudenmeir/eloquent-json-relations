@@ -58,10 +58,15 @@ trait IsConcatenableBelongsToJsonRelation
      * @param array $models
      * @param \Illuminate\Database\Eloquent\Collection $results
      * @param string $relation
+     * @param string $type
      * @return array
      */
-    public function matchResultsForDeepRelationship(array $models, Collection $results, string $relation): array
-    {
+    public function matchResultsForDeepRelationship(
+        array $models,
+        Collection $results,
+        string $relation,
+        string $type = 'many'
+    ): array {
         $dictionary = $this->buildDictionaryForDeepRelationship($results);
 
         foreach ($models as $model) {
@@ -73,9 +78,11 @@ trait IsConcatenableBelongsToJsonRelation
                 }
             }
 
-            $collection = $this->related->newCollection($matches);
+            $value = $type === 'one'
+                ? (reset($matches) ?: null)
+                : $this->related->newCollection($matches);
 
-            $model->setRelation($relation, $collection);
+            $model->setRelation($relation, $value);
         }
 
         return $models;

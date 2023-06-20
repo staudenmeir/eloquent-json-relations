@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasOneDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 
@@ -27,6 +28,11 @@ class User extends Model
     public function locale(): BelongsTo
     {
         return $this->belongsTo(Locale::class, 'options->locale_id');
+    }
+
+    public function permission(): HasOneDeep
+    {
+        return $this->hasOneDeepFromRelations($this->roles(), (new Role())->permissions());
     }
 
     public function permissions(): HasManyDeep

@@ -40,6 +40,15 @@ class FirstPositionTest extends TestCase
         $this->assertEquals([83, 84], $users[2]->permissions->pluck('id')->all());
     }
 
+    public function testEagerLoadingWithHasOneDeep()
+    {
+        $users = User::with('permission')->get();
+
+        $this->assertEquals(81, $users[0]->permission->id);
+        $this->assertNull($users[1]->permission);
+        $this->assertEquals(83, $users[2]->permission->id);
+    }
+
     public function testEagerLoadingWithObjects()
     {
         $users = User::with('permissions2')->get();

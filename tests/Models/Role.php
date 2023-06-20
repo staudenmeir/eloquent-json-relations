@@ -4,6 +4,7 @@ namespace Tests\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasOneDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Staudenmeir\EloquentJsonRelations\JsonKey;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
@@ -20,6 +21,11 @@ class Role extends Model
     public function countries2(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->usersWithObjects(), (new User())->country());
+    }
+
+    public function country(): HasOneDeep
+    {
+        return $this->hasOneDeepFromRelations($this->users(), (new User())->country());
     }
 
     public function permissions(): HasMany

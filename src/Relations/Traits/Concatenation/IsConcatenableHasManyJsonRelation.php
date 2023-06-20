@@ -74,19 +74,28 @@ trait IsConcatenableHasManyJsonRelation
      * @param array $models
      * @param \Illuminate\Database\Eloquent\Collection $results
      * @param string $relation
+     * @param string $type
      * @return array
      */
-    public function matchResultsForDeepRelationship(array $models, Collection $results, string $relation): array
-    {
+    public function matchResultsForDeepRelationship(
+        array $models,
+        Collection $results,
+        string $relation,
+        string $type = 'many'
+    ): array {
         $dictionary = $this->buildDictionaryForDeepRelationship($results);
 
         foreach ($models as $model) {
             $key = $this->getDictionaryKey($model->{$this->localKey});
 
             if (isset($dictionary[$key])) {
-                $collection = $this->related->newCollection($dictionary[$key]);
+                $value = $dictionary[$key];
 
-                $model->setRelation($relation, $collection);
+                $value = $type === 'one'
+                    ? (reset($value) ?: null)
+                    : $this->related->newCollection($value);
+
+                $model->setRelation($relation, $value);
             }
         }
 
