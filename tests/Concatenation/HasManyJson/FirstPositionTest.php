@@ -57,6 +57,15 @@ class FirstPositionTest extends TestCase
         $this->assertEquals([], $roles[3]->countries2->pluck('id')->all());
     }
 
+    public function testEagerLoadingWithHasOneDeep()
+    {
+        $roles = Role::with('country')->get();
+
+        $this->assertEquals(71, $roles[0]->country->id);
+        $this->assertEquals(71, $roles[1]->country->id);
+        $this->assertNull($roles[3]->country);
+    }
+
     public function testLazyEagerLoading()
     {
         $roles = Role::all()->load('countries');
