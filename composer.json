@@ -15,7 +15,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^10.1",
-        "staudenmeir/eloquent-has-many-deep": "^1.18.1"
+        "staudenmeir/eloquent-has-many-deep": "^1.18.1",
+        "phpstan/phpstan": "^1.10"
     },
     "autoload": {
         "psr-4": {
