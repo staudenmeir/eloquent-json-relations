@@ -275,6 +275,13 @@ class BelongsToJsonTest extends TestCase
         $this->assertEquals([1, 2], $keys);
     }
 
+    public function testGetRelatedKeyName()
+    {
+        $relatedKeyName = (new User())->roles()->getRelatedKeyName();
+
+        $this->assertEquals('id', $relatedKeyName);
+    }
+
     public static function idRelationProvider(): array
     {
         return [
