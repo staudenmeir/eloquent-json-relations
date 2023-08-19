@@ -257,4 +257,14 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
 
         return (new BaseCollection($model->{$this->foreignKey}))->filter(fn ($key) => $key !== null)->all();
     }
+
+    /**
+     * Get the related key for the relationship.
+     *
+     * @return string
+     */
+    public function getRelatedKeyName()
+    {
+        return $this->ownerKey;
+    }
 }
