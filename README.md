@@ -1,11 +1,11 @@
-![CI](https://github.com/staudenmeir/eloquent-json-relations/workflows/CI/badge.svg)
+# Eloquent JSON Relations
+
+[![CI](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml/badge.svg)](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml)
 [![Code Coverage](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/staudenmeir/eloquent-json-relations/v/stable)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
-[![Total Downloads](https://poser.pugx.org/staudenmeir/eloquent-json-relations/downloads)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
-[![License](https://poser.pugx.org/staudenmeir/eloquent-json-relations/license)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
-
-## Introduction
+[![Total Downloads](https://poser.pugx.org/staudenmeir/eloquent-json-relations/downloads)](https://packagist.org/packages/staudenmeir/eloquent-json-relations/stats)
+[![License](https://poser.pugx.org/staudenmeir/eloquent-json-relations/license)](https://github.com/staudenmeir/eloquent-json-relations/blob/master/LICENSE)
 
 This Laravel Eloquent extension adds support for JSON foreign keys to `BelongsTo`, `HasOne`, `HasMany`, `HasOneThrough`
 , `HasManyThrough`, `MorphTo`, `MorphOne` and `MorphMany` relationships.
@@ -30,6 +30,18 @@ relationships with JSON arrays.
 Use this command if you are in PowerShell on Windows (e.g. in VS Code):
 
     composer require "staudenmeir/eloquent-json-relations:^^^^1.1"
+
+## Versions
+
+| Laravel | Package |
+|:--------|:--------|
+| 10.x    | 1.8     |
+| 9.x     | 1.7     |
+| 8.x     | 1.6     |
+| 7.x     | 1.5     |
+| 6.x     | 1.4     |
+| 5.8     | 1.3     |
+| 5.5–5.7 | 1.2     |
 
 ## Usage
 
