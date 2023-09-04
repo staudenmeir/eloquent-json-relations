@@ -3,4 +3,4 @@ build:
     php: 8.2
 tools:
   external_code_coverage:
-    runs: 5
+    runs: 4
