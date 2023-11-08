@@ -324,7 +324,7 @@ trait HasJsonRelationships
         if ($firstKey instanceof JsonKey) {
             $relationships[] = $this->hasManyJson($through, $firstKey, $localKey);
 
-            $relationships[] = $through->hasMany($related, $secondKey, $secondLocalKey);
+            $relationships[] = $through->hasMany ($related, $secondKey, $secondLocalKey);
         } else {
             if (!method_exists($through, 'belongsToJson')) {
                 //@codeCoverageIgnoreStart
@@ -334,7 +334,7 @@ trait HasJsonRelationships
                 // @codeCoverageIgnoreEnd
             }
 
-            $relationships[] = $this->hasMany($through, $firstKey, $localKey);
+            $relationships[] = $this->hasMany ($through, $firstKey, $localKey);
 
             $relationships[] = $through->belongsToJson($related, $secondLocalKey, $secondKey);
         }
