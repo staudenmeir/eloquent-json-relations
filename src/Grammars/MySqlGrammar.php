@@ -71,6 +71,8 @@ class MySqlGrammar extends Base implements JsonGrammar
      */
     public function compileMemberOf(string $column, ?string $objectKey, mixed $value): string
     {
+        // TODO: quality
+        
         $columnWithKey = $objectKey ? $column . (str_contains($column, '->') ? '[*]' : '') . "->$objectKey" : $column;
 
         [$field, $path] = $this->wrapJsonFieldAndPath($columnWithKey);

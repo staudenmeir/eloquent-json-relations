@@ -53,6 +53,7 @@ Use this command if you are in PowerShell on Windows (e.g. in VS Code):
     - [Query Performance](#query-performance)
 - [Has-Many-Through Relationships](#has-many-through-relationships)
 - [Concatenation](#concatenation)
+- Ide
 
 ### One-To-Many Relationships
 
