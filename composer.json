@@ -14,9 +14,9 @@
         "staudenmeir/eloquent-has-many-deep-contracts": "^1.1"
     },
     "require-dev": {
+        "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.1",
-        "staudenmeir/eloquent-has-many-deep": "^1.18.1",
-        "phpstan/phpstan": "^1.10"
+        "staudenmeir/eloquent-has-many-deep": "^1.18.1"
     },
     "autoload": {
         "psr-4": {
@@ -29,5 +29,8 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
 }
