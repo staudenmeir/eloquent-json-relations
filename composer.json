@@ -14,6 +14,8 @@
         "staudenmeir/eloquent-has-many-deep-contracts": "^1.1"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^2.13",
+        "orchestra/testbench": "^8.17",
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.1",
         "staudenmeir/eloquent-has-many-deep": "^1.18.1"
@@ -30,6 +32,13 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Staudenmeir\\EloquentJsonRelations\\IdeHelperServiceProvider"
+            ]
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
