@@ -22,7 +22,7 @@ class JsonRelationsHook implements ModelHookInterface
         $traits = class_uses_recursive($model);
 
         if (!in_array(HasJsonRelationships::class, $traits)) {
-            return;
+            return; // @codeCoverageIgnore
         }
 
         $methods = (new ReflectionClass($model))->getMethods(ReflectionMethod::IS_PUBLIC);
@@ -35,8 +35,8 @@ class JsonRelationsHook implements ModelHookInterface
 
             try {
                 $relationship = $method->invoke($model);
-            } catch (Throwable) {
-                continue;
+            } catch (Throwable) { // @codeCoverageIgnore
+                continue; // @codeCoverageIgnore
             }
 
             if ($relationship instanceof BelongsToJson || $relationship instanceof HasManyJson) {
