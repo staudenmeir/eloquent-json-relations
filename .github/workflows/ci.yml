@@ -89,3 +89,7 @@ jobs:
           SQLSRV_PORT: ${{ job.services.sqlsrv.ports[1433] }}
       - run: php tests/coverage/scrutinizer.php
         if: matrix.coverage == 'xdebug'
+      - uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        if: matrix.coverage == 'xdebug' && env.CODECOV_TOKEN
