@@ -162,18 +162,15 @@ trait IsJsonRelation
     {
         $driver = $query->getConnection()->getDriverName();
 
-        switch ($driver) {
-            case 'mysql':
-                return $query->getConnection()->withTablePrefix(new MySqlGrammar());
-            case 'pgsql':
-                return $query->getConnection()->withTablePrefix(new PostgresGrammar());
-            case 'sqlite':
-                return $query->getConnection()->withTablePrefix(new SqliteGrammar());
-            case 'sqlsrv':
-                return $query->getConnection()->withTablePrefix(new SqlServerGrammar());
-        }
-
-        throw new RuntimeException('This database is not supported.'); // @codeCoverageIgnore
+        return $query->getConnection()->withTablePrefix(
+            match ($driver) {
+                'mysql' => new MySqlGrammar(),
+                'pgsql' => new PostgresGrammar(),
+                'sqlite' => new SqliteGrammar(),
+                'sqlsrv' => new SqlServerGrammar(),
+                default => throw new RuntimeException('This database is not supported.') // @codeCoverageIgnore
+            }
+        );
     }
 
     /**
