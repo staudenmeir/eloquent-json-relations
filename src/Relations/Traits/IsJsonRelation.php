@@ -11,7 +11,7 @@ use RuntimeException;
 use Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\MySqlGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
-use Staudenmeir\EloquentJsonRelations\Grammars\SqliteGrammar;
+use Staudenmeir\EloquentJsonRelations\Grammars\SQLiteGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\SqlServerGrammar;
 
 trait IsJsonRelation
@@ -166,7 +166,7 @@ trait IsJsonRelation
             match ($driver) {
                 'mysql' => new MySqlGrammar(),
                 'pgsql' => new PostgresGrammar(),
-                'sqlite' => new SqliteGrammar(),
+                'sqlite' => new SQLiteGrammar(),
                 'sqlsrv' => new SqlServerGrammar(),
                 default => throw new RuntimeException('This database is not supported.') // @codeCoverageIgnore
             }

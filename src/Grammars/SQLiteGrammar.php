@@ -6,7 +6,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Grammars\SQLiteGrammar as Base;
 use RuntimeException;
 
-class SqliteGrammar extends Base implements JsonGrammar
+class SQLiteGrammar extends Base implements JsonGrammar
 {
     /**
      * Compile a "JSON array" statement into SQL.
