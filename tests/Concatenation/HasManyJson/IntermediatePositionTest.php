@@ -2,22 +2,12 @@
 
 namespace Tests\Concatenation\HasManyJson;
 
-use Illuminate\Database\Capsule\Manager as DB;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Tests\Models\Permission;
 use Tests\TestCase;
 
 class IntermediatePositionTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $this->markTestSkipped();
-        }
-    }
-
     public function testLazyLoading()
     {
         $countries = Permission::find(83)->countries;
@@ -27,7 +17,7 @@ class IntermediatePositionTest extends TestCase
 
     public function testLazyLoadingWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -49,7 +39,7 @@ class IntermediatePositionTest extends TestCase
 
     public function testEagerLoadingWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -69,7 +59,7 @@ class IntermediatePositionTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

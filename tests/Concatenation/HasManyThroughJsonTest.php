@@ -11,15 +11,6 @@ use Tests\TestCase;
 
 class HasManyThroughJsonTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $this->markTestSkipped();
-        }
-    }
-
     public function testLazyLoading()
     {
         $projects = Role::find(2)->projects;
@@ -29,7 +20,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testLazyLoadingWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -51,7 +42,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testLazyLoadingWithReverseRelationshipAndObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -93,7 +84,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testEagerLoadingWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -120,7 +111,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testEagerLoadingWithReverseRelationshipAndObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -144,7 +135,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -162,7 +153,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testExistenceQueryWithReverseRelationshipAndObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

@@ -33,7 +33,7 @@ abstract class TestCase extends Base
     {
         parent::setUp();
 
-        $this->database = getenv('DATABASE') ?: 'mysql';
+        $this->database = getenv('DATABASE') ?: 'sqlite';
 
         $config = require __DIR__.'/config/database.php';
 
@@ -90,7 +90,7 @@ abstract class TestCase extends Base
         });
 
         DB::schema()->create('categories', function (Blueprint $table) {
-            $type = DB::connection()->getDriverName() === 'pgsql' ? 'uuid' : 'string';
+            $type = $this->database === 'pgsql' ? 'uuid' : 'string';
             $table->$type('id');
             $table->json('options');
             $table->softDeletes();

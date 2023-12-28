@@ -2,21 +2,11 @@
 
 namespace Tests\Concatenation\BelongsToJson;
 
-use Illuminate\Database\Capsule\Manager as DB;
 use Tests\Models\User;
 use Tests\TestCase;
 
 class FirstPositionTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $this->markTestSkipped();
-        }
-    }
-
     public function testLazyLoading()
     {
         $permissions = User::find(21)->permissions;
@@ -85,7 +75,7 @@ class FirstPositionTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

@@ -51,10 +51,6 @@ class JsonRelationsHookTest extends TestCase
 
     public function testRunWithHasManyJson()
     {
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $this->markTestSkipped();
-        }
-
         $command = Mockery::mock(ModelsCommand::class);
         $command->shouldReceive('setProperty')->once()->with(
             'users',

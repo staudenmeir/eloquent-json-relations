@@ -2,21 +2,11 @@
 
 namespace Tests\Concatenation\BelongsToJson;
 
-use Illuminate\Database\Capsule\Manager as DB;
 use Tests\Models\Country;
 use Tests\TestCase;
 
 class LastPositionTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $this->markTestSkipped();
-        }
-    }
-
     public function testLazyLoading()
     {
         $roles = Country::find(71)->roles;
@@ -26,7 +16,7 @@ class LastPositionTest extends TestCase
 
     public function testLazyLoadingWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -46,7 +36,7 @@ class LastPositionTest extends TestCase
 
     public function testEagerLoadingWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -66,7 +56,7 @@ class LastPositionTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

@@ -11,6 +11,7 @@ use RuntimeException;
 use Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\MySqlGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
+use Staudenmeir\EloquentJsonRelations\Grammars\SqliteGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\SqlServerGrammar;
 
 trait IsJsonRelation
@@ -166,6 +167,8 @@ trait IsJsonRelation
                 return $query->getConnection()->withTablePrefix(new MySqlGrammar());
             case 'pgsql':
                 return $query->getConnection()->withTablePrefix(new PostgresGrammar());
+            case 'sqlite':
+                return $query->getConnection()->withTablePrefix(new SqliteGrammar());
             case 'sqlsrv':
                 return $query->getConnection()->withTablePrefix(new SqlServerGrammar());
         }

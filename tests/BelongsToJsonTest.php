@@ -16,15 +16,6 @@ use Tests\Models\UserAsCollection;
 
 class BelongsToJsonTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $this->markTestSkipped();
-        }
-    }
-
     #[DataProvider(methodName: 'idRelationProvider')]
     public function testLazyLoading(string $relation)
     {
@@ -125,7 +116,7 @@ class BelongsToJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testExistenceQueryWithObjects(string $relation)
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -145,7 +136,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testExistenceQueryForSelfRelationWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

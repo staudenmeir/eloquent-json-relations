@@ -13,15 +13,6 @@ use Tests\Models\User;
 
 class HasManyJsonTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        if (DB::connection()->getDriverName() === 'sqlite') {
-            $this->markTestSkipped();
-        }
-    }
-
     #[DataProvider(methodName: 'idRelationProvider')]
     public function testLazyLoading(string $relation)
     {
@@ -33,7 +24,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testLazyLoadingWithObjects(string $relation)
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -58,7 +49,7 @@ class HasManyJsonTest extends TestCase
 
     public function testFirst()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -80,7 +71,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testEagerLoadingWithObjects(string $relation)
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -107,7 +98,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testLazyEagerLoadingWithObjects(string $relation)
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -133,7 +124,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testExistenceQueryWithObjects(string $relation)
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -153,7 +144,7 @@ class HasManyJsonTest extends TestCase
 
     public function testExistenceQueryForSelfRelationWithObjects()
     {
-        if (DB::connection()->getDriverName() === 'sqlsrv') {
+        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
