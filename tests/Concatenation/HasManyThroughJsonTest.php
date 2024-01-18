@@ -20,7 +20,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testLazyLoadingWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -42,7 +42,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testLazyLoadingWithReverseRelationshipAndObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -84,7 +84,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testEagerLoadingWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -111,7 +111,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testEagerLoadingWithReverseRelationshipAndObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -135,7 +135,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -153,7 +153,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testExistenceQueryWithReverseRelationshipAndObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

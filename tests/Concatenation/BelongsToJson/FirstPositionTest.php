@@ -75,7 +75,7 @@ class FirstPositionTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

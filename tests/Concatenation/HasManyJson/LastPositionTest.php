@@ -17,7 +17,7 @@ class LastPositionTest extends TestCase
 
     public function testLazyLoadingWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -39,7 +39,7 @@ class LastPositionTest extends TestCase
 
     public function testEagerLoadingWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -59,7 +59,7 @@ class LastPositionTest extends TestCase
 
     public function testExistenceQueryWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

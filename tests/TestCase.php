@@ -27,18 +27,18 @@ use Tests\Models\User;
 #[IgnoreMethodForCodeCoverage(SqlServerGrammar::class, 'prepareBindingsForMemberOf')]
 abstract class TestCase extends Base
 {
-    protected string $database;
+    protected string $connection;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->database = getenv('DATABASE') ?: 'sqlite';
+        $this->connection = getenv('DB_CONNECTION') ?: 'sqlite';
 
         $config = require __DIR__.'/config/database.php';
 
         $db = new DB();
-        $db->addConnection($config[$this->database]);
+        $db->addConnection($config[$this->connection]);
         $db->setAsGlobal();
         $db->bootEloquent();
 
@@ -90,7 +90,7 @@ abstract class TestCase extends Base
         });
 
         DB::schema()->create('categories', function (Blueprint $table) {
-            $type = $this->database === 'pgsql' ? 'uuid' : 'string';
+            $type = $this->connection === 'pgsql' ? 'uuid' : 'string';
             $table->$type('id');
             $table->json('options');
             $table->softDeletes();

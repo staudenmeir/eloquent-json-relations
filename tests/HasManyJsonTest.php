@@ -24,7 +24,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testLazyLoadingWithObjects(string $relation)
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -49,7 +49,7 @@ class HasManyJsonTest extends TestCase
 
     public function testFirst()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -71,7 +71,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testEagerLoadingWithObjects(string $relation)
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -98,7 +98,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testLazyEagerLoadingWithObjects(string $relation)
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -124,7 +124,7 @@ class HasManyJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testExistenceQueryWithObjects(string $relation)
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -144,7 +144,7 @@ class HasManyJsonTest extends TestCase
 
     public function testExistenceQueryForSelfRelationWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 

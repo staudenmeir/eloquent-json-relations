@@ -116,7 +116,7 @@ class BelongsToJsonTest extends TestCase
     #[DataProvider(methodName: 'objectRelationProvider')]
     public function testExistenceQueryWithObjects(string $relation)
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
@@ -136,7 +136,7 @@ class BelongsToJsonTest extends TestCase
 
     public function testExistenceQueryForSelfRelationWithObjects()
     {
-        if (in_array($this->database, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
