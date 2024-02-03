@@ -52,7 +52,7 @@ Use this command if you are in PowerShell on Windows (e.g. in VS Code):
     - [Array of Objects](#array-of-objects)
     - [Query Performance](#query-performance)
 - [Has-Many-Through Relationships](#has-many-through-relationships)
-- [Concatenation](#concatenation)
+- [Deep Relationship Concatenation](#deep-relationship-concatenation)
 
 ### One-To-Many Relationships
 
@@ -333,7 +333,7 @@ class Project extends Model
 }
 ```
 
-### Concatenation
+### Deep Relationship Concatenation
 
 You can include JSON relationships into deep relationships by concatenating them with other relationships
 using [staudenmeir/eloquent-has-many-deep](https://github.com/staudenmeir/eloquent-has-many-deep) (Laravel 9+).
