@@ -34,9 +34,6 @@
         "sort-packages": true
     },
     "extra": {
-        "branch-alias": {
-            "dev-l11": "1.11.x-dev"
-        },
         "laravel": {
             "providers": [
                 "Staudenmeir\\EloquentJsonRelations\\IdeHelperServiceProvider"
