@@ -9,16 +9,16 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "illuminate/database": "^10.38",
-        "staudenmeir/eloquent-has-many-deep-contracts": "^1.1"
+        "php": "^8.2",
+        "illuminate/database": "^11.0",
+        "staudenmeir/eloquent-has-many-deep-contracts": "^1.2"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^2.13",
-        "orchestra/testbench": "^8.17",
+        "barryvdh/laravel-ide-helper": "^3.0",
+        "orchestra/testbench": "^9.0",
         "phpstan/phpstan": "^1.10",
-        "phpunit/phpunit": "^10.1",
-        "staudenmeir/eloquent-has-many-deep": "^1.18.1"
+        "phpunit/phpunit": "^10.5",
+        "staudenmeir/eloquent-has-many-deep": "^1.20"
     },
     "autoload": {
         "psr-4": {
@@ -34,6 +34,9 @@
         "sort-packages": true
     },
     "extra": {
+        "branch-alias": {
+            "dev-l11": "1.11.x-dev"
+        },
         "laravel": {
             "providers": [
                 "Staudenmeir\\EloquentJsonRelations\\IdeHelperServiceProvider"
