@@ -15,13 +15,11 @@ relationships with JSON arrays.
 
 ## Compatibility
 
-| Database                                          | Laravel |
-|:--------------------------------------------------|:--------|
-| MySQL 5.7+                                        | 5.5.29+ |
-| MariaDB 10.2+                                     | 5.8+    |
-| PostgreSQL 9.3+                                   | 5.5.29+ |
-| [SQLite 3.18+](https://www.sqlite.org/json1.html) | 5.6.35+ |
-| SQL Server 2016+                                  | 5.6.25+ |
+- MySQL 5.7+
+- MariaDB 10.2+
+- PostgreSQL 9.3+
+- SQLite 3.38+
+- SQL Server 2016+
 
 ## Installation
 
