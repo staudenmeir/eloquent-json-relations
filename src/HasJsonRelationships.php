@@ -33,7 +33,7 @@ trait HasJsonRelationships
      */
     public function getAttribute($key)
     {
-        $attribute = preg_split('/(->|\[\])/', $key)[0];
+        $attribute = preg_split('/(->|\[])/', $key)[0];
 
         if (array_key_exists($attribute, $this->attributes)) {
             return $this->getAttributeValue($key);

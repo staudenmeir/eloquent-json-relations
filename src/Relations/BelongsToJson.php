@@ -19,6 +19,26 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     use IsJsonRelation;
 
     /**
+     * Create a new belongs to JSON relationship instance.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $child
+     * @param string $foreignKey
+     * @param string $ownerKey
+     * @param string $relationName
+     * @return void
+     */
+    public function __construct(Builder $query, Model $child, $foreignKey, $ownerKey, $relationName)
+    {
+        $segments = explode('[]->', $foreignKey);
+
+        $this->path = $segments[0];
+        $this->key = $segments[1] ?? null;
+
+        parent::__construct($query, $child, $foreignKey, $ownerKey, $relationName);
+    }
+
+    /**
      * Get the results of the relationship.
      *
      * @return mixed

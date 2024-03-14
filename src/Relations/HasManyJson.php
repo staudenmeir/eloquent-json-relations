@@ -18,6 +18,25 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     use IsJsonRelation;
 
     /**
+     * Create a new has many JSON relationship instance.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param string $foreignKey
+     * @param string $localKey
+     * @return void
+     */
+    public function __construct(Builder $query, Model $parent, $foreignKey, $localKey)
+    {
+        $segments = explode('[]->', $foreignKey);
+
+        $this->path = $segments[0];
+        $this->key = $segments[1] ?? null;
+
+        parent::__construct($query, $parent, $foreignKey, $localKey);
+    }
+
+    /**
      * Get the results of the relationship.
      *
      * @return mixed

@@ -15,7 +15,7 @@ class HasManyThroughJsonTest extends TestCase
     {
         $projects = Role::find(2)->projects;
 
-        $this->assertEquals([71, 73], $projects->pluck('id')->all());
+        $this->assertEquals([91, 93], $projects->pluck('id')->all());
     }
 
     public function testLazyLoadingWithObjects()
@@ -26,7 +26,7 @@ class HasManyThroughJsonTest extends TestCase
 
         $projects = Role::find(2)->projects2;
 
-        $this->assertEquals([71, 73], $projects->pluck('id')->all());
+        $this->assertEquals([91, 93], $projects->pluck('id')->all());
         $pivot = $projects[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
         $this->assertTrue($pivot->exists);
@@ -35,7 +35,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testLazyLoadingWithReverseRelationship()
     {
-        $roles = Project::find(71)->roles;
+        $roles = Project::find(91)->roles;
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
     }
@@ -46,7 +46,7 @@ class HasManyThroughJsonTest extends TestCase
             $this->markTestSkipped();
         }
 
-        $roles = Project::find(71)->roles2;
+        $roles = Project::find(91)->roles2;
 
         $this->assertEquals([1, 2], $roles->pluck('id')->all());
         $pivot = $roles[0]->pivot;
@@ -76,9 +76,9 @@ class HasManyThroughJsonTest extends TestCase
     {
         $roles = Role::with('projects')->get();
 
-        $this->assertEquals([71], $roles[0]->projects->pluck('id')->all());
-        $this->assertEquals([71, 73], $roles[1]->projects->pluck('id')->all());
-        $this->assertEquals([73], $roles[2]->projects->pluck('id')->all());
+        $this->assertEquals([91], $roles[0]->projects->pluck('id')->all());
+        $this->assertEquals([91, 93], $roles[1]->projects->pluck('id')->all());
+        $this->assertEquals([93], $roles[2]->projects->pluck('id')->all());
         $this->assertEquals([], $roles[3]->projects->pluck('id')->all());
     }
 
@@ -90,9 +90,9 @@ class HasManyThroughJsonTest extends TestCase
 
         $roles = Role::with('projects2')->get();
 
-        $this->assertEquals([71], $roles[0]->projects2->pluck('id')->all());
-        $this->assertEquals([71, 73], $roles[1]->projects2->pluck('id')->all());
-        $this->assertEquals([73], $roles[2]->projects2->pluck('id')->all());
+        $this->assertEquals([91], $roles[0]->projects2->pluck('id')->all());
+        $this->assertEquals([91, 93], $roles[1]->projects2->pluck('id')->all());
+        $this->assertEquals([93], $roles[2]->projects2->pluck('id')->all());
         $this->assertEquals([], $roles[3]->projects2->pluck('id')->all());
         $pivot = $roles[1]->projects2[0]->pivot;
         $this->assertInstanceOf(Pivot::class, $pivot);
@@ -148,7 +148,7 @@ class HasManyThroughJsonTest extends TestCase
     {
         $projects = Project::has('roles')->get();
 
-        $this->assertEquals([71, 73], $projects->pluck('id')->all());
+        $this->assertEquals([91, 93], $projects->pluck('id')->all());
     }
 
     public function testExistenceQueryWithReverseRelationshipAndObjects()
@@ -159,6 +159,6 @@ class HasManyThroughJsonTest extends TestCase
 
         $projects = Project::has('roles2')->get();
 
-        $this->assertEquals([71, 73], $projects->pluck('id')->all());
+        $this->assertEquals([91, 93], $projects->pluck('id')->all());
     }
 }

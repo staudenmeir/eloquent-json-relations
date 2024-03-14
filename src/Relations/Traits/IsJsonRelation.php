@@ -31,23 +31,6 @@ trait IsJsonRelation
     protected $key;
 
     /**
-     * Create a new JSON relationship instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $args = func_get_args();
-
-        $foreignKey = explode('[]->', $args[2]);
-
-        $this->path = $foreignKey[0];
-        $this->key = $foreignKey[1] ?? null;
-
-        parent::__construct(...$args);
-    }
-
-    /**
      * Hydrate the pivot relationship on the models.
      *
      * @param \Illuminate\Database\Eloquent\Collection $models
