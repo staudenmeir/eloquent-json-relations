@@ -33,7 +33,7 @@ trait HasJsonRelationships
      */
     public function getAttribute($key)
     {
-        $attribute = preg_split('/(->|\[\])/', $key)[0];
+        $attribute = preg_split('/(->|\[])/', $key)[0];
 
         if (array_key_exists($attribute, $this->attributes)) {
             return $this->getAttributeValue($key);
@@ -221,8 +221,8 @@ trait HasJsonRelationships
      * Define an inverse one-to-one or many JSON relationship.
      *
      * @param string $related
-     * @param string $foreignKey
-     * @param string $ownerKey
+     * @param string|array $foreignKey
+     * @param string|array $ownerKey
      * @param string $relation
      * @return \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
      */
@@ -251,8 +251,8 @@ trait HasJsonRelationships
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Illuminate\Database\Eloquent\Model $child
-     * @param string $foreignKey
-     * @param string $ownerKey
+     * @param string|array $foreignKey
+     * @param string|array $ownerKey
      * @param string $relation
      * @return \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
      */
@@ -265,8 +265,8 @@ trait HasJsonRelationships
      * Define a one-to-many JSON relationship.
      *
      * @param string $related
-     * @param string $foreignKey
-     * @param string $localKey
+     * @param string|array $foreignKey
+     * @param string|array $localKey
      * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
      */
     public function hasManyJson($related, $foreignKey, $localKey = null)
@@ -274,12 +274,21 @@ trait HasJsonRelationships
         /** @var \Illuminate\Database\Eloquent\Model $instance */
         $instance = $this->newRelatedInstance($related);
 
+        if (is_array($foreignKey)) {
+            $foreignKey = array_map(
+                fn (string $key) => "{$instance->getTable()}.$key",
+                (array) $foreignKey
+            );
+        } else {
+            $foreignKey = "{$instance->getTable()}.$foreignKey";
+        }
+
         $localKey = $localKey ?: $this->getKeyName();
 
         return $this->newHasManyJson(
             $instance->newQuery(),
             $this,
-            $instance->getTable().'.'.$foreignKey,
+            $foreignKey,
             $localKey
         );
     }
@@ -289,8 +298,8 @@ trait HasJsonRelationships
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param string $foreignKey
-     * @param string $localKey
+     * @param string|array $foreignKey
+     * @param string|array $localKey
      * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
      */
     protected function newHasManyJson(Builder $query, Model $parent, $foreignKey, $localKey)

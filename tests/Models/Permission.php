@@ -6,11 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
-use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
 class Permission extends Model
 {
-    use HasJsonRelationships;
     use HasRelationships;
 
     public $timestamps = false;

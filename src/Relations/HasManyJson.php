@@ -10,12 +10,49 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 use Staudenmeir\EloquentHasManyDeepContracts\Interfaces\ConcatenableRelation;
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableHasManyJsonRelation;
+use Staudenmeir\EloquentJsonRelations\Relations\Traits\CompositeKeys\SupportsHasManyJsonCompositeKeys;
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
 
 class HasManyJson extends HasMany implements ConcatenableRelation
 {
     use IsConcatenableHasManyJsonRelation;
     use IsJsonRelation;
+    use SupportsHasManyJsonCompositeKeys;
+
+    /**
+     * The foreign key of the parent model.
+     *
+     * @var string|array
+     */
+    protected $foreignKey;
+
+    /**
+     * The local key of the parent model.
+     *
+     * @var string|array
+     */
+    protected $localKey;
+
+    /**
+     * Create a new has many JSON relationship instance.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param string $foreignKey
+     * @param string $localKey
+     * @return void
+     */
+    public function __construct(Builder $query, Model $parent, $foreignKey, $localKey)
+    {
+        $segments = is_array($foreignKey)
+            ? explode('[]->', $foreignKey[0])
+            : explode('[]->', $foreignKey);
+
+        $this->path = $segments[0];
+        $this->key = $segments[1] ?? null;
+
+        parent::__construct($query, $parent, $foreignKey, $localKey);
+    }
 
     /**
      * Get the results of the relationship.
@@ -39,7 +76,9 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     {
         $models = parent::get($columns);
 
-        if ($this->key && !is_null($this->parent->{$this->localKey})) {
+        $localKey = $this->hasCompositeKey() ? $this->localKey[0] : $this->localKey;
+
+        if ($this->key && !is_null($this->parent->$localKey)) {
             $this->hydratePivotRelation(
                 $models,
                 $this->parent,
@@ -66,6 +105,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
                 $parentKey,
                 fn ($parentKey) => $this->parentKeyToArray($parentKey)
             );
+
+            if ($this->hasCompositeKey()) {
+                $this->addConstraintsWithCompositeKey();
+            }
         }
     }
 
@@ -77,6 +120,12 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      */
     public function addEagerConstraints(array $models)
     {
+        if ($this->hasCompositeKey()) {
+            $this->addEagerConstraintsWithCompositeKey($models);
+
+            return;
+        }
+
         $parentKeys = $this->getKeys($models, $this->localKey);
 
         $this->query->where(function (Builder $query) use ($parentKeys) {
@@ -120,7 +169,11 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
-        $models = parent::matchOneOrMany(...func_get_args());
+        if ($this->hasCompositeKey()) {
+            $this->matchWithCompositeKey($models, $results, $relation);
+        } else {
+            parent::matchOneOrMany($models, $results, $relation, $type);
+        }
 
         if ($this->key) {
             foreach ($models as $model) {
@@ -195,6 +248,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
             $this->getQualifiedPath(),
             $query->getQuery()->connection->raw($sql)
         );
+
+        if ($this->hasCompositeKey()) {
+            $this->getRelationExistenceQueryWithCompositeKey($query);
+        }
 
         return $query->select($columns);
     }
@@ -272,9 +329,11 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     {
         $key = str_replace('->', '.', $this->key);
 
+        $localKey = $this->hasCompositeKey() ? $this->localKey[0] : $this->localKey;
+
         $record = (new BaseCollection($records))
-            ->filter(function ($value) use ($key, $parent) {
-                return Arr::get($value, $key) == $parent->{$this->localKey};
+            ->filter(function ($value) use ($key, $localKey, $parent) {
+                return Arr::get($value, $key) == $parent->$localKey;
             })->first();
 
         return Arr::except($record, $key);
@@ -288,5 +347,39 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     public function getPathName()
     {
         return last(explode('.', $this->path));
+    }
+
+    /**
+     * Get the key value of the parent's local key.
+     *
+     * @return mixed
+     */
+    public function getParentKey()
+    {
+        $localKey = $this->hasCompositeKey() ? $this->localKey[0] : $this->localKey;
+
+        return $this->parent->getAttribute($localKey);
+    }
+
+    /**
+     * Get the fully qualified parent key name.
+     *
+     * @return string
+     */
+    public function getQualifiedParentKeyName()
+    {
+        $localKey = $this->hasCompositeKey() ? $this->localKey[0] : $this->localKey;
+
+        return $this->parent->qualifyColumn($localKey);
+    }
+
+    /**
+     * Get the foreign key for the relationship.
+     *
+     * @return string
+     */
+    public function getQualifiedForeignKeyName()
+    {
+        return $this->hasCompositeKey() ? $this->foreignKey[0] : $this->foreignKey;
     }
 }
