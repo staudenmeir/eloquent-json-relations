@@ -51,6 +51,7 @@ Use this command if you are in PowerShell on Windows (e.g. in VS Code):
 - [Many-To-Many Relationships](#many-to-many-relationships)
     - [Array of IDs](#array-of-ids)
     - [Array of Objects](#array-of-objects)
+    - [Composite Keys](#composite-keys)
     - [Query Performance](#query-performance)
 - [Has-Many-Through Relationships](#has-many-through-relationships)
 - [Deep Relationship Concatenation](#deep-relationship-concatenation)
@@ -224,6 +225,38 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 ```
 
 **Limitations:** On SQLite and SQL Server, these relationships only work partially.
+
+#### Composite Keys
+
+If multiple columns need to match, you can define a composite key.
+
+Pass an array of keys that starts with JSON key:
+
+```php
+class Employee extends Model
+{
+    public function tasks()
+    {
+        return $this->belongsToJson(
+            Task::class,
+            ['options->work_stream_ids', 'team_id'],
+            ['work_stream_id', 'team_id']
+        );
+    }
+}
+
+class Task extends Model
+{
+    public function employees()
+    {
+        return $this->hasManyJson(
+            Employee::class,
+            ['options->work_stream_ids', 'team_id'],
+            ['work_stream_id', 'team_id']
+        );
+    }
+}
+```
 
 #### Query Performance
 

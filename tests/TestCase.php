@@ -12,11 +12,13 @@ use Staudenmeir\EloquentJsonRelations\Grammars\SqlServerGrammar;
 use Tests\Models\Category;
 use Tests\Models\Comment;
 use Tests\Models\Country;
+use Tests\Models\Employee;
 use Tests\Models\Locale;
 use Tests\Models\Permission;
 use Tests\Models\Post;
 use Tests\Models\Product;
 use Tests\Models\Role;
+use Tests\Models\Task;
 use Tests\Models\Team;
 use Tests\Models\Project;
 use Tests\Models\User;
@@ -113,6 +115,19 @@ abstract class TestCase extends Base
         DB::schema()->create('projects', function (Blueprint $table) {
             $table->unsignedInteger('id');
             $table->unsignedInteger('user_id');
+        });
+
+        DB::schema()->create('tasks', function (Blueprint $table) {
+            $table->unsignedInteger('id');
+            $table->unsignedInteger('team_id');
+            $table->unsignedInteger('work_stream_id');
+        });
+
+        DB::schema()->create('employees', function (Blueprint $table) {
+            $table->unsignedInteger('id');
+            $table->unsignedInteger('team_id');
+            $table->json('work_stream_ids');
+            $table->json('options');
         });
     }
 
@@ -224,6 +239,46 @@ abstract class TestCase extends Base
              'id' => 93,
              'user_id' => 23,
          ]);
+
+        Task::create(['id' => 101, 'team_id' => 1, 'work_stream_id' => 111]);
+        Task::create(['id' => 102, 'team_id' => 2, 'work_stream_id' => 111]);
+        Task::create(['id' => 103, 'team_id' => 1, 'work_stream_id' => 112]);
+        Task::create(['id' => 104, 'team_id' => 2, 'work_stream_id' => 112]);
+        Task::create(['id' => 105, 'team_id' => 1, 'work_stream_id' => 113]);
+        Task::create(['id' => 106, 'team_id' => 2, 'work_stream_id' => 113]);
+
+        Employee::create(['id' => 121, 'team_id' => 1, 'work_stream_ids' => [111, 112, 113],
+            'options' => [
+                'work_streams' => [
+                    ['work_stream' => ['id' => 111, 'active' => true]],
+                    ['work_stream' => ['id' => 112, 'active' => false]],
+                    ['work_stream' => ['id' => 113, 'active' => true]],
+                ],
+            ],
+        ]);
+        Employee::create(['id' => 122, 'team_id' => 2, 'work_stream_ids' => [111, 112],
+            'options' => [
+                'work_streams' => [
+                    ['work_stream' => ['id' => 111, 'active' => false]],
+                    ['work_stream' => ['id' => 112, 'active' => true]],
+                ],
+            ],
+        ]);
+        Employee::create(['id' => 123, 'team_id' => 1, 'work_stream_ids' => [111],
+            'options' => [
+                'work_streams' => [
+                    ['work_stream' => ['id' => 111, 'active' => true]],
+                ],
+            ],
+        ]);
+        Employee::create(['id' => 124, 'team_id' => 3, 'work_stream_ids' => [111, 112],
+            'options' => [
+                'work_streams' => [
+                    ['work_stream' => ['id' => 111, 'active' => true]],
+                    ['work_stream' => ['id' => 112, 'active' => false]],
+                ],
+            ],
+        ]);
 
         Model::reguard();
     }

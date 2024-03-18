@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 use Staudenmeir\EloquentHasManyDeepContracts\Interfaces\ConcatenableRelation;
+use Staudenmeir\EloquentJsonRelations\Relations\Traits\CompositeKeys\SupportsBelongsToJsonCompositeKeys;
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableBelongsToJsonRelation;
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
 
@@ -17,6 +18,21 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     use InteractsWithPivotRecords;
     use IsConcatenableBelongsToJsonRelation;
     use IsJsonRelation;
+    use SupportsBelongsToJsonCompositeKeys;
+
+    /**
+     * The foreign key of the parent model.
+     *
+     * @var string|array
+     */
+    protected $foreignKey;
+
+    /**
+     * The associated key on the parent model.
+     *
+     * @var string|array
+     */
+    protected $ownerKey;
 
     /**
      * Create a new belongs to JSON relationship instance.
@@ -30,7 +46,9 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      */
     public function __construct(Builder $query, Model $child, $foreignKey, $ownerKey, $relationName)
     {
-        $segments = explode('[]->', $foreignKey);
+        $segments = is_array($foreignKey)
+            ? explode('[]->', $foreignKey[0])
+            : explode('[]->', $foreignKey);
 
         $this->path = $segments[0];
         $this->key = $segments[1] ?? null;
@@ -81,8 +99,31 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         if (static::$constraints) {
             $table = $this->related->getTable();
 
-            $this->query->whereIn($table.'.'.$this->ownerKey, $this->getForeignKeys());
+            $ownerKey = $this->hasCompositeKey() ? $this->ownerKey[0] : $this->ownerKey;
+
+            $this->query->whereIn("$table.$ownerKey", $this->getForeignKeys());
+
+            if ($this->hasCompositeKey()) {
+                $this->addConstraintsWithCompositeKey();
+            }
         }
+    }
+
+    /**
+     * Set the constraints for an eager load of the relation.
+     *
+     * @param array $models
+     * @return void
+     */
+    public function addEagerConstraints(array $models)
+    {
+        if ($this->hasCompositeKey()) {
+            $this->addEagerConstraintsWithCompositeKey($models);
+
+            return;
+        }
+
+        parent::addEagerConstraints($models);
     }
 
     /**
@@ -114,22 +155,30 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      */
     public function match(array $models, Collection $results, $relation)
     {
-        $dictionary = $this->buildDictionary($results);
+        if ($this->hasCompositeKey()) {
+            $this->matchWithCompositeKey($models, $results, $relation);
+        } else {
+            $dictionary = $this->buildDictionary($results);
+
+            foreach ($models as $model) {
+                $matches = [];
+
+                foreach ($this->getForeignKeys($model) as $id) {
+                    if (isset($dictionary[$id])) {
+                        $matches[] = $dictionary[$id];
+                    }
+                }
+
+                $collection = $this->related->newCollection($matches);
+
+                $model->setRelation($relation, $collection);
+            }
+        }
 
         foreach ($models as $model) {
-            $matches = [];
-
-            foreach ($this->getForeignKeys($model) as $id) {
-                if (isset($dictionary[$id])) {
-                    $matches[] = $dictionary[$id];
-                }
-            }
-
-            $model->setRelation($relation, $collection = $this->related->newCollection($matches));
-
             if ($this->key) {
                 $this->hydratePivotRelation(
-                    $collection,
+                    $model->getRelation($relation),
                     $model,
                     fn (Model $model, Model $parent) => $parent->{$this->path}
                 );
@@ -170,7 +219,9 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
             return $this->getRelationExistenceQueryForSelfRelation($query, $parentQuery, $columns);
         }
 
-        [$sql, $bindings] = $this->relationExistenceQueryOwnerKey($query, $this->ownerKey);
+        $ownerKey = $this->hasCompositeKey() ? $this->ownerKey[0] : $this->ownerKey;
+
+        [$sql, $bindings] = $this->relationExistenceQueryOwnerKey($query, $ownerKey);
 
         $query->addBinding($bindings);
 
@@ -179,6 +230,10 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
             $this->getQualifiedPath(),
             $query->getQuery()->connection->raw($sql)
         );
+
+        if ($this->hasCompositeKey()) {
+            $this->getRelationExistenceQueryWithCompositeKey($query);
+        }
 
         return $query->select($columns);
     }
@@ -257,9 +312,11 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     {
         $key = str_replace('->', '.', $this->key);
 
+        $ownerKey = $this->hasCompositeKey() ? $this->ownerKey[0] : $this->ownerKey;
+
         $record = (new BaseCollection($records))
-            ->filter(function ($value) use ($key, $model) {
-                return Arr::get($value, $key) == $model->{$this->ownerKey};
+            ->filter(function ($value) use ($key, $model, $ownerKey) {
+                return Arr::get($value, $key) == $model->$ownerKey;
             })->first();
 
         return Arr::except($record, $key);
@@ -275,7 +332,9 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     {
         $model = $model ?: $this->child;
 
-        return (new BaseCollection($model->{$this->foreignKey}))->filter(fn ($key) => $key !== null)->all();
+        $foreignKey = $this->hasCompositeKey() ? $this->foreignKey[0] : $this->foreignKey;
+
+        return (new BaseCollection($model->$foreignKey))->filter(fn ($key) => $key !== null)->all();
     }
 
     /**
