@@ -322,9 +322,9 @@ trait HasJsonRelationships
         string $related,
         string $through,
         string|JsonKey $firstKey,
-        string $secondKey = null,
-        string $localKey = null,
-        string|JsonKey $secondLocalKey = null
+        ?string $secondKey = null,
+        ?string $localKey = null,
+        string|JsonKey|null $secondLocalKey = null
     ) {
         $relationships = [];
 

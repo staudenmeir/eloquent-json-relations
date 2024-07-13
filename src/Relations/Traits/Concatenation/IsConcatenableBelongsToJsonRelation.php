@@ -24,7 +24,7 @@ trait IsConcatenableBelongsToJsonRelation
         if ($position === 0) {
             $foreignKeys[] = $this->ownerKey;
 
-            $localKeys[] = function (Builder $query, Builder $parentQuery = null) {
+            $localKeys[] = function (Builder $query, ?Builder $parentQuery = null) {
                 if ($parentQuery) {
                     $this->getRelationExistenceQuery($this->query, $parentQuery);
                 }

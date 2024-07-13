@@ -328,7 +328,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      * @param \Illuminate\Database\Eloquent\Model|null $model
      * @return array
      */
-    public function getForeignKeys(Model $model = null)
+    public function getForeignKeys(?Model $model = null)
     {
         $model = $model ?: $this->child;
 

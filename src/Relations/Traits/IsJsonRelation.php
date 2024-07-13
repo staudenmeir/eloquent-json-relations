@@ -117,7 +117,7 @@ trait IsJsonRelation
         Builder $query,
         string $column,
         mixed $value,
-        callable $objectValueCallback = null,
+        ?callable $objectValueCallback = null,
         string $boolean = 'and'
     ): void {
         $grammar = $this->getJsonGrammar($query);
