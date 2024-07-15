@@ -144,7 +144,7 @@ class User extends Model
        'options' => 'json',
     ];
     
-    public function roles()
+    public function roles(): \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
     {
         return $this->belongsToJson(Role::class, 'options->role_ids');
     }
@@ -154,7 +154,7 @@ class Role extends Model
 {
     use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
-    public function users()
+    public function users(): \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
     {
        return $this->hasManyJson(User::class, 'options->role_ids');
     }
@@ -187,7 +187,7 @@ class User extends Model
        'options' => 'json',
     ];
     
-    public function roles()
+    public function roles(): \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
     {
         return $this->belongsToJson(Role::class, 'options->roles[]->role_id');
     }
@@ -197,7 +197,7 @@ class Role extends Model
 {
     use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
-    public function users()
+    public function users(): \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
     {
        return $this->hasManyJson(User::class, 'options->roles[]->role_id');
     }
@@ -233,7 +233,7 @@ Pass an array of keys that starts with JSON key:
 ```php
 class Employee extends Model
 {
-    public function tasks()
+    public function tasks(): \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
     {
         return $this->belongsToJson(
             Task::class,
@@ -245,7 +245,7 @@ class Employee extends Model
 
 class Task extends Model
 {
-    public function employees()
+    public function employees(): \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
     {
         return $this->hasManyJson(
             Employee::class,
@@ -385,7 +385,7 @@ class User extends Model
     use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
     use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
-    public function permissions()
+    public function permissions(): \Staudenmeir\EloquentHasManyDeep\HasManyDeep
     {
         return $this->hasManyDeepFromRelations(
             $this->roles(),
@@ -393,7 +393,7 @@ class User extends Model
         );
     }
     
-    public function roles()
+    public function roles(): \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
     {
         return $this->belongsToJson(Role::class, 'options->role_ids');
     }
