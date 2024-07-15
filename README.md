@@ -2,10 +2,10 @@
 
 [![CI](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml/badge.svg)](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml)
 [![Code Coverage](https://codecov.io/gh/staudenmeir/eloquent-json-relations/graph/badge.svg?token=T41IX53I5U)](https://codecov.io/gh/staudenmeir/eloquent-json-relations)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/staudenmeir/eloquent-json-relations/?branch=main)
 [![Latest Stable Version](https://poser.pugx.org/staudenmeir/eloquent-json-relations/v/stable)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
 [![Total Downloads](https://poser.pugx.org/staudenmeir/eloquent-json-relations/downloads)](https://packagist.org/packages/staudenmeir/eloquent-json-relations/stats)
-[![License](https://poser.pugx.org/staudenmeir/eloquent-json-relations/license)](https://github.com/staudenmeir/eloquent-json-relations/blob/master/LICENSE)
+[![License](https://poser.pugx.org/staudenmeir/eloquent-json-relations/license)](https://github.com/staudenmeir/eloquent-json-relations/blob/main/LICENSE)
 
 This Laravel Eloquent extension adds support for JSON foreign keys to `BelongsTo`, `HasOne`, `HasMany`, `HasOneThrough`
 , `HasManyThrough`, `MorphTo`, `MorphOne` and `MorphMany` relationships.
