@@ -36,9 +36,9 @@ trait IsJsonRelation
      * @param \Illuminate\Database\Eloquent\Collection $models
      * @param \Illuminate\Database\Eloquent\Model $parent
      * @param callable $callback
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function hydratePivotRelation(Collection $models, Model $parent, callable $callback)
+    public function hydratePivotRelation(Collection $models, Model $parent, callable $callback): Collection
     {
         foreach ($models as $i => $model) {
             $clone = clone $model;
@@ -48,6 +48,8 @@ trait IsJsonRelation
                 $this->pivotRelation($clone, $parent, $callback)
             );
         }
+
+        return $models;
     }
 
     /**

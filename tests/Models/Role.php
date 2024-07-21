@@ -8,6 +8,7 @@ use Staudenmeir\EloquentHasManyDeep\HasOneDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Staudenmeir\EloquentJsonRelations\JsonKey;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
+use Staudenmeir\EloquentJsonRelations\Relations\HasOneJson;
 
 class Role extends Model
 {
@@ -43,9 +44,27 @@ class Role extends Model
         return $this->hasManyThroughJson(Project::class, User::class, new JsonKey('options->roles[]->role->id'));
     }
 
+    public function user(): HasOneJson
+    {
+        return $this->hasOneJson(User::class, 'options->role_ids')
+            ->orderByDesc('id');
+    }
+
+    public function userWithDefault(): HasOneJson
+    {
+        return $this->hasOneJson(User::class, 'options->role_ids')
+            ->withDefault();
+    }
+
     public function users(): HasManyJson
     {
         return $this->hasManyJson(User::class, 'options->role_ids');
+    }
+
+    public function userInColumn(): HasOneJson
+    {
+        return $this->hasOneJson(User::class, 'role_ids')
+            ->orderByDesc('id');
     }
 
     public function usersInColumn(): HasManyJson
@@ -53,9 +72,21 @@ class Role extends Model
         return $this->hasManyJson(User::class, 'role_ids');
     }
 
+    public function userWithObjects(): HasOneJson
+    {
+        return $this->hasOneJson(User::class, 'options->roles[]->role->id')
+            ->orderByDesc('id');
+    }
+
     public function usersWithObjects(): HasManyJson
     {
         return $this->hasManyJson(User::class, 'options->roles[]->role->id');
+    }
+
+    public function userWithObjectsInColumn(): HasOneJson
+    {
+        return $this->hasOneJson(User::class, 'role_objects[]->role->id')
+            ->orderByDesc('id');
     }
 
     public function usersWithObjectsInColumn(): HasManyJson

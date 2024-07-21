@@ -41,9 +41,9 @@ class HasManyJsonTest extends TestCase
     {
         DB::enableQueryLog();
 
-        $roles = (new Role())->users;
+        $users = (new Role())->users;
 
-        $this->assertInstanceOf(Collection::class, $roles);
+        $this->assertInstanceOf(Collection::class, $users);
         $this->assertEmpty(DB::getQueryLog());
     }
 

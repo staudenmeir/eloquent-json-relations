@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 use RuntimeException;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
+use Staudenmeir\EloquentJsonRelations\Relations\HasOneJson;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\BelongsTo as BelongsToPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasMany as HasManyPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasManyThrough as HasManyThroughPostgres;
@@ -305,6 +306,52 @@ trait HasJsonRelationships
     protected function newHasManyJson(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         return new HasManyJson($query, $parent, $foreignKey, $localKey);
+    }
+
+    /**
+     * Define a one-to-one JSON relationship.
+     *
+     * @param string $related
+     * @param string|array $foreignKey
+     * @param string|array|null $localKey
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasOneJson
+     */
+    public function hasOneJson(string $related, string|array $foreignKey, string|array|null $localKey = null): HasOneJson
+    {
+        /** @var \Illuminate\Database\Eloquent\Model $instance */
+        $instance = $this->newRelatedInstance($related);
+
+        if (is_array($foreignKey)) {
+            $foreignKey = array_map(
+                fn (string $key) => "{$instance->getTable()}.$key",
+                $foreignKey
+            );
+        } else {
+            $foreignKey = "{$instance->getTable()}.$foreignKey";
+        }
+
+        $localKey = $localKey ?: $this->getKeyName();
+
+        return $this->newHasOneJson(
+            $instance->newQuery(),
+            $this,
+            $foreignKey,
+            $localKey
+        );
+    }
+
+    /**
+     * Instantiate a new HasOneJson relationship.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param string|array $foreignKey
+     * @param string|array $localKey
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasOneJson
+     */
+    protected function newHasOneJson(Builder $query, Model $parent, string|array $foreignKey, string|array $localKey): HasOneJson
+    {
+        return new HasOneJson($query, $parent, $foreignKey, $localKey);
     }
 
     /**

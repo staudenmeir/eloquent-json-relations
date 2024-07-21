@@ -88,9 +88,10 @@ trait SupportsHasManyJsonCompositeKeys
      * @param array $models
      * @param \Illuminate\Database\Eloquent\Collection $results
      * @param string $relation
+     * @param string $type
      * @return array
      */
-    protected function matchWithCompositeKey(array $models, Collection $results, string $relation): array
+    protected function matchWithCompositeKey(array $models, Collection $results, string $relation, string $type): array
     {
         $dictionary = $this->buildDictionaryWithCompositeKey($results);
 
@@ -105,7 +106,7 @@ trait SupportsHasManyJsonCompositeKeys
             if (isset($dictionary[$key])) {
                 $model->setRelation(
                     $relation,
-                    $this->getRelationValue($dictionary, $key, 'many')
+                    $this->getRelationValue($dictionary, $key, $type)
                 );
             }
         }
