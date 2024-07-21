@@ -157,7 +157,7 @@ class Role extends Model
 
     public function users(): \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
     {
-       return $this->hasManyJson(User::class, 'options->role_ids');
+        return $this->hasManyJson(User::class, 'options->role_ids');
     }
 }
 ```
@@ -200,7 +200,7 @@ class Role extends Model
 
     public function users(): \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
     {
-       return $this->hasManyJson(User::class, 'options->roles[]->role_id');
+        return $this->hasManyJson(User::class, 'options->roles[]->role_id');
     }
 }
 ```
