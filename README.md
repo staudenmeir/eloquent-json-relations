@@ -227,7 +227,7 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 
 #### HasOneJson
 
-Define a `HasOneJson relationship if you only want to retrieve a single related instance:
+Define a `HasOneJson` relationship if you only want to retrieve a single related instance:
 
 ```php
 class Role extends Model
