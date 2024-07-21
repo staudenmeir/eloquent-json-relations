@@ -49,6 +49,7 @@ Use this command if you are in PowerShell on Windows (e.g. in VS Code):
 - [Many-To-Many Relationships](#many-to-many-relationships)
     - [Array of IDs](#array-of-ids)
     - [Array of Objects](#array-of-objects)
+    - [HasOneJson](#hasonejson)
     - [Composite Keys](#composite-keys)
     - [Query Performance](#query-performance)
 - [Has-Many-Through Relationships](#has-many-through-relationships)
@@ -223,6 +224,23 @@ $user->roles()->toggle([2 => ['active' => true], 3])->save();
 ```
 
 **Limitations:** On SQLite and SQL Server, these relationships only work partially.
+
+#### HasOneJson
+
+Define a `HasOneJson relationship if you only want to retrieve a single related instance:
+
+```php
+class Role extends Model
+{
+use \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+
+    public function latestUser(): \Staudenmeir\EloquentJsonRelations\Relations\HasOneJson
+    {
+        return $this->hasOneJson(User::class, 'options->roles[]->role_id')
+            ->latest();
+    }
+}
+```
 
 #### Composite Keys
 

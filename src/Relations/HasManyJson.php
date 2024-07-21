@@ -170,7 +170,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
         if ($this->hasCompositeKey()) {
-            $this->matchWithCompositeKey($models, $results, $relation);
+            $this->matchWithCompositeKey($models, $results, $relation, 'many');
         } else {
             parent::matchOneOrMany($models, $results, $relation, $type);
         }
