@@ -90,8 +90,8 @@ Remember to use the `HasJsonRelationships` trait in both the parent and the rela
 
 #### Referential Integrity
 
-On [MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html)
-, [MariaDB](https://mariadb.com/kb/en/library/foreign-keys/)
+On [MySQL](https://dev.mysql.com/doc/refman/en/create-table-foreign-keys.html),
+[MariaDB](https://mariadb.com/kb/en/library/foreign-keys/),
 and [SQL Server](https://docs.microsoft.com/en-us/sql/relational-databases/tables/specify-computed-columns-in-a-table)
 you can still ensure referential integrity with foreign keys on generated/computed columns.
 
@@ -107,7 +107,7 @@ Schema::create('users', function (Blueprint $table) {
 });
 ```
 
-Laravel migrations (5.7.25+) also support this feature on SQL Server:
+Laravel migrations also support this feature on SQL Server:
 
 ```php
 Schema::create('users', function (Blueprint $table) {
@@ -119,9 +119,6 @@ Schema::create('users', function (Blueprint $table) {
     $table->foreign('locale_id')->references('id')->on('locales');
 });
 ```
-
-There is a [workaround](https://github.com/staudenmeir/eloquent-json-relations/tree/1.1#referential-integrity) for older
-versions of Laravel.
 
 ### Many-To-Many Relationships
 
