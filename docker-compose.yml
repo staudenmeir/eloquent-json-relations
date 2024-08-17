@@ -51,7 +51,7 @@ services:
     networks:
       - test
   sqlsrv:
-    image: 'mcr.microsoft.com/mssql/server:2019-latest'
+    image: 'mcr.microsoft.com/mssql/server:2022-latest'
     environment:
       ACCEPT_EULA: Y
       SA_PASSWORD: Password!
