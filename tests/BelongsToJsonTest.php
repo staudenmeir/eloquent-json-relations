@@ -39,12 +39,12 @@ class BelongsToJsonTest extends TestCase
 
     public function testEmptyLazyLoading()
     {
-        DB::enableQueryLog();
+        DB::connection()->enableQueryLog();
 
         $roles = (new User())->roles;
 
         $this->assertInstanceOf(Collection::class, $roles);
-        $this->assertEmpty(DB::getQueryLog());
+        $this->assertEmpty(DB::connection()->getQueryLog());
     }
 
     public function testFirst()

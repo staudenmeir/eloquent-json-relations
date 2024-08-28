@@ -29,12 +29,12 @@ class HasOneJsonTest extends TestCase
 
     public function testEmptyLazyLoading()
     {
-        DB::enableQueryLog();
+        DB::connection()->enableQueryLog();
 
         $employee = (new Task())->employee;
 
         $this->assertNull($employee);
-        $this->assertEmpty(DB::getQueryLog());
+        $this->assertEmpty(DB::connection()->getQueryLog());
     }
 
     public function testEagerLoading()

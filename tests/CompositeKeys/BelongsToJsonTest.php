@@ -26,12 +26,12 @@ class BelongsToJsonTest extends TestCase
 
     public function testEmptyLazyLoading()
     {
-        DB::enableQueryLog();
+        DB::connection()->enableQueryLog();
 
         $tasks = (new Employee())->tasks;
 
         $this->assertInstanceOf(Collection::class, $tasks);
-        $this->assertEmpty(DB::getQueryLog());
+        $this->assertEmpty(DB::connection()->getQueryLog());
     }
 
     public function testEagerLoading()

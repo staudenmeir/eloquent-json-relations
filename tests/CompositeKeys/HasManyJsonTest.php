@@ -30,12 +30,12 @@ class HasManyJsonTest extends TestCase
 
     public function testEmptyLazyLoading()
     {
-        DB::enableQueryLog();
+        DB::connection()->enableQueryLog();
 
         $employees = (new Task())->employees;
 
         $this->assertInstanceOf(Collection::class, $employees);
-        $this->assertEmpty(DB::getQueryLog());
+        $this->assertEmpty(DB::connection()->getQueryLog());
     }
 
     public function testEagerLoading()

@@ -423,7 +423,7 @@ trait HasJsonRelationships
             /** @var \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson $hasManyJson */
             $hasManyJson = $relationships[0];
 
-            $postGetCallback = function (Collection $models) use ($hasManyJson, $relationships) {
+            $postGetCallback = function (Collection $models) use ($hasManyJson) {
                 if (isset($models[0]->laravel_through_key)) {
                     $hasManyJson->hydratePivotRelation(
                         $models,
@@ -440,7 +440,7 @@ trait HasJsonRelationships
             }
 
             $hasManyThroughJson->withCustomEagerMatchingCallback(
-                function (array $models, Collection $results, string $relation) use ($hasManyJson, $hasManyThroughJson) {
+                function (array $models, Collection $results, string $relation) use ($hasManyJson) {
                     foreach ($models as $model) {
                         $hasManyJson->hydratePivotRelation(
                             $model->$relation,

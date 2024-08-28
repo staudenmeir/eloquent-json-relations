@@ -64,12 +64,12 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testEmptyLazyLoadingWithReverseRelationship()
     {
-        DB::enableQueryLog();
+        DB::connection()->enableQueryLog();
 
         $roles = (new Project())->roles;
 
         $this->assertInstanceOf(Collection::class, $roles);
-        $this->assertEmpty(DB::getQueryLog());
+        $this->assertEmpty(DB::connection()->getQueryLog());
     }
 
     public function testEagerLoading()
