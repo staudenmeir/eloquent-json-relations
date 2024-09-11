@@ -1,6 +1,6 @@
 # Eloquent JSON Relations
 
-[![CI](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml/badge.svg)](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml)
+[![CI](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml/badge.svg)](https://github.com/staudenmeir/eloquent-json-relations/actions/workflows/ci.yml?query=branch%3Amain)
 [![Code Coverage](https://codecov.io/gh/staudenmeir/eloquent-json-relations/graph/badge.svg?token=T41IX53I5U)](https://codecov.io/gh/staudenmeir/eloquent-json-relations)
 [![Latest Stable Version](https://poser.pugx.org/staudenmeir/eloquent-json-relations/v/stable)](https://packagist.org/packages/staudenmeir/eloquent-json-relations)
 [![Total Downloads](https://poser.pugx.org/staudenmeir/eloquent-json-relations/downloads)](https://packagist.org/packages/staudenmeir/eloquent-json-relations/stats)
