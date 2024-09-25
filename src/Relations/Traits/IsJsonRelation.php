@@ -146,10 +146,11 @@ trait IsJsonRelation
      */
     protected function getJsonGrammar(Builder $query): JsonGrammar
     {
-        $driver = $query->getConnection()->getDriverName();
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
 
-        return $query->getConnection()->withTablePrefix(
-            match ($driver) {
+        return $connection->withTablePrefix(
+            match ($connection->getDriverName()) {
                 'mysql' => new MySqlGrammar(),
                 'mariadb' => new MariaDbGrammar(),
                 'pgsql' => new PostgresGrammar(),

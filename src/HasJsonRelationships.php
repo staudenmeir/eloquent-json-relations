@@ -94,7 +94,10 @@ trait HasJsonRelationships
      */
     protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
     {
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
+
+        if ($connection->getDriverName() === 'pgsql') {
             return new HasOnePostgres($query, $parent, $foreignKey, $localKey);
         }
 
@@ -115,7 +118,10 @@ trait HasJsonRelationships
      */
     protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
+
+        if ($connection->getDriverName() === 'pgsql') {
             return new HasOneThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
         }
 
@@ -134,7 +140,10 @@ trait HasJsonRelationships
      */
     protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
     {
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
+
+        if ($connection->getDriverName() === 'pgsql') {
             return new MorphOnePostgres($query, $parent, $type, $id, $localKey);
         }
 
@@ -153,7 +162,10 @@ trait HasJsonRelationships
      */
     protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
     {
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
+
+        if ($connection->getDriverName() === 'pgsql') {
             return new BelongsToPostgres($query, $child, $foreignKey, $ownerKey, $relation);
         }
 
@@ -171,7 +183,10 @@ trait HasJsonRelationships
      */
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
     {
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
+
+        if ($connection->getDriverName() === 'pgsql') {
             return new HasManyPostgres($query, $parent, $foreignKey, $localKey);
         }
 
@@ -192,7 +207,10 @@ trait HasJsonRelationships
      */
     protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
+
+        if ($connection->getDriverName() === 'pgsql') {
             return new HasManyThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
         }
 
@@ -211,7 +229,10 @@ trait HasJsonRelationships
      */
     protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
     {
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var \Illuminate\Database\Connection $connection */
+        $connection = $query->getConnection();
+
+        if ($connection->getDriverName() === 'pgsql') {
             return new MorphManyPostgres($query, $parent, $type, $id, $localKey);
         }
 
@@ -428,7 +449,7 @@ trait HasJsonRelationships
                     $hasManyJson->hydratePivotRelation(
                         $models,
                         $this,
-                        fn (Model $model) => json_decode($model->laravel_through_key, true)
+                        fn (Model $model) => json_decode($model->laravel_through_key ?? '[]', true)
                     );
                 }
             };
@@ -445,7 +466,7 @@ trait HasJsonRelationships
                         $hasManyJson->hydratePivotRelation(
                             $model->$relation,
                             $model,
-                            fn (Model $model) => json_decode($model->laravel_through_key, true)
+                            fn (Model $model) => json_decode($model->laravel_through_key ?? '[]', true)
                         );
                     }
 

@@ -219,10 +219,12 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     {
         $foreignKey = explode('.', $this->foreignKey)[1];
 
-        /** @var \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson $relation */
-        $relation = $model->belongsToJson(get_class($this->parent), $foreignKey, $this->localKey);
+        if (method_exists($model, 'belongsToJson')) {
+            /** @var \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson $relation */
+            $relation = $model->belongsToJson(get_class($this->parent), $foreignKey, $this->localKey);
 
-        $relation->attach($this->getParentKey());
+            $relation->attach($this->getParentKey());
+        }
     }
 
     /**

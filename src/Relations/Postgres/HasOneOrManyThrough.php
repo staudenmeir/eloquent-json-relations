@@ -22,7 +22,8 @@ trait HasOneOrManyThrough
 
         $query->join($this->throughParent->getTable(), $this->getQualifiedParentKeyName(), '=', $farKey);
 
-        if ($this->throughParentSoftDeletes()) {
+        if ($this->throughParentSoftDeletes()
+            && method_exists($this->throughParent, 'getQualifiedDeletedAtColumn')) {
             $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
         }
     }
@@ -99,7 +100,8 @@ trait HasOneOrManyThrough
 
         $query->join($table, $hash.'.'.$this->secondLocalKey, '=', $farKey);
 
-        if ($this->throughParentSoftDeletes()) {
+        if ($this->throughParentSoftDeletes()
+            && method_exists($this->throughParent, 'getDeletedAtColumn')) {
             $query->whereNull($hash.'.'.$this->throughParent->getDeletedAtColumn());
         }
 

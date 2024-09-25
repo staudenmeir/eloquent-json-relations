@@ -115,7 +115,7 @@ trait IsConcatenableHasManyJsonRelation
         $key = $this->key ? str_replace('->', '.', $this->key) : null;
 
         foreach ($results as $result) {
-            $values = json_decode($result->laravel_through_key, true);
+            $values = json_decode($result->laravel_through_key ?? '[]', true);
 
             if ($key) {
                 $values = array_filter(
