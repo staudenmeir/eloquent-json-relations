@@ -56,4 +56,12 @@ interface JsonGrammar
      * @return array
      */
     public function prepareBindingsForMemberOf(mixed $value): array;
+
+    /**
+     * Wrap a value in keyword identifiers.
+     *
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $value
+     * @return string
+     */
+    public function wrap($value);
 }
