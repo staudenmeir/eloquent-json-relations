@@ -50,11 +50,13 @@ trait HasOneOrManyThrough
 
         $firstKey = $this->jsonColumn($query, $this->farParent, $this->getQualifiedFirstKeyName(), $this->localKey);
 
-        return $query->select($columns)->whereColumn(
+        $query->select($columns)->whereColumn(
             $this->getQualifiedLocalKeyName(),
             '=',
             $firstKey
         );
+
+        return $query;
     }
 
     /**
@@ -77,11 +79,13 @@ trait HasOneOrManyThrough
 
         $firstKey = $this->jsonColumn($query, $this->farParent, $this->getQualifiedFirstKeyName(), $this->localKey);
 
-        return $query->select($columns)->whereColumn(
+        $query->select($columns)->whereColumn(
             $parentQuery->getQuery()->from.'.'.$this->localKey,
             '=',
             $firstKey
         );
+
+        return $query;
     }
 
     /**
@@ -107,10 +111,12 @@ trait HasOneOrManyThrough
 
         $firstKey = $this->jsonColumn($query, $this->farParent, $hash.'.'.$this->firstKey, $this->localKey);
 
-        return $query->select($columns)->whereColumn(
+        $query->select($columns)->whereColumn(
             $parentQuery->getQuery()->from.'.'.$this->localKey,
             '=',
             $firstKey
         );
+
+        return $query;
     }
 }

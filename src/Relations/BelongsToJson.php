@@ -21,26 +21,12 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     use SupportsBelongsToJsonCompositeKeys;
 
     /**
-     * The foreign key of the parent model.
-     *
-     * @var string|array
-     */
-    protected $foreignKey;
-
-    /**
-     * The associated key on the parent model.
-     *
-     * @var string|array
-     */
-    protected $ownerKey;
-
-    /**
      * Create a new belongs to JSON relationship instance.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Illuminate\Database\Eloquent\Model $child
-     * @param string $foreignKey
-     * @param string $ownerKey
+     * @param list<string>|string $foreignKey
+     * @param list<string>|string $ownerKey
      * @param string $relationName
      * @return void
      */
@@ -235,7 +221,9 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
             $this->getRelationExistenceQueryWithCompositeKey($query);
         }
 
-        return $query->select($columns);
+        $query->select($columns);
+
+        return $query;
     }
 
     /**
@@ -262,7 +250,9 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
             $query->getQuery()->connection->raw($sql)
         );
 
-        return $query->select($columns);
+        $query->select($columns);
+
+        return $query;
     }
 
     /**

@@ -20,26 +20,12 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     use SupportsHasManyJsonCompositeKeys;
 
     /**
-     * The foreign key of the parent model.
-     *
-     * @var string|array
-     */
-    protected $foreignKey;
-
-    /**
-     * The local key of the parent model.
-     *
-     * @var string|array
-     */
-    protected $localKey;
-
-    /**
      * Create a new has many JSON relationship instance.
      *
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param string $foreignKey
-     * @param string $localKey
+     * @param list<string>|string $foreignKey
+     * @param list<string>|string $localKey
      * @return void
      */
     public function __construct(Builder $query, Model $parent, $foreignKey, $localKey)
@@ -255,7 +241,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
             $this->getRelationExistenceQueryWithCompositeKey($query);
         }
 
-        return $query->select($columns);
+
+        $query->select($columns);
+
+        return $query;
     }
 
     /**
@@ -282,7 +271,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
             $query->getQuery()->connection->raw($sql)
         );
 
-        return $query->select($columns);
+
+        $query->select($columns);
+
+        return $query;
     }
 
     /**

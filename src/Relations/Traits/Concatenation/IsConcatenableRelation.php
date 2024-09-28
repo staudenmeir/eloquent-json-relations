@@ -33,8 +33,10 @@ trait IsConcatenableRelation
 
         $wheres = $from->getQuery()->wheres;
 
-        return $query->withoutGlobalScopes(
+        $query->withoutGlobalScopes(
             $from->removedScopes()
         )->mergeWheres($wheres, $whereBindings);
+
+        return $query;
     }
 }

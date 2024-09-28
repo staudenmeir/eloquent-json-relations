@@ -16,7 +16,10 @@ trait SupportsHasManyJsonCompositeKeys
      */
     protected function hasCompositeKey(): bool
     {
-        return is_array($this->foreignKey);
+        /** @var list<string>|string $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        return is_array($foreignKey);
     }
 
     /**
@@ -45,21 +48,27 @@ trait SupportsHasManyJsonCompositeKeys
      */
     protected function addEagerConstraintsWithCompositeKey(array $models): void
     {
+        /** @var list<string> $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        /** @var list<string> $localKey */
+        $localKey = $this->localKey;
+
         $keys = (new BaseCollection($models))->map(
-            function (Model $model) {
+            function (Model $model) use ($localKey) {
                 return array_map(
                     fn (string $column) => $model[$column],
-                    $this->localKey
+                    $localKey
                 );
             }
         )->values()->unique(null, true)->all();
 
         $this->query->where(
-            function (Builder $query) use ($keys) {
+            function (Builder $query) use ($foreignKey, $keys) {
                 foreach ($keys as $key) {
                     $query->orWhere(
-                        function (Builder $query) use ($key) {
-                            foreach ($this->foreignKey as $i => $column) {
+                        function (Builder $query) use ($foreignKey, $key) {
+                            foreach ($foreignKey as $i => $column) {
                                 if ($i === 0) {
                                     $this->whereJsonContainsOrMemberOf(
                                         $query,

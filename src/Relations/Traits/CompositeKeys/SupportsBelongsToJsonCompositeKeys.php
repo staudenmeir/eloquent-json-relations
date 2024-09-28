@@ -16,7 +16,10 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     protected function hasCompositeKey(): bool
     {
-        return is_array($this->foreignKey);
+        /** @var list<string>|string $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        return is_array($foreignKey);
     }
 
     /**
@@ -45,21 +48,27 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     protected function addEagerConstraintsWithCompositeKey(array $models): void
     {
+        /** @var list<string> $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
         $keys = (new BaseCollection($models))->map(
-            function (Model $model) {
+            function (Model $model) use ($foreignKey) {
                 return array_map(
                     fn (string $column) => $model[$column],
-                    $this->foreignKey
+                    $foreignKey
                 );
             }
         )->values()->unique(null, true)->all();
 
         $this->query->where(
-            function (Builder $query) use ($keys) {
+            function (Builder $query) use ($keys, $ownerKey) {
                 foreach ($keys as $key) {
                     $query->orWhere(
-                        function (Builder $query) use ($key) {
-                            foreach ($this->ownerKey as $i => $column) {
+                        function (Builder $query) use ($key, $ownerKey) {
+                            foreach ($ownerKey as $i => $column) {
                                 if ($i === 0) {
                                     $query->whereIn(
                                         $this->related->qualifyColumn($column),

@@ -149,7 +149,8 @@ trait IsJsonRelation
         /** @var \Illuminate\Database\Connection $connection */
         $connection = $query->getConnection();
 
-        return $connection->withTablePrefix(
+        /** @var \Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar $grammar */
+        $grammar = $connection->withTablePrefix(
             match ($connection->getDriverName()) {
                 'mysql' => new MySqlGrammar(),
                 'mariadb' => new MariaDbGrammar(),
@@ -159,6 +160,8 @@ trait IsJsonRelation
                 default => throw new RuntimeException('This database is not supported.') // @codeCoverageIgnore
             }
         );
+
+        return $grammar;
     }
 
     /**

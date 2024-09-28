@@ -24,11 +24,13 @@ trait HasOneOrMany
 
         $second = $this->jsonColumn($query, $this->parent, $this->getExistenceCompareKey(), $this->localKey);
 
-        return $query->select($columns)->whereColumn(
+        $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
             $second
         );
+
+        return $query;
     }
 
     /**
@@ -47,10 +49,12 @@ trait HasOneOrMany
 
         $second = $this->jsonColumn($query, $this->parent, $hash.'.'.$this->getForeignKeyName(), $this->localKey);
 
-        return $query->select($columns)->whereColumn(
+        $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
             $second
         );
+
+        return $query;
     }
 }
