@@ -53,7 +53,7 @@ trait HasOneOrManyThrough
         $query->select($columns)->whereColumn(
             $this->getQualifiedLocalKeyName(),
             '=',
-            $firstKey
+            $firstKey // @phpstan-ignore-line TODO
         );
 
         return $query;
@@ -82,7 +82,7 @@ trait HasOneOrManyThrough
         $query->select($columns)->whereColumn(
             $parentQuery->getQuery()->from.'.'.$this->localKey,
             '=',
-            $firstKey
+            $firstKey // @phpstan-ignore-line TODO
         );
 
         return $query;
@@ -114,7 +114,7 @@ trait HasOneOrManyThrough
         $query->select($columns)->whereColumn(
             $parentQuery->getQuery()->from.'.'.$this->localKey,
             '=',
-            $firstKey
+            $firstKey // @phpstan-ignore-line TODO
         );
 
         return $query;

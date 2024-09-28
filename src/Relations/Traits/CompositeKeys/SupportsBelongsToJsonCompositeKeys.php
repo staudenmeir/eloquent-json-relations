@@ -29,7 +29,10 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     protected function addConstraintsWithCompositeKey(): void
     {
-        $columns = array_slice($this->ownerKey, 1);
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
+        $columns = array_slice($ownerKey, 1);
 
         foreach ($columns as $column) {
             $this->query->where(
@@ -99,6 +102,9 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     protected function matchWithCompositeKey(array $models, Collection $results, string $relation): array
     {
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
         $dictionary = $this->buildDictionaryWithCompositeKey($results);
 
         foreach ($models as $model) {
@@ -106,7 +112,7 @@ trait SupportsBelongsToJsonCompositeKeys
 
             $additionalValues = array_map(
                 fn (string $key) => $model->$key,
-                array_slice($this->ownerKey, 1)
+                array_slice($ownerKey, 1)
             );
 
             foreach ($this->getForeignKeys($model) as $id) {
@@ -135,12 +141,15 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     protected function buildDictionaryWithCompositeKey(Collection $results): array
     {
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
         $dictionary = [];
 
         foreach ($results as $result) {
             $values = array_map(
                 fn (string $key) => $result->$key,
-                $this->ownerKey
+                $ownerKey
             );
 
             $values = implode("\0", $values);
@@ -159,7 +168,10 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     public function getRelationExistenceQueryWithCompositeKey(Builder $query): void
     {
-        $columns = array_slice($this->foreignKey, 1, preserve_keys: true);
+        /** @var list<string>|string $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        $columns = array_slice($foreignKey, 1, preserve_keys: true);
 
         foreach ($columns as $i => $column) {
             $query->whereColumn(

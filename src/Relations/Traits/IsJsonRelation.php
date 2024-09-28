@@ -71,7 +71,7 @@ trait IsJsonRelation
 
         $attributes = $this->pivotAttributes($model, $parent, $records);
 
-        return Pivot::fromAttributes($model, $attributes, null, true);
+        return Pivot::fromAttributes($model, $attributes, null, true); // @phpstan-ignore-line TODO
     }
 
     /**

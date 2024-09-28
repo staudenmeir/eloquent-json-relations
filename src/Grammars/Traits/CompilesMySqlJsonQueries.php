@@ -10,7 +10,7 @@ trait CompilesMySqlJsonQueries
     /**
      * Compile a "JSON array" statement into SQL.
      *
-     * @param string $column
+     * @param string|\Illuminate\Database\Query\Expression $column
      * @return string
      */
     public function compileJsonArray($column)

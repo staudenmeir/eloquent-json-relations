@@ -27,7 +27,7 @@ trait HasOneOrMany
         $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
-            $second
+            $second // @phpstan-ignore-line TODO
         );
 
         return $query;
@@ -52,7 +52,7 @@ trait HasOneOrMany
         $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
-            $second
+            $second // @phpstan-ignore-line TODO
         );
 
         return $query;

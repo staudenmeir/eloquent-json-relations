@@ -29,7 +29,10 @@ trait SupportsHasManyJsonCompositeKeys
      */
     protected function addConstraintsWithCompositeKey(): void
     {
-        $columns = array_slice($this->localKey, 1);
+        /** @var list<string> $localKey */
+        $localKey = $this->localKey;
+
+        $columns = array_slice($localKey, 1);
 
         foreach ($columns as $column) {
             $this->query->where(
@@ -102,12 +105,15 @@ trait SupportsHasManyJsonCompositeKeys
      */
     protected function matchWithCompositeKey(array $models, Collection $results, string $relation, string $type): array
     {
+        /** @var list<string> $localKey */
+        $localKey = $this->localKey;
+
         $dictionary = $this->buildDictionaryWithCompositeKey($results);
 
         foreach ($models as $model) {
             $values = array_map(
                 fn ($key) => $model->$key,
-                $this->localKey
+                $localKey
             );
 
             $key = implode("\0", $values);
@@ -181,9 +187,12 @@ trait SupportsHasManyJsonCompositeKeys
      */
     protected function getAdditionalForeignKeyNames(): array
     {
+        /** @var list<string>|string $foreignKey */
+        $foreignKey = $this->foreignKey;
+
         $names = [];
 
-        $columns = array_slice($this->foreignKey, 1, preserve_keys: true);
+        $columns = array_slice($foreignKey, 1, preserve_keys: true);
 
         foreach ($columns as $i => $column) {
             $segments = explode('.', $column);
