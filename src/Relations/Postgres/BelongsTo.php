@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo as Base;
  */
 class BelongsTo extends Base
 {
-    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Postgres\IsPostgresRelation<TRelatedModel, TDeclaringModel> */
     use IsPostgresRelation;
 
     /** @inheritDoc */

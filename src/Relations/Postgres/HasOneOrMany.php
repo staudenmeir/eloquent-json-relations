@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait HasOneOrMany
 {
-    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Postgres\IsPostgresRelation<TRelatedModel, TDeclaringModel> */
     use IsPostgresRelation;
 
     /**

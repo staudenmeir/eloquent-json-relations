@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait HasOneOrManyThrough
 {
-    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Postgres\IsPostgresRelation<TRelatedModel, TDeclaringModel> */
     use IsPostgresRelation;
 
     /**
