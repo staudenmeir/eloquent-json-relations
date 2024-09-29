@@ -18,7 +18,7 @@ class IdeHelperServiceProvider extends ServiceProvider implements DeferrableProv
             'ide-helper.model_hooks',
             array_merge(
                 [JsonRelationsHook::class],
-                $config->get('ide-helper.model_hooks', [])
+                (array) $config->get('ide-helper.model_hooks', [])
             )
         );
     }

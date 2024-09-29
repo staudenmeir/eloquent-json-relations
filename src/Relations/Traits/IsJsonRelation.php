@@ -75,7 +75,10 @@ trait IsJsonRelation
 
         $attributes = $this->pivotAttributes($model, $parent, $records);
 
-        return Pivot::fromAttributes($model, $attributes, null, true); // @phpstan-ignore-line TODO
+        /** @var TRelatedModel $pivotModel */
+        $pivotModel = Pivot::fromAttributes($model, $attributes, null, true); // @phpstan-ignore-line
+
+        return $pivotModel;
     }
 
     /**
@@ -96,7 +99,10 @@ trait IsJsonRelation
      */
     public function first($columns = ['*'])
     {
-        return $this->take(1)->get($columns)->first();
+        /** @var \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $models */
+        $models = $this->take(1)->get($columns);
+
+        return $models->first();
     }
 
     /**

@@ -21,6 +21,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
  */
 class BelongsToJson extends BelongsTo implements ConcatenableRelation
 {
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\InteractsWithPivotRecords<TRelatedModel, TDeclaringModel> */
     use InteractsWithPivotRecords;
     /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableBelongsToJsonRelation<TRelatedModel, TDeclaringModel> */
     use IsConcatenableBelongsToJsonRelation;
@@ -161,8 +162,11 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
 
         foreach ($models as $model) {
             if ($this->key) {
+                /** @var \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $relatedModels */
+                $relatedModels = $model->getRelation($relation);
+
                 $this->hydratePivotRelation(
-                    $model->getRelation($relation),
+                    $relatedModels,
                     $model,
                     fn (Model $model, Model $parent) => $parent->{$this->path}
                 );

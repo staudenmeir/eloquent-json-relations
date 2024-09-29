@@ -325,7 +325,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      */
     public function getPathName()
     {
-        return last(explode('.', $this->path));
+        /** @var string $pathName */
+        $pathName = last(explode('.', $this->path));
+
+        return $pathName;
     }
 
     /**
