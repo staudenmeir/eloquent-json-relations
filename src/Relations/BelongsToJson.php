@@ -284,10 +284,14 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      */
     public function pivotAttributes(Model $model, Model $parent, array $records)
     {
-        $key = str_replace('->', '.', $this->key);
+        /** @var string $key */
+        $key = $this->key;
+
+        $key = str_replace('->', '.', $key);
 
         $ownerKey = $this->hasCompositeKey() ? $this->ownerKey[0] : $this->ownerKey;
 
+        /** @var array<string, mixed> $record */
         $record = (new BaseCollection($records))
             ->filter(function ($value) use ($key, $model, $ownerKey) {
                 return Arr::get($value, $key) == $model->$ownerKey;

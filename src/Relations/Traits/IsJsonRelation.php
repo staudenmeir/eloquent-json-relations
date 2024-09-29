@@ -31,7 +31,7 @@ trait IsJsonRelation
     /**
      * The optional object key of the foreign key.
      *
-     * @var string
+     * @var string|null
      */
     protected $key;
 

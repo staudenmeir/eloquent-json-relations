@@ -140,7 +140,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      */
     protected function parentKeyToArray($parentKey)
     {
-        $keys = explode('->', $this->key);
+        /** @var string $key */
+        $key = $this->key;
+
+        $keys = explode('->', $key);
 
         foreach (array_reverse($keys) as $key) {
             $parentKey = [$key => $parentKey];
@@ -299,10 +302,14 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      */
     public function pivotAttributes(Model $model, Model $parent, array $records)
     {
-        $key = str_replace('->', '.', $this->key);
+        /** @var string $key */
+        $key = $this->key;
+
+        $key = str_replace('->', '.', $key);
 
         $localKey = $this->hasCompositeKey() ? $this->localKey[0] : $this->localKey;
 
+        /** @var array<string, mixed> $record */
         $record = (new BaseCollection($records))
             ->filter(function ($value) use ($key, $localKey, $parent) {
                 return Arr::get($value, $key) == $parent->$localKey;
