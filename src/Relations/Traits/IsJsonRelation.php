@@ -15,6 +15,10 @@ use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\SQLiteGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\SqlServerGrammar;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait IsJsonRelation
 {
     /**
@@ -27,17 +31,17 @@ trait IsJsonRelation
     /**
      * The optional object key of the foreign key.
      *
-     * @var string
+     * @var string|null
      */
     protected $key;
 
     /**
      * Hydrate the pivot relationship on the models.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $models
-     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $models
+     * @param TDeclaringModel $parent
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function hydratePivotRelation(Collection $models, Model $parent, callable $callback): Collection
     {
@@ -56,10 +60,10 @@ trait IsJsonRelation
     /**
      * Get the pivot relationship from the query.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param TRelatedModel $model
+     * @param TDeclaringModel $parent
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return TRelatedModel
      */
     protected function pivotRelation(Model $model, Model $parent, callable $callback)
     {
@@ -71,28 +75,34 @@ trait IsJsonRelation
 
         $attributes = $this->pivotAttributes($model, $parent, $records);
 
-        return Pivot::fromAttributes($model, $attributes, null, true);
+        /** @var TRelatedModel $pivotModel */
+        $pivotModel = Pivot::fromAttributes($model, $attributes, null, true); // @phpstan-ignore-line
+
+        return $pivotModel;
     }
 
     /**
      * Get the pivot attributes from a model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param array $records
-     * @return array
+     * @param TRelatedModel $model
+     * @param TDeclaringModel $parent
+     * @param list<array<string, mixed>> $records
+     * @return array<string, mixed>
      */
     abstract public function pivotAttributes(Model $model, Model $parent, array $records);
 
     /**
      * Execute the query and get the first related model.
      *
-     * @param array $columns
-     * @return mixed
+     * @param list<string> $columns
+     * @return TRelatedModel|null
      */
     public function first($columns = ['*'])
     {
-        return $this->take(1)->get($columns)->first();
+        /** @var \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $models */
+        $models = $this->take(1)->get($columns);
+
+        return $models->first();
     }
 
     /**
@@ -149,7 +159,8 @@ trait IsJsonRelation
         /** @var \Illuminate\Database\Connection $connection */
         $connection = $query->getConnection();
 
-        return $connection->withTablePrefix(
+        /** @var \Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar $grammar */
+        $grammar = $connection->withTablePrefix(
             match ($connection->getDriverName()) {
                 'mysql' => new MySqlGrammar(),
                 'mariadb' => new MariaDbGrammar(),
@@ -159,6 +170,8 @@ trait IsJsonRelation
                 default => throw new RuntimeException('This database is not supported.') // @codeCoverageIgnore
             }
         );
+
+        return $grammar;
     }
 
     /**

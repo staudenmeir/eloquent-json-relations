@@ -4,17 +4,21 @@ namespace Staudenmeir\EloquentJsonRelations\Relations\Postgres;
 
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait HasOneOrMany
 {
     use IsPostgresRelation;
 
     /**
-     * Add the constraints for a relationship query.
+     * Add the constraints for an internal relationship existence query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
-     * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param \Illuminate\Database\Eloquent\Builder<TDeclaringModel> $parentQuery
+     * @param list<string>|string $columns
+     * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -24,20 +28,22 @@ trait HasOneOrMany
 
         $second = $this->jsonColumn($query, $this->parent, $this->getExistenceCompareKey(), $this->localKey);
 
-        return $query->select($columns)->whereColumn(
+        $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
-            $second
+            $second // @phpstan-ignore-line
         );
+
+        return $query;
     }
 
     /**
      * Add the constraints for a relationship query on the same table.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
-     * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param \Illuminate\Database\Eloquent\Builder<TDeclaringModel> $parentQuery
+     * @param list<string>|string $columns
+     * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
@@ -47,10 +53,12 @@ trait HasOneOrMany
 
         $second = $this->jsonColumn($query, $this->parent, $hash.'.'.$this->getForeignKeyName(), $this->localKey);
 
-        return $query->select($columns)->whereColumn(
+        $query->select($columns)->whereColumn(
             $this->getQualifiedParentKeyName(),
             '=',
-            $second
+            $second // @phpstan-ignore-line
         );
+
+        return $query;
     }
 }

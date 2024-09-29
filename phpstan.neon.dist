@@ -1,9 +1,4 @@
-includes:
-    - ./vendor/larastan/larastan/extension.neon
 parameters:
-    level: 2
+    level: 9
     paths:
         - src
-    ignoreErrors:
-        - "#Called 'first' on Laravel collection, but could have been retrieved as a query.#"
-        - '#Call to private method take\(\) of parent class Illuminate\\Database\\Eloquent\\Relations\\BelongsTo#'

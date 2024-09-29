@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as BaseCollection;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait SupportsBelongsToJsonCompositeKeys
 {
     /**
@@ -16,7 +20,10 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     protected function hasCompositeKey(): bool
     {
-        return is_array($this->foreignKey);
+        /** @var list<string>|string $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        return is_array($foreignKey);
     }
 
     /**
@@ -26,7 +33,10 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     protected function addConstraintsWithCompositeKey(): void
     {
-        $columns = array_slice($this->ownerKey, 1);
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
+        $columns = array_slice($ownerKey, 1);
 
         foreach ($columns as $column) {
             $this->query->where(
@@ -40,26 +50,32 @@ trait SupportsBelongsToJsonCompositeKeys
     /**
      * Set the constraints for an eager load of the relation for a composite key.
      *
-     * @param array $models
+     * @param list<TDeclaringModel> $models
      * @return void
      */
     protected function addEagerConstraintsWithCompositeKey(array $models): void
     {
+        /** @var list<string> $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
         $keys = (new BaseCollection($models))->map(
-            function (Model $model) {
+            function (Model $model) use ($foreignKey) {
                 return array_map(
                     fn (string $column) => $model[$column],
-                    $this->foreignKey
+                    $foreignKey
                 );
             }
         )->values()->unique(null, true)->all();
 
         $this->query->where(
-            function (Builder $query) use ($keys) {
+            function (Builder $query) use ($keys, $ownerKey) {
                 foreach ($keys as $key) {
                     $query->orWhere(
-                        function (Builder $query) use ($key) {
-                            foreach ($this->ownerKey as $i => $column) {
+                        function (Builder $query) use ($key, $ownerKey) {
+                            foreach ($ownerKey as $i => $column) {
                                 if ($i === 0) {
                                     $query->whereIn(
                                         $this->related->qualifyColumn($column),
@@ -83,13 +99,16 @@ trait SupportsBelongsToJsonCompositeKeys
     /**
      * Match the eagerly loaded results to their parents for a composite key.
      *
-     * @param array $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param list<TDeclaringModel> $models
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
      * @param string $relation
-     * @return array
+     * @return list<TDeclaringModel>
      */
     protected function matchWithCompositeKey(array $models, Collection $results, string $relation): array
     {
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
         $dictionary = $this->buildDictionaryWithCompositeKey($results);
 
         foreach ($models as $model) {
@@ -97,7 +116,7 @@ trait SupportsBelongsToJsonCompositeKeys
 
             $additionalValues = array_map(
                 fn (string $key) => $model->$key,
-                array_slice($this->ownerKey, 1)
+                array_slice($ownerKey, 1)
             );
 
             foreach ($this->getForeignKeys($model) as $id) {
@@ -121,17 +140,20 @@ trait SupportsBelongsToJsonCompositeKeys
     /**
      * Build model dictionary keyed by the relation's composite foreign key.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @return array
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
+     * @return array<string, list<TRelatedModel>>
      */
     protected function buildDictionaryWithCompositeKey(Collection $results): array
     {
+        /** @var list<string> $ownerKey */
+        $ownerKey = $this->ownerKey;
+
         $dictionary = [];
 
         foreach ($results as $result) {
             $values = array_map(
                 fn (string $key) => $result->$key,
-                $this->ownerKey
+                $ownerKey
             );
 
             $values = implode("\0", $values);
@@ -145,12 +167,15 @@ trait SupportsBelongsToJsonCompositeKeys
     /**
      * Add the constraints for a relationship query for a composite key.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
      * @return void
      */
     public function getRelationExistenceQueryWithCompositeKey(Builder $query): void
     {
-        $columns = array_slice($this->foreignKey, 1, preserve_keys: true);
+        /** @var list<string> $foreignKey */
+        $foreignKey = $this->foreignKey;
+
+        $columns = array_slice($foreignKey, 1, preserve_keys: true);
 
         foreach ($columns as $i => $column) {
             $query->whereColumn(

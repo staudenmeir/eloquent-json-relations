@@ -10,7 +10,7 @@ trait CompilesMySqlJsonQueries
     /**
      * Compile a "JSON array" statement into SQL.
      *
-     * @param string $column
+     * @param string|\Illuminate\Database\Query\Expression $column
      * @return string
      */
     public function compileJsonArray($column)
@@ -90,7 +90,7 @@ trait CompilesMySqlJsonQueries
      * Prepare the bindings for a "member of" statement.
      *
      * @param mixed $value
-     * @return array
+     * @return list<mixed>
      */
     public function prepareBindingsForMemberOf(mixed $value): array
     {

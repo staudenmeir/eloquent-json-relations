@@ -7,19 +7,25 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection as BaseCollection;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait InteractsWithPivotRecords
 {
     /**
      * Attach models to the relationship.
      *
-     * @param mixed $ids
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param int|array<int|string, array<string, mixed>>|string|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|TRelatedModel|\Illuminate\Support\Collection<int, int|string> $ids
+     * @return TDeclaringModel
      */
     public function attach($ids)
     {
         [$records, $others] = $this->decodeRecords();
 
-        $records = $this->formatIds($this->parseIds($ids)) + $records;
+        $records = $this->formatIds(
+            $this->parseIds($ids)
+        ) + $records;
 
         $this->child->{$this->path} = $this->encodeRecords($records, $others);
 
@@ -29,17 +35,20 @@ trait InteractsWithPivotRecords
     /**
      * Detach models from the relationship.
      *
-     * @param mixed $ids
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param int|string|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|TRelatedModel|\Illuminate\Support\Collection<int, int|string> $ids
+     * @return TDeclaringModel
      */
     public function detach($ids = null)
     {
         [$records, $others] = $this->decodeRecords();
 
         if (!is_null($ids)) {
+            /** @var list<int|string> $parsedIds */
+            $parsedIds = $this->parseIds($ids);
+
             $records = array_diff_key(
                 $records,
-                array_flip($this->parseIds($ids))
+                array_flip($parsedIds)
             );
         } else {
             $records = [];
@@ -53,14 +62,16 @@ trait InteractsWithPivotRecords
     /**
      * Sync the relationship with a list of models.
      *
-     * @param mixed $ids
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param int|array<int|string, array<string, mixed>>|string|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|TRelatedModel|\Illuminate\Support\Collection<int, int|string> $ids
+     * @return TDeclaringModel
      */
     public function sync($ids)
     {
         [, $others] = $this->decodeRecords();
 
-        $records = $this->formatIds($this->parseIds($ids));
+        $records = $this->formatIds(
+            $this->parseIds($ids)
+        );
 
         $this->child->{$this->path} = $this->encodeRecords($records, $others);
 
@@ -70,14 +81,16 @@ trait InteractsWithPivotRecords
     /**
      * Toggle models from the relationship.
      *
-     * @param mixed $ids
-     * @return \Illuminate\Database\Eloquent\Model
+     * @param int|array<int|string, array<string, mixed>>|string|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|TRelatedModel|\Illuminate\Support\Collection<int, int|string> $ids
+     * @return TDeclaringModel
      */
     public function toggle($ids)
     {
         [$records, $others] = $this->decodeRecords();
 
-        $ids = $this->formatIds($this->parseIds($ids));
+        $ids = $this->formatIds(
+            $this->parseIds($ids)
+        );
 
         $records = array_diff_key(
             $ids + $records,
@@ -92,7 +105,7 @@ trait InteractsWithPivotRecords
     /**
      * Decode the records on the child model.
      *
-     * @return array
+     * @return array{0: array<int|string, array<string, mixed>>, 1: list<array<string, mixed>>}
      */
     protected function decodeRecords()
     {
@@ -123,9 +136,9 @@ trait InteractsWithPivotRecords
     /**
      * Encode the records for the child model.
      *
-     * @param array $records
-     * @param array $others
-     * @return array
+     * @param array<int|string, array<string, mixed>> $records
+     * @param list<array<string, mixed>> $others
+     * @return list<array<string, mixed>>|list<int|string>
      */
     protected function encodeRecords(array $records, array $others)
     {
@@ -148,8 +161,8 @@ trait InteractsWithPivotRecords
     /**
      * Get all of the IDs from the given mixed value.
      *
-     * @param mixed $value
-     * @return array
+     * @param int|array<int|string, array<string, mixed>>|string|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|TRelatedModel|\Illuminate\Support\Collection<int, int|string> $value
+     * @return array<int|string, array<string, mixed>>|list<int|string>
      */
     protected function parseIds($value)
     {
@@ -158,11 +171,17 @@ trait InteractsWithPivotRecords
         }
 
         if ($value instanceof Collection) {
-            return $value->pluck($this->ownerKey)->all();
+            /** @var \Illuminate\Support\Collection<int, int|string> $ids */
+            $ids = $value->pluck($this->ownerKey);
+
+            return $ids->all();
         }
 
         if ($value instanceof BaseCollection) {
-            return $value->toArray();
+            /** @var list<int|string> $ids */
+            $ids = $value->toArray();
+
+            return $ids;
         }
 
         return (array) $value;
@@ -171,8 +190,8 @@ trait InteractsWithPivotRecords
     /**
      * Format the parsed IDs.
      *
-     * @param array $ids
-     * @return array
+     * @param array<int|string, array<string, mixed>>|list<int|string> $ids
+     * @return array<int|string, array<string, mixed>>
      */
     protected function formatIds(array $ids)
     {
