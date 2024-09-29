@@ -6,18 +6,25 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\JoinClause;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait IsConcatenableBelongsToJsonRelation
 {
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableRelation<TRelatedModel, TDeclaringModel> */
     use IsConcatenableRelation;
 
     /**
      * Append the relation's through parents, foreign and local keys to a deep relationship.
      *
-     * @param string[] $through
-     * @param array $foreignKeys
-     * @param array $localKeys
+     * @param non-empty-list<string> $through
+     * @param non-empty-list<array{0: string, 1: string}|callable|string|\Staudenmeir\EloquentHasManyDeep\Eloquent\CompositeKey|null> $foreignKeys
+     * @param non-empty-list<array{0: string, 1: string}|callable|string|\Staudenmeir\EloquentHasManyDeep\Eloquent\CompositeKey|null> $localKeys
      * @param int $position
-     * @return array
+     * @return array{0: non-empty-list<string>,
+     *     1: non-empty-list<array{0: string, 1: string}|callable|string|\Staudenmeir\EloquentHasManyDeep\Eloquent\CompositeKey|null>,
+     *     2: non-empty-list<array{0: string, 1: string}|callable|string|\Staudenmeir\EloquentHasManyDeep\Eloquent\CompositeKey|null>}
      */
     public function appendToDeepRelationship(array $through, array $foreignKeys, array $localKeys, int $position): array
     {
@@ -55,11 +62,11 @@ trait IsConcatenableBelongsToJsonRelation
     /**
      * Match the eagerly loaded results for a deep relationship to their parents.
      *
-     * @param array $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param list<TDeclaringModel> $models
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
      * @param string $relation
      * @param string $type
-     * @return array
+     * @return list<TDeclaringModel>
      */
     public function matchResultsForDeepRelationship(
         array $models,
@@ -91,8 +98,8 @@ trait IsConcatenableBelongsToJsonRelation
     /**
      * Build the model dictionary for a deep relation.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @return array
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
+     * @return array<string, list<TRelatedModel>>
      */
     protected function buildDictionaryForDeepRelationship(Collection $results): array
     {

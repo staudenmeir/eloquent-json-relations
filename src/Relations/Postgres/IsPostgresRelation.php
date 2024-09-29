@@ -7,13 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Staudenmeir\EloquentJsonRelations\Casts\Uuid;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait IsPostgresRelation
 {
     /**
      * Get the wrapped and cast JSON column.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param TRelatedModel $model
      * @param string $column
      * @param string $key
      * @return \Illuminate\Database\Query\Expression

@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Concerns\SupportsDefaultModels;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson<TRelatedModel, TDeclaringModel>
+ */
 class HasOneJson extends HasManyJson
 {
     use SupportsDefaultModels;
@@ -48,12 +54,15 @@ class HasOneJson extends HasManyJson
 
         if ($this->key) {
             foreach ($models as $model) {
+                /** @var \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $relatedModel */
+                $relatedModel = new Collection(
+                    array_filter([$model->$relation])
+                );
+
                 $model->setRelation(
                     $relation,
                     $this->hydratePivotRelation(
-                        new Collection(
-                            array_filter([$model->$relation])
-                        ),
+                        $relatedModel,
                         $model,
                         fn (Model $model) => $model->{$this->getPathName()}
                     )->first()
@@ -64,7 +73,12 @@ class HasOneJson extends HasManyJson
         return $models;
     }
 
-    /** @inheritDoc */
+    /**
+     * Make a new related instance for the given model.
+     *
+     * @param TDeclaringModel $parent
+     * @return TRelatedModel
+     */
     public function newRelatedInstanceFor(Model $parent)
     {
         return $this->related->newInstance();

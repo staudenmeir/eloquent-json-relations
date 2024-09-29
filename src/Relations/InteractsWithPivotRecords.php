@@ -92,7 +92,7 @@ trait InteractsWithPivotRecords
     /**
      * Decode the records on the child model.
      *
-     * @return array
+     * @return array{0: array<int|string, array<string, mixed>>, 1: list<array<string, mixed>>}
      */
     protected function decodeRecords()
     {
@@ -123,9 +123,9 @@ trait InteractsWithPivotRecords
     /**
      * Encode the records for the child model.
      *
-     * @param array $records
-     * @param array $others
-     * @return array
+     * @param array<int|string, array<string, mixed>> $records
+     * @param list<array<string, mixed>> $others
+     * @return list<array<string, array<string, mixed>>>|list<int|string>
      */
     protected function encodeRecords(array $records, array $others)
     {
@@ -149,7 +149,7 @@ trait InteractsWithPivotRecords
      * Get all of the IDs from the given mixed value.
      *
      * @param mixed $value
-     * @return array
+     * @return list<mixed>
      */
     protected function parseIds($value)
     {
@@ -171,8 +171,8 @@ trait InteractsWithPivotRecords
     /**
      * Format the parsed IDs.
      *
-     * @param array $ids
-     * @return array
+     * @param list<mixed> $ids
+     * @return array<int|string, array<string, mixed>>
      */
     protected function formatIds(array $ids)
     {

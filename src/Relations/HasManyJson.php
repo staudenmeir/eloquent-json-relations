@@ -13,17 +13,26 @@ use Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatena
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\CompositeKeys\SupportsHasManyJsonCompositeKeys;
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends \Illuminate\Database\Eloquent\Relations\HasMany<TRelatedModel, TDeclaringModel>
+ */
 class HasManyJson extends HasMany implements ConcatenableRelation
 {
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableHasManyJsonRelation<TRelatedModel, TDeclaringModel> */
     use IsConcatenableHasManyJsonRelation;
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation<TRelatedModel, TDeclaringModel> */
     use IsJsonRelation;
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\CompositeKeys\SupportsHasManyJsonCompositeKeys<TRelatedModel, TDeclaringModel> */
     use SupportsHasManyJsonCompositeKeys;
 
     /**
      * Create a new has many JSON relationship instance.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param TDeclaringModel $parent
      * @param list<string>|string $foreignKey
      * @param list<string>|string $localKey
      * @return void
@@ -55,8 +64,8 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param list<string>|string $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
     {
@@ -98,12 +107,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         }
     }
 
-    /**
-     * Set the constraints for an eager load of the relation.
-     *
-     * @param array $models
-     * @return void
-     */
+    /** @inheritDoc */
     public function addEagerConstraints(array $models)
     {
         if ($this->hasCompositeKey()) {
@@ -131,7 +135,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      * Embed a parent key in a nested array.
      *
      * @param mixed $parentKey
-     * @return array
+     * @return array<array<mixed>>
      */
     protected function parentKeyToArray($parentKey)
     {
@@ -144,15 +148,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         return [$parentKey];
     }
 
-    /**
-     * Match the eagerly loaded results to their many parents.
-     *
-     * @param array $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @param string $relation
-     * @param string $type
-     * @return array
-     */
+    /** @inheritDoc */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type)
     {
         if ($this->hasCompositeKey()) {
@@ -174,12 +170,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         return $models;
     }
 
-    /**
-     * Build model dictionary keyed by the relation's foreign key.
-     *
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @return array
-     */
+    /** @inheritDoc */
     protected function buildDictionary(Collection $results)
     {
         $foreign = $this->getForeignKeyName();
@@ -206,21 +197,14 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         $foreignKey = explode('.', $this->foreignKey)[1];
 
         if (method_exists($model, 'belongsToJson')) {
-            /** @var \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson $relation */
+            /** @var \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson<*, *> $relation */
             $relation = $model->belongsToJson(get_class($this->parent), $foreignKey, $this->localKey);
 
             $relation->attach($this->getParentKey());
         }
     }
 
-    /**
-     * Add the constraints for a relationship query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
-     * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
+    /** @inheritDoc */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         if ($query->getQuery()->from == $parentQuery->getQuery()->from) {
@@ -247,14 +231,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         return $query;
     }
 
-    /**
-     * Add the constraints for a relationship query on the same table.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
-     * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
+    /** @inheritDoc */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         $query->from($query->getModel()->getTable() . ' as ' . $hash = $this->getRelationCountHash());
@@ -280,8 +257,8 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     /**
      * Get the parent key for the relationship query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return array
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @return array{0: string, 1: list<mixed>}
      */
     protected function relationExistenceQueryParentKey(Builder $query): array
     {
@@ -314,10 +291,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     /**
      * Get the pivot attributes from a model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param array $records
-     * @return array
+     * @param TRelatedModel $model
+     * @param TDeclaringModel $parent
+     * @param list<array<string, mixed>> $records
+     * @return array<string, mixed>
      */
     public function pivotAttributes(Model $model, Model $parent, array $records)
     {

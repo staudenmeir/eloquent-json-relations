@@ -72,7 +72,7 @@ class SqlServerGrammar extends Base implements JsonGrammar
      * Prepare the bindings for a "member of" statement.
      *
      * @param mixed $value
-     * @return array
+     * @return list<mixed>
      */
     public function prepareBindingsForMemberOf(mixed $value): array
     {

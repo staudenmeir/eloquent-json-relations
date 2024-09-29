@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as BaseCollection;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait SupportsHasManyJsonCompositeKeys
 {
     /**
@@ -46,7 +50,7 @@ trait SupportsHasManyJsonCompositeKeys
     /**
      * Set the constraints for an eager load of the relation for a composite key.
      *
-     * @param array $models
+     * @param list<TDeclaringModel> $models
      * @return void
      */
     protected function addEagerConstraintsWithCompositeKey(array $models): void
@@ -97,11 +101,11 @@ trait SupportsHasManyJsonCompositeKeys
     /**
      * Match the eagerly loaded results to their parents for a composite key.
      *
-     * @param array $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
+     * @param list<TDeclaringModel> $models
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
      * @param string $relation
      * @param string $type
-     * @return array
+     * @return list<TDeclaringModel>
      */
     protected function matchWithCompositeKey(array $models, Collection $results, string $relation, string $type): array
     {
@@ -132,8 +136,8 @@ trait SupportsHasManyJsonCompositeKeys
     /**
      * Build model dictionary keyed by the relation's composite foreign key.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @return array
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
+     * @return array<string, list<TRelatedModel>>
      */
     protected function buildDictionaryWithCompositeKey(Collection $results): array
     {
@@ -164,7 +168,7 @@ trait SupportsHasManyJsonCompositeKeys
     /**
      * Add the constraints for a relationship query for a composite key.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
      * @return void
      */
     public function getRelationExistenceQueryWithCompositeKey(Builder $query): void
@@ -183,7 +187,7 @@ trait SupportsHasManyJsonCompositeKeys
     /**
      * Get the plain additional foreign keys.
      *
-     * @return array
+     * @return array<int, string>
      */
     protected function getAdditionalForeignKeyNames(): array
     {

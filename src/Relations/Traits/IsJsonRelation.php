@@ -15,6 +15,10 @@ use Staudenmeir\EloquentJsonRelations\Grammars\PostgresGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\SQLiteGrammar;
 use Staudenmeir\EloquentJsonRelations\Grammars\SqlServerGrammar;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ */
 trait IsJsonRelation
 {
     /**
@@ -34,10 +38,10 @@ trait IsJsonRelation
     /**
      * Hydrate the pivot relationship on the models.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $models
-     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $models
+     * @param TDeclaringModel $parent
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function hydratePivotRelation(Collection $models, Model $parent, callable $callback): Collection
     {
@@ -56,10 +60,10 @@ trait IsJsonRelation
     /**
      * Get the pivot relationship from the query.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param TRelatedModel $model
+     * @param TDeclaringModel $parent
      * @param callable $callback
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return TRelatedModel
      */
     protected function pivotRelation(Model $model, Model $parent, callable $callback)
     {
@@ -77,18 +81,18 @@ trait IsJsonRelation
     /**
      * Get the pivot attributes from a model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param array $records
-     * @return array
+     * @param TRelatedModel $model
+     * @param TDeclaringModel $parent
+     * @param list<array<string, mixed>> $records
+     * @return array<string, mixed>
      */
     abstract public function pivotAttributes(Model $model, Model $parent, array $records);
 
     /**
      * Execute the query and get the first related model.
      *
-     * @param array $columns
-     * @return mixed
+     * @param list<string>|string $columns
+     * @return TRelatedModel|null
      */
     public function first($columns = ['*'])
     {

@@ -23,6 +23,9 @@ class IdeHelperServiceProvider extends ServiceProvider implements DeferrableProv
         );
     }
 
+    /**
+     * @return list<class-string>
+     */
     public function provides(): array
     {
         return [

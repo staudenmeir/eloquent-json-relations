@@ -13,18 +13,27 @@ use Staudenmeir\EloquentJsonRelations\Relations\Traits\CompositeKeys\SupportsBel
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableBelongsToJsonRelation;
 use Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation;
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends \Illuminate\Database\Eloquent\Relations\BelongsTo<TRelatedModel, TDeclaringModel>
+ */
 class BelongsToJson extends BelongsTo implements ConcatenableRelation
 {
     use InteractsWithPivotRecords;
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\Concatenation\IsConcatenableBelongsToJsonRelation<TRelatedModel, TDeclaringModel> */
     use IsConcatenableBelongsToJsonRelation;
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\IsJsonRelation<TRelatedModel, TDeclaringModel> */
     use IsJsonRelation;
+    /** @use \Staudenmeir\EloquentJsonRelations\Relations\Traits\CompositeKeys\SupportsBelongsToJsonCompositeKeys<TRelatedModel, TDeclaringModel> */
     use SupportsBelongsToJsonCompositeKeys;
 
     /**
      * Create a new belongs to JSON relationship instance.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $child
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param TDeclaringModel $child
      * @param list<string>|string $foreignKey
      * @param list<string>|string $ownerKey
      * @param string $relationName
@@ -57,8 +66,8 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param array $columns
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param list<string>|string $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
     {
@@ -95,12 +104,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         }
     }
 
-    /**
-     * Set the constraints for an eager load of the relation.
-     *
-     * @param array $models
-     * @return void
-     */
+    /** @inheritDoc */
     public function addEagerConstraints(array $models)
     {
         if ($this->hasCompositeKey()) {
@@ -115,8 +119,8 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     /**
      * Gather the keys from an array of related models.
      *
-     * @param array $models
-     * @return array
+     * @param array<int, TDeclaringModel> $models
+     * @return list<mixed>
      */
     protected function getEagerModelKeys(array $models)
     {
@@ -131,14 +135,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         return array_values(array_unique($keys));
     }
 
-    /**
-     * Match the eagerly loaded results to their parents.
-     *
-     * @param array  $models
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @param string $relation
-     * @return array
-     */
+    /** @inheritDoc */
     public function match(array $models, Collection $results, $relation)
     {
         if ($this->hasCompositeKey()) {
@@ -177,8 +174,8 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param \Illuminate\Database\Eloquent\Collection $results
-     * @return array
+     * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
+     * @return array<int|string, TRelatedModel>
      */
     protected function buildDictionary(Collection $results)
     {
@@ -191,14 +188,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         return $dictionary;
     }
 
-    /**
-     * Add the constraints for a relationship query.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
-     * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
+    /** @inheritDoc */
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         if ($parentQuery->getQuery()->from == $query->getQuery()->from) {
@@ -226,14 +216,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         return $query;
     }
 
-    /**
-     * Add the constraints for a relationship query on the same table.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Builder $parentQuery
-     * @param array|mixed $columns
-     * @return \Illuminate\Database\Eloquent\Builder
-     */
+    /** @inheritDoc */
     public function getRelationExistenceQueryForSelfRelation(Builder $query, Builder $parentQuery, $columns = ['*'])
     {
         $query->from($query->getModel()->getTable().' as '.$hash = $this->getRelationCountHash());
@@ -258,9 +241,9 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     /**
      * Get the owner key for the relationship query.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
      * @param string $ownerKey
-     * @return array
+     * @return array{0: string, 1: list<mixed>}
      */
     protected function relationExistenceQueryOwnerKey(Builder $query, string $ownerKey): array
     {
@@ -293,10 +276,10 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     /**
      * Get the pivot attributes from a model.
      *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param array $records
-     * @return array
+     * @param TRelatedModel $model
+     * @param TDeclaringModel $parent
+     * @param list<array<string, mixed>> $records
+     * @return array<string, mixed>
      */
     public function pivotAttributes(Model $model, Model $parent, array $records)
     {
@@ -316,7 +299,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      * Get the foreign key values.
      *
      * @param \Illuminate\Database\Eloquent\Model|null $model
-     * @return array
+     * @return list<mixed>
      */
     public function getForeignKeys(?Model $model = null)
     {
