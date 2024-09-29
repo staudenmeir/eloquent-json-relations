@@ -99,7 +99,7 @@ trait IsConcatenableBelongsToJsonRelation
      * Build the model dictionary for a deep relation.
      *
      * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
-     * @return array<string, list<TRelatedModel>>
+     * @return array<int|string, list<TRelatedModel>>
      */
     protected function buildDictionaryForDeepRelationship(Collection $results): array
     {

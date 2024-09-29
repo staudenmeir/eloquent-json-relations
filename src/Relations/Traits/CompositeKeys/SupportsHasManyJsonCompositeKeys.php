@@ -191,7 +191,7 @@ trait SupportsHasManyJsonCompositeKeys
      */
     protected function getAdditionalForeignKeyNames(): array
     {
-        /** @var list<string>|string $foreignKey */
+        /** @var list<string> $foreignKey */
         $foreignKey = $this->foreignKey;
 
         $names = [];

@@ -48,6 +48,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         $this->path = $segments[0];
         $this->key = $segments[1] ?? null;
 
+        // @phpstan-ignore-next-line
         parent::__construct($query, $child, $foreignKey, $ownerKey, $relationName);
     }
 
@@ -66,7 +67,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param list<string>|string $columns
+     * @param list<string> $columns
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])

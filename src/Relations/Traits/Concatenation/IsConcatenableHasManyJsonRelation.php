@@ -114,7 +114,7 @@ trait IsConcatenableHasManyJsonRelation
      *
      * @param \Illuminate\Database\Eloquent\Collection $results
      * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
-     * @return array<string, list<TRelatedModel>>
+     * @return array<int|string, list<TRelatedModel>>
      */
     protected function buildDictionaryForDeepRelationship(Collection $results): array
     {

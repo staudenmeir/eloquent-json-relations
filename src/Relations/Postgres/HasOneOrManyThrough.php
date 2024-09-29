@@ -82,10 +82,13 @@ trait HasOneOrManyThrough
 
         $query->getModel()->setTable($hash);
 
+        /** @var string $parentFrom */
+        $parentFrom = $parentQuery->getQuery()->from;
+
         $firstKey = $this->jsonColumn($query, $this->farParent, $this->getQualifiedFirstKeyName(), $this->localKey);
 
         $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey,
+            "$parentFrom.$this->localKey",
             '=',
             $firstKey // @phpstan-ignore-line TODO
         );
@@ -114,10 +117,13 @@ trait HasOneOrManyThrough
             $query->whereNull($hash.'.'.$this->throughParent->getDeletedAtColumn());
         }
 
+        /** @var string $parentFrom */
+        $parentFrom = $parentQuery->getQuery()->from;
+
         $firstKey = $this->jsonColumn($query, $this->farParent, $hash.'.'.$this->firstKey, $this->localKey);
 
         $query->select($columns)->whereColumn(
-            $parentQuery->getQuery()->from.'.'.$this->localKey,
+            "$parentFrom.$this->localKey",
             '=',
             $firstKey // @phpstan-ignore-line TODO
         );

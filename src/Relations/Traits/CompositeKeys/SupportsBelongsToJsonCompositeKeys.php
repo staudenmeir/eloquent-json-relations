@@ -172,7 +172,7 @@ trait SupportsBelongsToJsonCompositeKeys
      */
     public function getRelationExistenceQueryWithCompositeKey(Builder $query): void
     {
-        /** @var list<string>|string $foreignKey */
+        /** @var list<string> $foreignKey */
         $foreignKey = $this->foreignKey;
 
         $columns = array_slice($foreignKey, 1, preserve_keys: true);

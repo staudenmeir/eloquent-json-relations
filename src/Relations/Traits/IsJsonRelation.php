@@ -91,7 +91,7 @@ trait IsJsonRelation
     /**
      * Execute the query and get the first related model.
      *
-     * @param list<string>|string $columns
+     * @param list<string> $columns
      * @return TRelatedModel|null
      */
     public function first($columns = ['*'])

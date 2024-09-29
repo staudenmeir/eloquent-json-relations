@@ -46,6 +46,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         $this->path = $segments[0];
         $this->key = $segments[1] ?? null;
 
+        // @phpstan-ignore-next-line
         parent::__construct($query, $parent, $foreignKey, $localKey);
     }
 
@@ -64,7 +65,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param list<string>|string $columns
+     * @param list<string> $columns
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function get($columns = ['*'])
