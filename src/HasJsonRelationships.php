@@ -26,12 +26,7 @@ use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphOne as MorphOnePos
 
 trait HasJsonRelationships
 {
-    /**
-     * Get an attribute from the model.
-     *
-     * @param string $key
-     * @return mixed
-     */
+    /** @inheritDoc */
     public function getAttribute($key)
     {
         $attribute = preg_split('/(->|\[])/', $key)[0];
@@ -43,12 +38,7 @@ trait HasJsonRelationships
         return parent::getAttribute($key);
     }
 
-    /**
-     * Get an attribute from the $attributes array.
-     *
-     * @param string $key
-     * @return mixed
-     */
+    /** @inheritDoc */
     public function getAttributeFromArray($key)
     {
         if (str_contains($key, '->')) {
@@ -58,12 +48,7 @@ trait HasJsonRelationships
         return parent::getAttributeFromArray($key);
     }
 
-    /**
-     * Get a plain attribute (not a relationship).
-     *
-     * @param string $key
-     * @return mixed
-     */
+    /** @inheritDoc */
     public function getAttributeValue($key)
     {
         if (str_contains($key, '->')) {
@@ -83,15 +68,7 @@ trait HasJsonRelationships
         return parent::getAttributeValue($key);
     }
 
-    /**
-     * Instantiate a new HasOne relationship.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param string $foreignKey
-     * @param string $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
-     */
+    /** @inheritDoc */
     protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
@@ -104,18 +81,7 @@ trait HasJsonRelationships
         return new HasOne($query, $parent, $foreignKey, $localKey);
     }
 
-    /**
-     * Instantiate a new HasOneThrough relationship.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $farParent
-     * @param \Illuminate\Database\Eloquent\Model $throughParent
-     * @param string $firstKey
-     * @param string $secondKey
-     * @param string $localKey
-     * @param string $secondLocalKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasOneThrough
-     */
+    /** @inheritDoc */
     protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
@@ -128,16 +94,7 @@ trait HasJsonRelationships
         return new HasOneThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
     }
 
-    /**
-     * Instantiate a new MorphOne relationship.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param string $type
-     * @param string $id
-     * @param string $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
-     */
+    /** @inheritDoc */
     protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
@@ -150,16 +107,7 @@ trait HasJsonRelationships
         return new MorphOne($query, $parent, $type, $id, $localKey);
     }
 
-    /**
-     * Instantiate a new BelongsTo relationship.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $child
-     * @param string $foreignKey
-     * @param string $ownerKey
-     * @param string $relation
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+    /** @inheritDoc */
     protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
     {
         /** @var \Illuminate\Database\Connection $connection */
@@ -172,15 +120,7 @@ trait HasJsonRelationships
         return new BelongsTo($query, $child, $foreignKey, $ownerKey, $relation);
     }
 
-    /**
-     * Instantiate a new HasMany relationship.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param string $foreignKey
-     * @param string $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
+    /** @inheritDoc */
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
@@ -193,18 +133,7 @@ trait HasJsonRelationships
         return new HasMany($query, $parent, $foreignKey, $localKey);
     }
 
-    /**
-     * Instantiate a new HasManyThrough relationship.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $farParent
-     * @param \Illuminate\Database\Eloquent\Model $throughParent
-     * @param string $firstKey
-     * @param string $secondKey
-     * @param string $localKey
-     * @param string $secondLocalKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
+    /** @inheritDoc */
     protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
@@ -217,16 +146,7 @@ trait HasJsonRelationships
         return new HasManyThrough($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
     }
 
-    /**
-     * Instantiate a new MorphMany relationship.
-     *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $parent
-     * @param string $type
-     * @param string $id
-     * @param string $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
-     */
+    /** @inheritDoc */
     protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
@@ -242,11 +162,13 @@ trait HasJsonRelationships
     /**
      * Define an inverse one-to-one or many JSON relationship.
      *
-     * @param string $related
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param class-string<TRelatedModel> $related
      * @param string|array $foreignKey
      * @param string|array $ownerKey
      * @param string $relation
-     * @return \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson<TRelatedModel, $this>
      */
     public function belongsToJson($related, $foreignKey, $ownerKey = null, $relation = null)
     {
@@ -271,12 +193,15 @@ trait HasJsonRelationships
     /**
      * Instantiate a new BelongsToJson relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $child
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param TDeclaringModel $child
      * @param string|array $foreignKey
      * @param string|array $ownerKey
      * @param string $relation
-     * @return \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson<TRelatedModel, TDeclaringModel>
      */
     protected function newBelongsToJson(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
     {
@@ -286,10 +211,12 @@ trait HasJsonRelationships
     /**
      * Define a one-to-many JSON relationship.
      *
-     * @param string $related
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param class-string<TRelatedModel> $related
      * @param string|array $foreignKey
      * @param string|array $localKey
-     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson<TRelatedModel, $this>
      */
     public function hasManyJson($related, $foreignKey, $localKey = null)
     {
@@ -318,11 +245,14 @@ trait HasJsonRelationships
     /**
      * Instantiate a new HasManyJson relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param TDeclaringModel $parent
      * @param string|array $foreignKey
      * @param string|array $localKey
-     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasManyJson<TRelatedModel, TDeclaringModel>
      */
     protected function newHasManyJson(Builder $query, Model $parent, $foreignKey, $localKey)
     {
@@ -332,10 +262,12 @@ trait HasJsonRelationships
     /**
      * Define a one-to-one JSON relationship.
      *
-     * @param string $related
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param class-string<TRelatedModel> $related
      * @param string|array $foreignKey
      * @param string|array|null $localKey
-     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasOneJson
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasOneJson<TRelatedModel, $this>
      */
     public function hasOneJson(string $related, string|array $foreignKey, string|array|null $localKey = null): HasOneJson
     {
@@ -364,11 +296,14 @@ trait HasJsonRelationships
     /**
      * Instantiate a new HasOneJson relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param TDeclaringModel $parent
      * @param string|array $foreignKey
      * @param string|array $localKey
-     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasOneJson
+     * @return \Staudenmeir\EloquentJsonRelations\Relations\HasOneJson<TRelatedModel, TDeclaringModel>
      */
     protected function newHasOneJson(Builder $query, Model $parent, string|array $foreignKey, string|array $localKey): HasOneJson
     {
@@ -378,13 +313,15 @@ trait HasJsonRelationships
     /**
      * Define has-many-through JSON relationship.
      *
-     * @param string $related
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     *
+     * @param class-string<TRelatedModel> $related
      * @param string $through
      * @param string|\Staudenmeir\EloquentJsonRelations\JsonKey $firstKey
      * @param string|null $secondKey
      * @param string|null $localKey
      * @param string|\Staudenmeir\EloquentJsonRelations\JsonKey|null $secondLocalKey
-     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
+     * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep<TRelatedModel, $this>
      */
     public function hasManyThroughJson(
         string $related,
@@ -431,7 +368,7 @@ trait HasJsonRelationships
      * Add the pivot relationship to the has-many-through JSON relationship.
      *
      * @param \Staudenmeir\EloquentHasManyDeep\HasManyDeep $hasManyThroughJson
-     * @param \Illuminate\Database\Eloquent\Relations\Relation[] $relationships
+     * @param non-empty-list<\Illuminate\Database\Eloquent\Relations\Relation> $relationships
      * @param \Illuminate\Database\Eloquent\Model $through
      * @return void
      */
@@ -497,7 +434,7 @@ trait HasJsonRelationships
     /**
      * Instantiate a new HasManyThroughJson relationship.
      *
-     * @param \Illuminate\Database\Eloquent\Relations\Relation[] $relationships
+     * @param non-empty-list<\Illuminate\Database\Eloquent\Relations\Relation> $relationships
      * @return \Staudenmeir\EloquentHasManyDeep\HasManyDeep
      */
     protected function newHasManyThroughJson(array $relationships)
