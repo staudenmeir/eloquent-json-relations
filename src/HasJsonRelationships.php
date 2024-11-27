@@ -24,6 +24,9 @@ use Staudenmeir\EloquentJsonRelations\Relations\Postgres\HasOneThrough as HasOne
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphMany as MorphManyPostgres;
 use Staudenmeir\EloquentJsonRelations\Relations\Postgres\MorphOne as MorphOnePostgres;
 
+/**
+ * @phpstan-ignore trait.unused
+ */
 trait HasJsonRelationships
 {
     /** @inheritDoc */

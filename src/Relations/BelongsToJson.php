@@ -308,7 +308,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      * Get the foreign key values.
      *
      * @param \Illuminate\Database\Eloquent\Model|null $model
-     * @return list<mixed>
+     * @return array<int, mixed>
      */
     public function getForeignKeys(?Model $model = null)
     {

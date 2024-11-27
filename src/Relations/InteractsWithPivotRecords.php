@@ -121,6 +121,8 @@ trait InteractsWithPivotRecords
                 continue;
             }
 
+            /** @var array<string, mixed> $record */
+
             $foreignKey = Arr::get($record, $key);
 
             if (!is_null($foreignKey)) {
