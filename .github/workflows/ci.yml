@@ -16,7 +16,7 @@ jobs:
         database: [ mysql, mariadb, pgsql, sqlite, sqlsrv ]
         release: [ stable, lowest ]
         include:
-          - php: 8.3
+          - php: 8.4
             release: stable
             coverage: true
 
