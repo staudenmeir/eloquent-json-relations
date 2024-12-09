@@ -163,8 +163,11 @@ class HasManyJson extends HasMany implements ConcatenableRelation
 
         if ($this->key) {
             foreach ($models as $model) {
+                /** @var \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $relatedModels */
+                $relatedModels = $model->$relation;
+
                 $this->hydratePivotRelation(
-                    $model->$relation,
+                    $relatedModels,
                     $model,
                     fn (Model $model) => $model->{$this->getPathName()}
                 );
@@ -182,7 +185,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
         $dictionary = [];
 
         foreach ($results as $result) {
-            foreach ($result->{$foreign} as $value) {
+            /** @var list<int|string|null> $foreignKeys */
+            $foreignKeys = $result->$foreign;
+
+            foreach ($foreignKeys as $value) {
                 $dictionary[$value][] = $result;
             }
         }
@@ -297,7 +303,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
      *
      * @param TRelatedModel $model
      * @param TDeclaringModel $parent
-     * @param list<array<string, mixed>> $records
+     * @param array<int, array<string, mixed>> $records
      * @return array<string, mixed>
      */
     public function pivotAttributes(Model $model, Model $parent, array $records)
@@ -315,7 +321,10 @@ class HasManyJson extends HasMany implements ConcatenableRelation
                 return Arr::get($value, $key) == $parent->$localKey;
             })->first();
 
-        return Arr::except($record, $key);
+        /** @var array<string, mixed> $result */
+        $result = Arr::except($record, $key);
+
+        return $result;
     }
 
     /**

@@ -29,7 +29,10 @@ trait HasOneOrManyThrough
 
         if ($this->throughParentSoftDeletes()
             && method_exists($this->throughParent, 'getQualifiedDeletedAtColumn')) {
-            $query->whereNull($this->throughParent->getQualifiedDeletedAtColumn());
+            /** @var string $deletedAtColumn */
+            $deletedAtColumn = $this->throughParent->getQualifiedDeletedAtColumn();
+
+            $query->whereNull($deletedAtColumn);
         }
     }
 
@@ -114,7 +117,10 @@ trait HasOneOrManyThrough
 
         if ($this->throughParentSoftDeletes()
             && method_exists($this->throughParent, 'getDeletedAtColumn')) {
-            $query->whereNull($hash.'.'.$this->throughParent->getDeletedAtColumn());
+            /** @var string $deletedAtColumn */
+            $deletedAtColumn = $this->throughParent->getDeletedAtColumn();
+
+            $query->whereNull("$hash.$deletedAtColumn");
         }
 
         /** @var string $parentFrom */

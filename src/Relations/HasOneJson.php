@@ -54,15 +54,18 @@ class HasOneJson extends HasManyJson
 
         if ($this->key) {
             foreach ($models as $model) {
-                /** @var \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $relatedModel */
-                $relatedModel = new Collection(
-                    array_filter([$model->$relation])
+                /** @var TRelatedModel|null $relatedModel */
+                $relatedModel = $model->$relation;
+
+                /** @var \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $relatedModels */
+                $relatedModels = new Collection(
+                    array_filter([$relatedModel])
                 );
 
                 $model->setRelation(
                     $relation,
                     $this->hydratePivotRelation(
-                        $relatedModel,
+                        $relatedModels,
                         $model,
                         fn (Model $model) => $model->{$this->getPathName()}
                     )->first()

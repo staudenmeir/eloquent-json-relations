@@ -39,6 +39,8 @@ class SqlServerGrammar extends Base implements JsonGrammar
      */
     public function compileJsonValueSelect(string $column): string
     {
+        /** @var string $field */
+        /** @var string $path */
         [$field, $path] = $this->wrapJsonFieldAndPath($column);
 
         return "json_query($field$path)";
