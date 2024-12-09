@@ -283,7 +283,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      *
      * @param TRelatedModel $model
      * @param TDeclaringModel $parent
-     * @param list<array<string, mixed>> $records
+     * @param array<int, array<string, mixed>> $records
      * @return array<string, mixed>
      */
     public function pivotAttributes(Model $model, Model $parent, array $records)
@@ -301,7 +301,10 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
                 return Arr::get($value, $key) == $model->$ownerKey;
             })->first();
 
-        return Arr::except($record, $key);
+        /** @var array<string, mixed> $result */
+        $result = Arr::except($record, $key);
+
+        return $result;
     }
 
     /**
@@ -316,7 +319,10 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
 
         $foreignKey = $this->hasCompositeKey() ? $this->foreignKey[0] : $this->foreignKey;
 
-        return (new BaseCollection($model->$foreignKey))->filter(fn ($key) => $key !== null)->all();
+        /** @var list<int|string|null> $foreignKeys */
+        $foreignKeys = $model->$foreignKey;
+
+        return (new BaseCollection($foreignKeys))->filter(fn ($key) => $key !== null)->all();
     }
 
     /**

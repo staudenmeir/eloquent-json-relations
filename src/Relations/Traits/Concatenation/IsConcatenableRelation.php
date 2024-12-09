@@ -33,6 +33,7 @@ trait IsConcatenableRelation
      */
     public function mergeWhereConstraints(Builder $query, Builder $from): Builder
     {
+        /** @var array<int, mixed> $whereBindings */
         $whereBindings = $from->getQuery()->getRawBindings()['where'] ?? [];
 
         $wheres = $from->getQuery()->wheres;

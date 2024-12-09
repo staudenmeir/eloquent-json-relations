@@ -153,7 +153,10 @@ trait SupportsHasManyJsonCompositeKeys
                 $additionalColumns
             );
 
-            foreach($result->$foreignKey as $value) {
+            /** @var list<int|string> $values */
+            $values = $result->$foreignKey;
+
+            foreach($values as $value) {
                 $values = [$value, ...$additionalValues];
 
                 $key = implode("\0", $values);
