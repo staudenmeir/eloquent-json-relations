@@ -67,6 +67,7 @@ trait IsJsonRelation
      */
     protected function pivotRelation(Model $model, Model $parent, callable $callback)
     {
+        /** @var list<array<string, mixed>>|\Illuminate\Contracts\Support\Arrayable<int, array<string, mixed>> $records */
         $records = $callback($model, $parent);
 
         if ($records instanceof Arrayable) {
@@ -86,7 +87,7 @@ trait IsJsonRelation
      *
      * @param TRelatedModel $model
      * @param TDeclaringModel $parent
-     * @param list<array<string, mixed>> $records
+     * @param array<int, array<string, mixed>> $records
      * @return array<string, mixed>
      */
     abstract public function pivotAttributes(Model $model, Model $parent, array $records);

@@ -121,6 +121,8 @@ trait InteractsWithPivotRecords
                 continue;
             }
 
+            /** @var array<string, mixed> $record */
+
             $foreignKey = Arr::get($record, $key);
 
             if (!is_null($foreignKey)) {
@@ -167,7 +169,10 @@ trait InteractsWithPivotRecords
     protected function parseIds($value)
     {
         if ($value instanceof Model) {
-            return [$value->{$this->ownerKey}];
+            /** @var int|string $id */
+            $id = $value->{$this->ownerKey};
+
+            return [$id];
         }
 
         if ($value instanceof Collection) {

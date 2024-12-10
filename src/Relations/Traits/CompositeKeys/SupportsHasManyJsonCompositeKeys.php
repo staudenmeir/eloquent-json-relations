@@ -50,7 +50,7 @@ trait SupportsHasManyJsonCompositeKeys
     /**
      * Set the constraints for an eager load of the relation for a composite key.
      *
-     * @param list<TDeclaringModel> $models
+     * @param array<int, TDeclaringModel> $models
      * @return void
      */
     protected function addEagerConstraintsWithCompositeKey(array $models): void
@@ -101,11 +101,11 @@ trait SupportsHasManyJsonCompositeKeys
     /**
      * Match the eagerly loaded results to their parents for a composite key.
      *
-     * @param list<TDeclaringModel> $models
+     * @param array<int, TDeclaringModel> $models
      * @param \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
      * @param string $relation
      * @param string $type
-     * @return list<TDeclaringModel>
+     * @return array<int, TDeclaringModel>
      */
     protected function matchWithCompositeKey(array $models, Collection $results, string $relation, string $type): array
     {
@@ -153,7 +153,10 @@ trait SupportsHasManyJsonCompositeKeys
                 $additionalColumns
             );
 
-            foreach($result->$foreignKey as $value) {
+            /** @var list<int|string> $values */
+            $values = $result->$foreignKey;
+
+            foreach($values as $value) {
                 $values = [$value, ...$additionalValues];
 
                 $key = implode("\0", $values);
