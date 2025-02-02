@@ -11,7 +11,7 @@ class SqlServerGrammar extends Base implements JsonGrammar
     /**
      * Compile a "JSON array" statement into SQL.
      *
-     * @param string|\Illuminate\Database\Query\Expression $column
+     * @param string|\Illuminate\Database\Query\Expression<*> $column
      * @return string
      */
     public function compileJsonArray($column)

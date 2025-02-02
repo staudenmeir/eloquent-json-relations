@@ -64,7 +64,7 @@ trait IsConcatenableHasManyJsonRelation
      * Get the custom through key for an eager load of the relation.
      *
      * @param string $alias
-     * @return \Illuminate\Database\Query\Expression
+     * @return \Illuminate\Database\Query\Expression<*>
      */
     public function getThroughKeyForDeepRelationships(string $alias): Expression
     {

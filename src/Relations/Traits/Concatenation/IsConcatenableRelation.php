@@ -36,7 +36,7 @@ trait IsConcatenableRelation
         /** @var array<int, mixed> $whereBindings */
         $whereBindings = $from->getQuery()->getRawBindings()['where'] ?? [];
 
-        $wheres = $from->getQuery()->wheres ?? [];
+        $wheres = $from->getQuery()->wheres;
 
         $query->withoutGlobalScopes(
             $from->removedScopes()

@@ -16,7 +16,7 @@ trait IsPostgresRelation
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param string $column
      * @param string $key
-     * @return \Illuminate\Database\Query\Expression
+     * @return \Illuminate\Database\Query\Expression<*>
      */
     protected function jsonColumn(Builder $query, Model $model, $column, $key)
     {
