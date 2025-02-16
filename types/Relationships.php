@@ -15,7 +15,7 @@ function test(Role $role, User $user): void
         'Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson<Staudenmeir\EloquentJsonRelations\Types\Models\Role, Staudenmeir\EloquentJsonRelations\Types\Models\User>',
         $user->belongsToJson(Role::class, 'role_ids')
     );
-    
+
     assertType(
         'Staudenmeir\EloquentJsonRelations\Relations\HasManyJson<Staudenmeir\EloquentJsonRelations\Types\Models\User, Staudenmeir\EloquentJsonRelations\Types\Models\Role>',
         $role->hasManyJson(User::class, 'role_ids')

@@ -12,7 +12,8 @@ class IdeHelperServiceProvider extends ServiceProvider implements DeferrableProv
     /**
      * @var string
      */
-    const ModelsCommandAlias = __NAMESPACE__ . '\\' . ModelsCommand::class;
+    public const ModelsCommandAlias = __NAMESPACE__ . '\\' . ModelsCommand::class;
+
     public function register(): void
     {
         /** @var \Illuminate\Config\Repository $config */

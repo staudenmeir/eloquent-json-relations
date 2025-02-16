@@ -160,19 +160,14 @@ trait IsJsonRelation
         /** @var \Illuminate\Database\Connection $connection */
         $connection = $query->getConnection();
 
-        /** @var \Staudenmeir\EloquentJsonRelations\Grammars\JsonGrammar $grammar */
-        $grammar = $connection->withTablePrefix(
-            match ($connection->getDriverName()) {
-                'mysql' => new MySqlGrammar(),
-                'mariadb' => new MariaDbGrammar(),
-                'pgsql' => new PostgresGrammar(),
-                'sqlite' => new SQLiteGrammar(),
-                'sqlsrv' => new SqlServerGrammar(),
-                default => throw new RuntimeException('This database is not supported.') // @codeCoverageIgnore
-            }
-        );
-
-        return $grammar;
+        return match ($connection->getDriverName()) {
+            'mysql' => new MySqlGrammar($connection),
+            'mariadb' => new MariaDbGrammar($connection),
+            'pgsql' => new PostgresGrammar($connection),
+            'sqlite' => new SQLiteGrammar($connection),
+            'sqlsrv' => new SqlServerGrammar($connection),
+            default => throw new RuntimeException('This database is not supported.') // @codeCoverageIgnore
+        };
     }
 
     /**
