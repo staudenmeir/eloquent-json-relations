@@ -14,6 +14,7 @@ use ReflectionNamedType;
 use Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 use Staudenmeir\EloquentJsonRelations\Relations\BelongsToJson;
 use Staudenmeir\EloquentJsonRelations\Relations\HasManyJson;
+use Staudenmeir\EloquentJsonRelations\Relations\HasOneJson;
 
 class JsonRelationsHook implements ModelHookInterface
 {
@@ -34,7 +35,7 @@ class JsonRelationsHook implements ModelHookInterface
             }
 
             if ($method->getReturnType() instanceof ReflectionNamedType
-                && in_array($method->getReturnType()->getName(), [BelongsToJson::class, HasManyJson::class], true)) {
+                && in_array($method->getReturnType()->getName(), [BelongsToJson::class, HasManyJson::class, HasOneJson::class], true)) {
                 /** @var \Illuminate\Database\Eloquent\Relations\Relation<*, *, *> $relationship */
                 $relationship = $method->invoke($model);
 
