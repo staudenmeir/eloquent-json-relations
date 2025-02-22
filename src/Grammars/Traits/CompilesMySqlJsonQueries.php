@@ -52,6 +52,8 @@ trait CompilesMySqlJsonQueries
      */
     public function supportsMemberOf(ConnectionInterface $connection): bool
     {
+        /** @var \Illuminate\Database\Connection $connection */
+
         if ($connection instanceof MariaDbConnection) {
             return false;
         }
