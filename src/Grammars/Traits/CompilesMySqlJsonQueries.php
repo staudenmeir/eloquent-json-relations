@@ -4,7 +4,6 @@ namespace Staudenmeir\EloquentJsonRelations\Grammars\Traits;
 
 use Illuminate\Contracts\Database\Query\Expression;
 use Illuminate\Database\ConnectionInterface;
-use Illuminate\Database\MariaDbConnection;
 
 trait CompilesMySqlJsonQueries
 {
@@ -52,9 +51,9 @@ trait CompilesMySqlJsonQueries
      */
     public function supportsMemberOf(ConnectionInterface $connection): bool
     {
-        /** @var \Illuminate\Database\Connection $connection */
+        /** @var \Illuminate\Database\MySqlConnection $connection */
 
-        if ($connection instanceof MariaDbConnection) {
+        if ($connection->isMaria()) {
             return false;
         }
 
