@@ -187,7 +187,10 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         $dictionary = [];
 
         foreach ($results as $result) {
-            $dictionary[$result->{$this->ownerKey}] = $result;
+            /** @var int|string $key */
+            $key = $result->{$this->ownerKey};
+
+            $dictionary[$key] = $result;
         }
 
         return $dictionary;
@@ -311,7 +314,7 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
      * Get the foreign key values.
      *
      * @param \Illuminate\Database\Eloquent\Model|null $model
-     * @return array<int, mixed>
+     * @return array<int, int|string>
      */
     public function getForeignKeys(?Model $model = null)
     {
@@ -322,7 +325,10 @@ class BelongsToJson extends BelongsTo implements ConcatenableRelation
         /** @var list<int|string|null> $foreignKeys */
         $foreignKeys = $model->$foreignKey;
 
-        return (new BaseCollection($foreignKeys))->filter(fn ($key) => $key !== null)->all();
+        /** @var list<int|string> $filteredForeignKeys */
+        $filteredForeignKeys = (new BaseCollection($foreignKeys))->filter(fn ($key) => $key !== null)->all();
+
+        return $filteredForeignKeys;
     }
 
     /**

@@ -116,6 +116,7 @@ trait InteractsWithPivotRecords
 
         foreach ((array) $this->child->{$this->path} as $record) {
             if (!is_array($record)) {
+                /** @var int|string $record */
                 $records[$record] = [];
 
                 continue;
@@ -123,6 +124,7 @@ trait InteractsWithPivotRecords
 
             /** @var array<string, mixed> $record */
 
+            /** @var int|string|null $foreignKey */
             $foreignKey = Arr::get($record, $key);
 
             if (!is_null($foreignKey)) {
@@ -154,14 +156,17 @@ trait InteractsWithPivotRecords
             Arr::set($attributes, $key, $id);
         }
 
-        return array_merge(
+        /** @var list<array<string, mixed>>|list<int|string> $encodedRecords */
+        $encodedRecords = array_merge(
             array_values($records),
             $others
         );
+
+        return $encodedRecords;
     }
 
     /**
-     * Get all of the IDs from the given mixed value.
+     * Get all the IDs from the given mixed value.
      *
      * @param int|array<int|string, array<string, mixed>>|string|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|TRelatedModel|\Illuminate\Support\Collection<int, int|string> $value
      * @return array<int|string, array<string, mixed>>|list<int|string>

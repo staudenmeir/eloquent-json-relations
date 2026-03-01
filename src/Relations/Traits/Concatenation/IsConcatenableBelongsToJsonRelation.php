@@ -106,7 +106,10 @@ trait IsConcatenableBelongsToJsonRelation
         $dictionary = [];
 
         foreach ($results as $result) {
-            $dictionary[$result->laravel_through_key ?? null][] = $result;
+            /** @var int|string $key */
+            $key = $result->laravel_through_key ?? '';
+
+            $dictionary[$key][] = $result;
         }
 
         return $dictionary;
