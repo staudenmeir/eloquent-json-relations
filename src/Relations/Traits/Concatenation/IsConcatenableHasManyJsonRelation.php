@@ -93,6 +93,7 @@ trait IsConcatenableHasManyJsonRelation
         $dictionary = $this->buildDictionaryForDeepRelationship($results);
 
         foreach ($models as $model) {
+            /** @var int|string $key */
             $key = $this->getDictionaryKey($model->{$this->localKey});
 
             if (isset($dictionary[$key])) {
@@ -126,10 +127,11 @@ trait IsConcatenableHasManyJsonRelation
             /** @var string|null $throughKey */
             $throughKey = $result->getAttribute('laravel_through_key');
 
-            /** @var array<string, mixed> $values */
+            /** @var array<string, int|string|null> $values */
             $values = json_decode($throughKey ?? '[]', true);
 
             if ($key) {
+                /** @var array<string, int|string> $values */
                 $values = array_filter(
                     Arr::pluck($values, $key),
                     fn ($value) => $value !== null
