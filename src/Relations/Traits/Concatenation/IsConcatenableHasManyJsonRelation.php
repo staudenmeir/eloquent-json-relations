@@ -139,7 +139,7 @@ trait IsConcatenableHasManyJsonRelation
             }
 
             foreach ($values as $value) {
-                $dictionary[$value][] = $result;
+                $dictionary[$value ?? ''][] = $result;
             }
         }
 

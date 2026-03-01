@@ -189,7 +189,7 @@ class HasManyJson extends HasMany implements ConcatenableRelation
             $foreignKeys = $result->$foreign;
 
             foreach ($foreignKeys as $value) {
-                $dictionary[$value][] = $result;
+                $dictionary[$value ?? ''][] = $result;
             }
         }
 
