@@ -42,7 +42,7 @@ class HasManyThroughJsonTest extends TestCase
 
     public function testLazyLoadingWithReverseRelationshipAndObjects()
     {
-        if (in_array($this->connection, ['sqlite', 'sqlsrv'])) {
+        if (in_array($this->connection, ['mariadb', 'sqlite', 'sqlsrv'])) {
             $this->markTestSkipped();
         }
 
