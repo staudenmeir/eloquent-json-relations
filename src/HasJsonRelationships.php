@@ -75,7 +75,7 @@ trait HasJsonRelationships
     protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getConnection();
+        $connection = $query->getQuery()->getConnection();
 
         if ($connection->getDriverName() === 'pgsql') {
             return new HasOnePostgres($query, $parent, $foreignKey, $localKey);
@@ -88,7 +88,7 @@ trait HasJsonRelationships
     protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getConnection();
+        $connection = $query->getQuery()->getConnection();
 
         if ($connection->getDriverName() === 'pgsql') {
             return new HasOneThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
@@ -101,7 +101,7 @@ trait HasJsonRelationships
     protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getConnection();
+        $connection = $query->getQuery()->getConnection();
 
         if ($connection->getDriverName() === 'pgsql') {
             return new MorphOnePostgres($query, $parent, $type, $id, $localKey);
@@ -114,7 +114,7 @@ trait HasJsonRelationships
     protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
     {
         /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getConnection();
+        $connection = $query->getQuery()->getConnection();
 
         if ($connection->getDriverName() === 'pgsql') {
             return new BelongsToPostgres($query, $child, $foreignKey, $ownerKey, $relation);
@@ -127,7 +127,7 @@ trait HasJsonRelationships
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getConnection();
+        $connection = $query->getQuery()->getConnection();
 
         if ($connection->getDriverName() === 'pgsql') {
             return new HasManyPostgres($query, $parent, $foreignKey, $localKey);
@@ -140,7 +140,7 @@ trait HasJsonRelationships
     protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getConnection();
+        $connection = $query->getQuery()->getConnection();
 
         if ($connection->getDriverName() === 'pgsql') {
             return new HasManyThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
@@ -153,7 +153,7 @@ trait HasJsonRelationships
     protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
     {
         /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getConnection();
+        $connection = $query->getQuery()->getConnection();
 
         if ($connection->getDriverName() === 'pgsql') {
             return new MorphManyPostgres($query, $parent, $type, $id, $localKey);
