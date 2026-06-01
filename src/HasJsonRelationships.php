@@ -74,10 +74,7 @@ trait HasJsonRelationships
     /** @inheritDoc */
     protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
     {
-        /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getQuery()->getConnection();
-
-        if ($connection->getDriverName() === 'pgsql') {
+        if ($this->isPostgresConnection($query)) {
             return new HasOnePostgres($query, $parent, $foreignKey, $localKey);
         }
 
@@ -87,10 +84,7 @@ trait HasJsonRelationships
     /** @inheritDoc */
     protected function newHasOneThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
-        /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getQuery()->getConnection();
-
-        if ($connection->getDriverName() === 'pgsql') {
+        if ($this->isPostgresConnection($query)) {
             return new HasOneThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
         }
 
@@ -100,10 +94,7 @@ trait HasJsonRelationships
     /** @inheritDoc */
     protected function newMorphOne(Builder $query, Model $parent, $type, $id, $localKey)
     {
-        /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getQuery()->getConnection();
-
-        if ($connection->getDriverName() === 'pgsql') {
+        if ($this->isPostgresConnection($query)) {
             return new MorphOnePostgres($query, $parent, $type, $id, $localKey);
         }
 
@@ -113,10 +104,7 @@ trait HasJsonRelationships
     /** @inheritDoc */
     protected function newBelongsTo(Builder $query, Model $child, $foreignKey, $ownerKey, $relation)
     {
-        /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getQuery()->getConnection();
-
-        if ($connection->getDriverName() === 'pgsql') {
+        if ($this->isPostgresConnection($query)) {
             return new BelongsToPostgres($query, $child, $foreignKey, $ownerKey, $relation);
         }
 
@@ -126,10 +114,7 @@ trait HasJsonRelationships
     /** @inheritDoc */
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
     {
-        /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getQuery()->getConnection();
-
-        if ($connection->getDriverName() === 'pgsql') {
+        if ($this->isPostgresConnection($query)) {
             return new HasManyPostgres($query, $parent, $foreignKey, $localKey);
         }
 
@@ -139,10 +124,7 @@ trait HasJsonRelationships
     /** @inheritDoc */
     protected function newHasManyThrough(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey)
     {
-        /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getQuery()->getConnection();
-
-        if ($connection->getDriverName() === 'pgsql') {
+        if ($this->isPostgresConnection($query)) {
             return new HasManyThroughPostgres($query, $farParent, $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
         }
 
@@ -152,14 +134,24 @@ trait HasJsonRelationships
     /** @inheritDoc */
     protected function newMorphMany(Builder $query, Model $parent, $type, $id, $localKey)
     {
-        /** @var \Illuminate\Database\Connection $connection */
-        $connection = $query->getQuery()->getConnection();
-
-        if ($connection->getDriverName() === 'pgsql') {
+        if ($this->isPostgresConnection($query)) {
             return new MorphManyPostgres($query, $parent, $type, $id, $localKey);
         }
 
         return new MorphMany($query, $parent, $type, $id, $localKey);
+    }
+
+    /**
+     * Determine whether the given Eloquent builder targets a PostgreSQL connection.
+     *
+     * Reads the connection directly from the underlying query builder to avoid
+     * Eloquent\Builder's passthru -> toBase() -> applyScopes() clone path.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder<*> $query
+     */
+    private function isPostgresConnection(Builder $query): bool
+    {
+        return $query->getQuery()->getConnection()->getDriverName() === 'pgsql';
     }
 
     /**
