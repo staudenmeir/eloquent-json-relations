@@ -149,7 +149,7 @@ trait HasJsonRelationships
      *
      * @param \Illuminate\Database\Eloquent\Builder<*> $query
      */
-    private function isPostgresConnection(Builder $query): bool
+    protected function isPostgresConnection(Builder $query): bool
     {
         return $query->getQuery()->getConnection()->getDriverName() === 'pgsql';
     }
